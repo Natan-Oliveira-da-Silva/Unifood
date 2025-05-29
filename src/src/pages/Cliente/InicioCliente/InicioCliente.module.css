@@ -1,4 +1,23 @@
-.titulo{
-    font-size:5vh;
-    text-align: center;
+.pesquisa{
+    background-color: #D9D9D9;
+    width: 48vw;
+    height: 4vh;
+    margin-left: 21rem;
+    margin-top: 6rem;
+    padding-left: 3rem;
 }
+
+.recomendacoes{
+    display: flex;
+    justify-content: center;
+    margin-top: 4rem;
+}
+.Restaurantes{
+    display: flex;
+    width: 80vw;
+    justify-self: center;
+    justify-content: space-between;
+    margin-top: 3rem;
+}
+
+

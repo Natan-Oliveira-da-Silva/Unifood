@@ -16,7 +16,7 @@ function TelaInicial() {
     <div className={styles.container}>
       <div className={styles.logoContainer}>
         <img
-          src="src/assets/unifood1.png"s
+          src="src/assets/unifood1.png"
           alt=""
           className={styles.logo}
         />

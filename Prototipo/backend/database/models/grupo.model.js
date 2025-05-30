@@ -1,4 +1,3 @@
-// backend/database/models/grupo.model.js
 module.exports = (db) => {
     const sql = `
         CREATE TABLE IF NOT EXISTS grupos (

@@ -1,4 +1,4 @@
-// backend/database/models/usuario_grupo.model.js
+
 module.exports = (db) => {
     const sql = `
         CREATE TABLE IF NOT EXISTS usuario_grupos (

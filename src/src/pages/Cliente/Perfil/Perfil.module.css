@@ -1,4 +1,36 @@
 .titulo{
     font-size:5vh;
     text-align: center;
+    margin-top: 2rem;
+}
+
+.instrucao{
+    text-align: center;
+    margin-top: 2rem;
+}
+
+.inputs{
+    display: flex;
+    flex-direction: column;
+    width: 35%;
+    justify-self: center;
+    margin-top: 2rem;
+    gap: 10px;
+}
+
+.texto{
+    height: 2rem;
+    background-color: #C9C9C9;
+    color: #464646;
+    font-size: 20px;
+
+}
+
+.criar{
+    height: 3rem;
+    background-color: #414141;
+    color: #FFFFFF;
+    font-size: 20px;
+    margin-top: 1rem;
+    width: 100%;
 }

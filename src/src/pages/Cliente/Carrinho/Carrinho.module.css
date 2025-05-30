@@ -1,4 +1,37 @@
+.CarrinhoPage{
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+
+}
+
+.carrinhoMainContent{
+    flex-grow: 1;
+}
+
 .titulo{
     font-size:5vh;
     text-align: center;
+    margin-top: 2rem;
+}
+
+.Carrinho{
+    width: 70vw;
+    height: 23vh;
+    background-color: #D9D9D9;
+    justify-self: center;
+    margin-top: 3rem;
+    display: flex;
+    justify-content: space-around ;
+
+}
+.Logo{
+    align-self: center;
+    justify-self: center;
+}
+
+.foto{
+    width: 120px;
+    height: 120px;
+  
 }

@@ -2,6 +2,7 @@ const sqlite3 = require('sqlite3').verbose();
 const path = require('path'); 
 const criarTabelaUsuarioGrupos = require('./models/usuario_grupo.model.js');
 const criarTabelaGrupoPermissoes = require('./models/grupo_permissao.model.js');
+const criarTabelaCozinhas = require('./models/cozinha.model.js');
 
 
 const DBSOURCE = path.resolve(__dirname, "unifood.sqlite");
@@ -27,6 +28,7 @@ const db = new sqlite3.Database(DBSOURCE, (err) => {
             criarTabelaPermissoes(db);
             criarTabelaUsuarioGrupos(db);
             criarTabelaGrupoPermissoes(db);
+            criarTabelaCozinhas(db)
 
 
             console.log("Processo de inicialização de tabelas concluído (ou em andamento de forma assíncrona).");

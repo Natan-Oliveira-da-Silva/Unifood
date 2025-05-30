@@ -1,5 +1,6 @@
 const sqlite3 = require('sqlite3').verbose();
 const path = require('path'); 
+const criarTabelaUsuarioGrupos = require('./models/usuario_grupo.model.js');
 
 
 const DBSOURCE = path.resolve(__dirname, "unifood.sqlite");
@@ -23,6 +24,7 @@ const db = new sqlite3.Database(DBSOURCE, (err) => {
             criarTabelaUsuarios(db);
             criarTabelaGrupos(db);
             criarTabelaPermissoes(db);
+            criarTabelaUsuarioGrupos(db);
 
 
 

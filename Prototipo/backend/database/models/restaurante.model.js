@@ -1,4 +1,4 @@
-// backend/database/models/restaurante.model.js
+
 module.exports = (db) => {
 
     const sqlSafe = `

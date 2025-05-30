@@ -6,6 +6,7 @@ const criarTabelaCozinhas = require('./models/cozinha.model.js');
 const criarTabelaRestaurantes = require('./models/restaurante.model.js');
 const criarTabelaFormasPagamento = require('./models/forma_pagamento.model.js');
 const  criarTabelaRestauranteFormasPagamento = require('./models/restaurante_forma_pagamento.model.js');
+const  criarTabelaProdutos = require('./models/produto.model.js');
 
 
 const DBSOURCE = path.resolve(__dirname, "unifood.sqlite");
@@ -35,6 +36,7 @@ const db = new sqlite3.Database(DBSOURCE, (err) => {
             criarTabelaRestaurantes(db);
             criarTabelaFormasPagamento(db);
             criarTabelaRestauranteFormasPagamento(db);
+            criarTabelaProdutos(db);
 
             console.log("Processo de inicialização de tabelas concluído (ou em andamento de forma assíncrona).");
         });

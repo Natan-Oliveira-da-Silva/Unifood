@@ -36,7 +36,6 @@ module.exports = (db) => {
                 // AdminSistema
                 { id_grupo: 3, id_permissao: 6 }, // AdminSistema -> ADMINISTRAR_USUARIOS
                 { id_grupo: 3, id_permissao: 7 }, // AdminSistema -> ADMINISTRAR_RESTAURANTES_TODOS
-                // Por exemplo, se AdminSistema também pode fazer tudo que um cliente ou restaurante faz:
                 { id_grupo: 3, id_permissao: 1 },
                 { id_grupo: 3, id_permissao: 2 },
                 { id_grupo: 3, id_permissao: 3 },

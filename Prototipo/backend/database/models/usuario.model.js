@@ -2,10 +2,13 @@ module.exports = (db) => {
     const sql = `
         CREATE TABLE IF NOT EXISTS usuarios (
             id_usuario INTEGER PRIMARY KEY AUTOINCREMENT,
-            nome TEXT NOT NULL,
+            nome_completo TEXT,
             email TEXT NOT NULL UNIQUE,
-            senha TEXT NOT NULL,
-            data_cadastro TEXT DEFAULT CURRENT_TIMESTAMP
+            senha_hash TEXT NOT NULL,
+            telefone TEXT,
+            cpf TEXT UNIQUE,
+            data_cadastro TEXT DEFAULT CURRENT_TIMESTAMP,
+            ativo INTEGER DEFAULT 1
         )
     `;
     db.run(sql, (err) => {

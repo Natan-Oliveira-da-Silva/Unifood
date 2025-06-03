@@ -22,6 +22,10 @@ const router = createBrowserRouter([
     element: <TelaInicial />,
   },
   {
+    path: "/TelaInicial/TelaInicial",
+    element: <TelaInicial />,
+  },
+  {
     path: "/cliente/login",
     element: <LoginCliente />,
   },

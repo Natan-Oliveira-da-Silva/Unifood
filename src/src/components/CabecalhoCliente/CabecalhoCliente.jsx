@@ -9,7 +9,7 @@ function CabecalhoCliente() {
         <a href="/cliente/consultarpedidos">Consultar Pedidos</a>
         <a href="/cliente/perfil">Perfil</a>
         <a href="/cliente/carrinho">Carrinho</a>
-        <a href="/cliente/login">Sair</a>
+        <a href="/TelaInicial/TelaInicial">Sair</a>
       </nav>
     </header>
   );

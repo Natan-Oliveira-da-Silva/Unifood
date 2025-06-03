@@ -1,7 +1,85 @@
 // backend/controllers/usuario.controller.js
 const db = require('../database/db');
 const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
 const saltRounds = 10;
+
+exports.loginUsuario = async (req, res) => {
+    const { email, senha } = req.body;
+
+    if (!email || !senha) {
+        return res.status(400).json({ message: "Email e senha são obrigatórios." });
+    }
+
+    const sql = "SELECT * FROM usuarios WHERE email = ?";
+
+    try {
+        const usuario = await new Promise((resolve, reject) => {
+            db.get(sql, [email], (err, row) => {
+                if (err) {
+                    console.error("Erro ao buscar usuário no banco:", err.message);
+                    reject(new Error("Erro interno ao tentar fazer login."));
+                }
+                resolve(row);
+            });
+        });
+
+        if (!usuario) {
+            return res.status(401).json({ message: "Credenciais inválidas. Usuário não encontrado." });
+        }
+
+        // Verificar se o usuário está ativo (opcional, mas recomendado)
+        if (usuario.ativo === 0) {
+            return res.status(403).json({ message: "Usuário inativo. Entre em contato com o suporte." });
+        }
+
+        const senhaCorreta = await bcrypt.compare(senha, usuario.senha_hash);
+
+        if (!senhaCorreta) {
+            return res.status(401).json({ message: "Credenciais inválidas. Senha incorreta." });
+        }
+
+        // Senha correta, gerar JWT
+        // Crie uma chave secreta para assinar o token. Guarde-a de forma segura!
+        // Pode ser uma string aleatória longa. NO FUTURO, coloque em variáveis de ambiente.
+        const JWT_SECRET = process.env.JWT_SECRET || "SEGREDO_MUITO_SECRETO_PARA_DESENVOLVIMENTO_12345";
+
+        const payload = {
+            id_usuario: usuario.id_usuario,
+            email: usuario.email,
+            nome_completo: usuario.nome_completo
+            // Você pode adicionar outros dados que julgar úteis no payload,
+            // como papéis/grupos do usuário, se tiver RBAC.
+        };
+
+        const token = jwt.sign(
+            payload,
+            JWT_SECRET,
+            { expiresIn: '1h' } // Token expira em 1 hora (exemplo, ajuste conforme necessário)
+        );
+
+        res.status(200).json({
+            message: "Login bem-sucedido!",
+            token: token,
+            usuario: { // Enviar alguns dados do usuário é opcional, mas útil para o frontend
+                id_usuario: usuario.id_usuario,
+                email: usuario.email,
+                nome_completo: usuario.nome_completo
+            }
+        });
+
+    } catch (error) {
+        // Se o erro foi o que rejeitamos em db.get
+        if (error.message === "Erro interno ao tentar fazer login.") {
+             return res.status(500).json({ message: error.message });
+        }
+        // Outros erros inesperados
+        console.error("Erro no processo de login:", error.message);
+        res.status(500).json({ message: "Erro interno no servidor durante o login." });
+    }
+};
+
+
 
 // --- CRIAR NOVO USUÁRIO (Cadastro) ---
 exports.criarUsuario = async (req, res) => {

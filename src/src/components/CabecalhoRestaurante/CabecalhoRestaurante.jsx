@@ -7,7 +7,7 @@ function CabecalhoRestaurante () {
         <a href="/restaurante/inicio">Meu Restaurante</a>
         <a href="/restaurante/meusprodutos">Meus Produtos</a>
         <a href="/restaurante/criarproduto">Criar Produto</a>
-        <a href="/restaurante/login">Sair</a>
+        <a href="/TelaInicial/TelaInicial">Sair</a>
       </nav>
     </header>
   );

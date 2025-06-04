@@ -1,16 +1,13 @@
-// backend/controllers/restaurante.controller.js
 const db = require('../database/db');
 
-// Buscar o restaurante do usuário logado
 exports.getMeuRestaurante = async (req, res) => {
-    // O id_usuario vem do token JWT, decodificado pelo middleware de autenticação
+    
     const idUsuarioResponsavel = req.usuarioDecodificado.id_usuario;
 
     if (!idUsuarioResponsavel) {
         return res.status(400).json({ message: "ID do usuário não encontrado no token." });
     }
 
-    // Adicionar JOIN com cozinhas para pegar o nome da cozinha
     const sql = `
         SELECT 
             r.*, 

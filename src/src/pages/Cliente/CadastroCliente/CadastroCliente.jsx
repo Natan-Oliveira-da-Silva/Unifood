@@ -51,6 +51,7 @@ function CadastroCliente() {
         body: JSON.stringify({
           email: email,
           senha: senha,
+          tipo_usuario: 'C'
           
         }),
       });

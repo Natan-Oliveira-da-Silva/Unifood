@@ -51,8 +51,7 @@ function CadastroRestaurante() {
         body: JSON.stringify({
           email: email, 
           senha: senha,
-          // nome_completo pode ser opcional ou preenchido depois
-          // cpf, telefone também opcionais para este usuário "restaurante"
+          tipo_usuario: 'R'
         }),
       });
       console.log("6. Fetch realizado. Status da resposta:", response.status);

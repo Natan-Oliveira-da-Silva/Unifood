@@ -1,6 +1,6 @@
 import styles from "./TelaInicial.module.css";
 import { useNavigate } from "react-router-dom";
-import logo from 'C:/Users/12724119349/Desktop/hhjh/EntregaP1A3/src/src/assets/unifood1.png'
+import logo from '../../assets/logo.png'
 
 function TelaInicial() {
   const navigate = useNavigate();

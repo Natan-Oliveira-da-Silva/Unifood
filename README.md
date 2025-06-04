@@ -1,3 +1,4 @@
 Seja Bem-Vindo ao UNIFOOD, um MVC de delivery de comida desenvolvido pelos estudantes: Diogo Souza, Nathan Oliveira, Elvis Reis, Danilo Queiroz, Caue Luz, Pedro Bispo, Gustavo Lima para a realização da A3 de Usabilidade ministrada pelos professores Lucas ( Teorica ) e Thiago ( Pratica ) da Universidade Salvador (UNIFACS). O aplicativo foi criado tendo como base as leis da Usabilidade de Jakob Nielsen. 
 A primeira entrega (13/05/2025), foi demonstrar ao instrutor Thiago um prototipo em HTML, CSS e JavaScript alem de Wireframes em baixa e alta fidelidade da nossa aplicação, que esta atualmente no nosso github. 
-A segunda entrega será realizada no dia 13/06/2025 onde devemos criar a mesma aplicação em React.Js
+A segunda entrega será realizada no dia 17/06/2025 onde devemos criar a mesma aplicação em React.Js
+Para começar com o React.JS é necessario utilizar 2 terminais e para o backend que esta localizado na pasta Prototipo e inicia-lo com o comando "npm run start" e depois criar um segundo terminal para iniciar o front end que esta localizado em src/src com o comando "npm run dev"

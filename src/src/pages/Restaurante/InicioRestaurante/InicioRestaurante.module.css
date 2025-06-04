@@ -67,3 +67,55 @@
     margin-left: 4rem;
     gap: 6px;
 }
+
+.containerMensagem { 
+  width: 80vw;
+  padding: 3rem 1rem; 
+  background-color: #e9e9e9; 
+  margin: 2rem auto; 
+  text-align: center;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+.mensagemCarregando,
+.mensagemErroGeral,
+.avisoRestauranteNaoCadastrado {
+  font-size: 1.2rem;
+  color: #555;
+  padding: 1rem;
+}
+
+.mensagemErroGeral {
+  color: #D8000C; 
+  background-color: #FFD2D2; 
+  border: 1px solid #D8000C;
+  border-radius: 4px;
+}
+
+.avisoRestauranteNaoCadastrado {
+  color: #4F8A10; 
+  background-color: #DFF2BF; 
+  border: 1px solid #4F8A10;
+  border-radius: 4px;
+  margin-bottom: 1.5rem; 
+}
+
+.botaoAcaoPrincipal { 
+  padding: 0.8rem 1.5rem;
+  font-size: 1rem;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  background-color: #4CAF50; 
+  font-weight: bold;
+  transition: background-color 0.3s ease;
+  margin-top: 1rem; 
+}
+.botaoAcaoPrincipal:hover {
+  background-color: #45a049;
+}
+
+.imagemCarregando { 
+  opacity: 0.5;
+}

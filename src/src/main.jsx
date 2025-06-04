@@ -69,6 +69,10 @@ const router = createBrowserRouter([
     path: "/restaurante/meusprodutos",
     element: <MeusProdutos />,
   },
+  {
+  path: "/restaurante/cadastrar-detalhes",
+  element: <CadastrarDetalhesRestaurante />, 
+},
 ]);
 
 createRoot(document.getElementById("root")).render(

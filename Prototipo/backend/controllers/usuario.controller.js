@@ -39,9 +39,6 @@ exports.loginUsuario = async (req, res) => {
             return res.status(401).json({ message: "Credenciais inválidas. Senha incorreta." });
         }
 
-        // Senha correta, gerar JWT
-        // Crie uma chave secreta para assinar o token. Guarde-a de forma segura!
-        // Pode ser uma string aleatória longa. NO FUTURO, coloque em variáveis de ambiente.
         const JWT_SECRET = process.env.JWT_SECRET || "SEGREDO_MUITO_SECRETO_PARA_DESENVOLVIMENTO_12345";
 
         const payload = {
@@ -83,39 +80,32 @@ exports.loginUsuario = async (req, res) => {
 
 // --- CRIAR NOVO USUÁRIO (Cadastro) ---
 exports.criarUsuario = async (req, res) => {
-    const { nome_completo, email, senha, telefone, cpf } = req.body;
+    // Adicionado tipo_usuario ao destructuring
+    const { nome_completo, email, senha, telefone, cpf, tipo_usuario } = req.body;
 
-    if (!email || !senha) {
-        return res.status(400).json({ message: "Email e senha são obrigatórios." });
+    // Validação básica: email, senha e tipo_usuario agora são obrigatórios
+    if (!email || !senha || !tipo_usuario) {
+        return res.status(400).json({ message: "Email, senha e tipo de usuário são obrigatórios." });
+    }
+
+    if (tipo_usuario !== 'C' && tipo_usuario !== 'R') {
+        return res.status(400).json({ message: "Tipo de usuário inválido. Use 'C' para cliente ou 'R' para restaurante." });
     }
 
     try {
-        const emailExists = await new Promise((resolve, reject) => {
-            db.get("SELECT id_usuario FROM usuarios WHERE email = ?", [email], (err, row) => {
-                if (err) reject(err);
-                resolve(row);
-            });
-        });
-        if (emailExists) {
-            return res.status(409).json({ message: "Este email já está cadastrado." });
-        }
-
+        
+        const emailExists = await new Promise((resolve, reject) => { });
+        if (emailExists) {  }
         if (cpf) {
-            const cpfExists = await new Promise((resolve, reject) => {
-                db.get("SELECT id_usuario FROM usuarios WHERE cpf = ?", [cpf], (err, row) => {
-                    if (err) reject(err);
-                    resolve(row);
-                });
-            });
-            if (cpfExists) {
-                return res.status(409).json({ message: "Este CPF já está cadastrado." });
-            }
+            const cpfExists = await new Promise((resolve, reject) => {  });
+            if (cpfExists) {  }
         }
 
         const senha_hash = await bcrypt.hash(senha, saltRounds);
+
         const sql = `
-            INSERT INTO usuarios (nome_completo, email, senha_hash, telefone, cpf, ativo)
-            VALUES (?, ?, ?, ?, ?, ?)
+            INSERT INTO usuarios (nome_completo, email, senha_hash, telefone, cpf, tipo_usuario, ativo)
+            VALUES (?, ?, ?, ?, ?, ?, ?)
         `;
         const params = [
             nome_completo || null,
@@ -123,6 +113,7 @@ exports.criarUsuario = async (req, res) => {
             senha_hash,
             telefone || null,
             cpf || null,
+            tipo_usuario,
             1
         ];
 
@@ -135,7 +126,8 @@ exports.criarUsuario = async (req, res) => {
                 message: "Usuário criado com sucesso!",
                 id_usuario: this.lastID,
                 email: email,
-                nome_completo: nome_completo || null
+                nome_completo: nome_completo || null,
+                tipo_usuario: tipo_usuario
             });
         });
     } catch (error) {

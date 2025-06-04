@@ -1,3 +1,4 @@
+
 import styles from './LoginRestaurante.module.css';
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -7,13 +8,67 @@ function LoginRestaurante() {
   const [email, setEmail] = useState('');
   const [senha, setSenha] = useState('');
   const [erro, setErro] = useState('');
+  const [loading, setLoading] = useState(false); 
   const navigate = useNavigate();
 
-  function handleLogin(e) {
+  async function handleLogin(e) {
     e.preventDefault();
-    // Aqui você pode validar o email/senha antes de navegar
-    navigate("/restaurante/inicio");
+    setErro(''); 
+
+    if (email === '' || senha === '') {
+      setErro("Preencha todos os campos");
+      return;
+    }
+
+    setLoading(true);
+    console.log("1. Função handleLogin (restaurante) iniciada.");
+
+    try {
+     
+      const response = await fetch('http://localhost:3001/api/usuarios/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          email: email,
+          senha: senha,
+        }),
+      });
+      console.log("2. Fetch para login realizado. Status da resposta:", response.status);
+
+      const data = await response.json();
+      console.log("3. Resposta convertida para JSON:", data);
+
+      setLoading(false);
+
+      if (!response.ok) {
+        setErro(data.message || `Erro ${response.status}: Não foi possível realizar o login.`);
+        console.log("Erro na resposta do backend:", data.message || `Status: ${response.status}`);
+        return;
+      }
+
+      // Login bem-sucedido
+      console.log('Login de restaurante realizado com sucesso:', data);
+
+  
+      if (data.token) {
+        localStorage.setItem('authToken', data.token);
+        if (data.usuario) {
+          localStorage.setItem('userData', JSON.stringify(data.usuario));
+        }
+      }
+
+      // Navegar para a página inicial do restaurante
+      navigate("/restaurante/inicio");
+
+    } catch (error) {
+      setLoading(false);
+      console.error("4. Erro no bloco try/catch (ex: falha de rede):", error);
+      setErro("Não foi possível conectar ao servidor ou ocorreu um erro na requisição. Verifique o console.");
+    }
   }
+
 
   function irParaCadastro() {
     navigate("/restaurante/cadastro");
@@ -30,6 +85,7 @@ function LoginRestaurante() {
             placeholder="email@restaurante.com"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
+            disabled={loading}
           />
           <input
             className={styles.input}
@@ -37,14 +93,15 @@ function LoginRestaurante() {
             placeholder="senha"
             value={senha}
             onChange={(e) => setSenha(e.target.value)}
+            disabled={loading}
           />
           {erro && <p className={styles.erro}>{erro}</p>}
-          <button type="submit" className={styles.botao}>
-            Entrar
+          <button type="submit" className={styles.botao} disabled={loading}>
+            {loading ? 'Entrando...' : 'Entrar'}
           </button>
         </form>
+        <hr className={styles.divisor} />
         <p className={styles.linkCadastro}>
-          <hr className={styles.divisor} />
           Não possui uma conta?{' '}
           <span className={styles.criar} onClick={irParaCadastro}>
             Cadastrar

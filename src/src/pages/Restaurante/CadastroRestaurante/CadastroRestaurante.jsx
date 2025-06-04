@@ -3,6 +3,10 @@ import styles from './CadastroRestaurante.module.css';
 import { useNavigate } from 'react-router-dom';
 import { useState } from 'react';
 import logo from '../../../assets/logo.png'; // Verifique o caminho do logo
+import Batata_Frita from "../../../assets/Batata_Frita.png"; 
+import Burrito from "../../../assets/Burrito.png";
+import Fatia_pizza from "../../../assets/Fatia_pizza.png"; 
+import Nachos from "../../../assets/Nachos.png";
 
 function CadastroRestaurante() {
   const navigate = useNavigate();
@@ -86,6 +90,12 @@ function CadastroRestaurante() {
   return (
     <>
       <div className={styles.container}>
+
+        <img src={Batata_Frita} className={styles.Batata_Frita}/>
+        <img src={Burrito} className={styles.burrito}/>
+        <img src={Fatia_pizza} className={styles.Fatia_pizza}/>
+        <img src={Nachos} className={styles.Nachos}/>
+
         <div className={styles.formulario}>
           <h2>Cadastro Usuário Restaurante</h2>
 

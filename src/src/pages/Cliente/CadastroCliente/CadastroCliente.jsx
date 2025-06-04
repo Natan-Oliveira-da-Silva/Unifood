@@ -2,6 +2,10 @@ import styles from './CadastroCliente.module.css';
 import { useNavigate } from 'react-router-dom';
 import { useState } from 'react';
 import logo from '../../../assets/logo.png'; // Verifique se este caminho para o logo está correto
+import Batata_Frita from "../../../assets/Batata_Frita.png"; 
+import Burrito from "../../../assets/Burrito.png";
+import Fatia_pizza from "../../../assets/Fatia_pizza.png"; 
+import Nachos from "../../../assets/Nachos.png";
 
 function CadastroCliente() {
   const navigate = useNavigate();
@@ -89,6 +93,12 @@ function CadastroCliente() {
 
   return (
     <div className={styles.container}>
+
+      <img src={Batata_Frita} className={styles.Batata_Frita}/>
+      <img src={Burrito} className={styles.burrito}/>
+      <img src={Fatia_pizza} className={styles.Fatia_pizza}/>
+      <img src={Nachos} className={styles.Nachos}/>
+      
       <div className={styles.formulario}>
         <h2>Cadastro Clientes</h2>
 

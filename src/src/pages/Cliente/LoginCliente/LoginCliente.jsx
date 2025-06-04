@@ -3,6 +3,11 @@ import styles from './LoginCliente.module.css';
 import { useNavigate } from 'react-router-dom';
 import React, { useState } from 'react'; // React já estava importado
 import logo from '../../../assets/logo.png';
+import Batata_Frita from "../../../assets/Batata_Frita.png"; 
+import Macarrao from "../../../assets/Macarrao.png";
+import Rosquinha from "../../../assets/Rosquinha.png"; 
+import Sushi from "../../../assets/Sushi.png";
+
 
 function LoginCliente() {
   const navigate = useNavigate();
@@ -76,6 +81,12 @@ function LoginCliente() {
   return (
     <>
       <div className={styles.container}>
+
+        <img src={Batata_Frita} className={styles.Batata_Frita}/>
+        <img src={Macarrao} className={styles.Macarrao}/>
+        <img src={Rosquinha} className={styles.Rosquinha}/>
+        <img src={Sushi} className={styles.Sushi}/>
+
         <div className={styles.formulario}>
           <h2>Login Clientes</h2>
 

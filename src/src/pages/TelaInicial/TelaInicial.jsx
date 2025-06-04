@@ -1,7 +1,8 @@
 import styles from "./TelaInicial.module.css";
 import { useNavigate } from "react-router-dom";
 import logo from '../../assets/logo.png'
-//import logo from "../../assets/unifood1.png";
+import Pizza from "../../assets/Mao_Pizza.png";
+import Cachorro from "../../assets/Cachorro_quente.png";
 
 function TelaInicial() {
   const navigate = useNavigate();
@@ -15,7 +16,10 @@ function TelaInicial() {
   }
 
   return (
+    
     <div className={styles.container}>
+      <img src={Pizza} className={styles.pizza}/>
+      <img src={Cachorro} className={styles.Cachorro}/>
       <div className={styles.logoContainer}>
         <img
           src={logo}

@@ -1,5 +1,3 @@
-* {
-}
 .container {
   display: flex;
   flex-direction: column;
@@ -8,6 +6,18 @@
   height: 100vh;
   text-align: center;
   font-family: 'Poppins', sans-serif;
+}
+
+.pizza{
+  position: absolute;
+  top: 141px;
+  left: -30px;
+}
+
+.Cachorro {
+  position: absolute;
+  top: 141px;
+  right: 1px;
 }
 
 .logoContainer {

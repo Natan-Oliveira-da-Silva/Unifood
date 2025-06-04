@@ -7,6 +7,42 @@
   font-family: 'Arial', sans-serif;
 }
 
+.Batata_Frita {
+  position: absolute;
+  bottom: 10px;
+  left: 20px;
+  width: 200px;
+  height: 200px;
+}
+
+
+.Sushi{
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  width: 200px;
+  height: 200px;
+
+}
+
+.Macarrao {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  
+  width: 200px;
+  height: 200px;
+}
+
+.Rosquinha{
+  position: absolute;
+  bottom: 8px;
+  right: 20px;
+  width: 200px;
+  height: 200px;
+
+}
+
 .formulario {
   background-color: #fff;
   padding: 40px;

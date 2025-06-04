@@ -7,6 +7,38 @@
   font-family: 'Arial', sans-serif;
 }
 
+
+.burrito {
+  position: absolute;
+  bottom: 1px;
+  left: 20px;
+  width: 200px;
+}
+
+.Batata_Frita{
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  width: 200px;
+
+}
+
+.Fatia_pizza {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  
+  width: 200px;
+}
+
+.Nachos{
+  position: absolute;
+  bottom: 1px;
+  right: 20px;
+  width: 200px;
+
+}
+
 .formulario {
   background-color: #fff;
   padding: 40px;

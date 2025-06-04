@@ -10,6 +10,7 @@ module.exports = (db) => {
             aberto INTEGER DEFAULT 0, 
             url_imagem_logo TEXT,
             id_cozinha INTEGER NOT NULL,
+            id_usuario_responsavel INTEGER UNIQUE,
             endereco_cep TEXT,
             endereco_logradouro TEXT,
             endereco_numero TEXT,

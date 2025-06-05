@@ -35,7 +35,6 @@ exports.getMeuRestaurante = async (req, res) => {
 
 // CRIAR UM NOVO RESTAURANTE
 exports.criarRestaurante = async (req, res) => {
-    // ... (código completo da função criarRestaurante que já te enviei e corrigimos)
     const id_usuario_responsavel = req.usuarioDecodificado.id_usuario;
     const {
         nome, id_cozinha, taxa_frete = 0.0, url_imagem_logo,
@@ -43,7 +42,7 @@ exports.criarRestaurante = async (req, res) => {
         endereco_bairro, endereco_cidade, endereco_estado
     } = req.body;
 
-    if (!nome || !id_cozinha) { // Adicionei !id_cozinha aqui também
+    if (!nome || !id_cozinha) {
         return res.status(400).json({ message: "Nome e Tipo de Cozinha do restaurante são obrigatórios." });
     }
 
@@ -95,21 +94,15 @@ exports.criarRestaurante = async (req, res) => {
     }
 };
 
-// --- ATUALIZAR DADOS DO "MEU RESTAURANTE" ---
+// ATUALIZAR DADOS DO "MEU RESTAURANTE"
 exports.atualizarMeuRestaurante = async (req, res) => {
     const id_usuario_responsavel = req.usuarioDecodificado.id_usuario;
-    const { nome, id_cozinha, taxa_frete, url_imagem_logo, endereco_cep, endereco_logradouro, endereco_numero, endereco_complemento, endereco_bairro, endereco_cidade, endereco_estado /* adicione outros campos aqui */ } = req.body;
+    const { nome, id_cozinha, taxa_frete, url_imagem_logo, endereco_cep, endereco_logradouro, endereco_numero, endereco_complemento, endereco_bairro, endereco_cidade, endereco_estado } = req.body;
 
     if (Object.keys(req.body).length === 0) {
         return res.status(400).json({ message: "Nenhum dado fornecido para atualização." });
     }
-    if (nome !== undefined && (typeof nome !== 'string' || nome.trim() === '')) {
-        return res.status(400).json({ message: "O nome do restaurante, se fornecido, não pode ser vazio." });
-    }
-    if (id_cozinha !== undefined && (isNaN(parseInt(id_cozinha, 10)) || parseInt(id_cozinha, 10) <= 0)) {
-        return res.status(400).json({ message: "ID da cozinha, se fornecido, deve ser um número válido." });
-    }
-    // Adicione mais validações conforme necessário
+    // Adicione validações para cada campo que pode ser atualizado, se necessário
 
     try {
         const restauranteDoUsuario = await new Promise((resolve, reject) => {
@@ -128,19 +121,14 @@ exports.atualizarMeuRestaurante = async (req, res) => {
 
         let camposParaAtualizar = [];
         let valoresParaAtualizar = [];
-
-        // Função helper para adicionar campos à atualização
         const addCampo = (nomeCampo, valor, isNumeric = false) => {
             if (valor !== undefined) {
                 camposParaAtualizar.push(`${nomeCampo} = ?`);
-                if (isNumeric && valor !== null && valor !== '') { // Garante que strings vazias não virem NaN para números
+                if (isNumeric && valor !== null && valor !== '') {
                     valoresParaAtualizar.push(Number(valor));
-                } else {
-                    valoresParaAtualizar.push(valor === '' ? null : valor); // Permite limpar campos de texto
-                }
+                } else { valoresParaAtualizar.push(valor === '' ? null : valor); }
             }
         };
-
         addCampo("nome", nome);
         addCampo("id_cozinha", id_cozinha, true);
         addCampo("taxa_frete", taxa_frete, true);
@@ -152,8 +140,7 @@ exports.atualizarMeuRestaurante = async (req, res) => {
         addCampo("endereco_bairro", endereco_bairro);
         addCampo("endereco_cidade", endereco_cidade);
         addCampo("endereco_estado", endereco_estado);
-        // Adicione outros campos aqui usando addCampo, ex: addCampo("aberto", req.body.aberto, true);
-
+        // Adicione aqui outros campos atualizáveis como 'aberto', 'ativo', etc.
 
         if (camposParaAtualizar.length === 0) {
             return res.status(400).json({ message: "Nenhum campo válido fornecido para atualização." });
@@ -166,29 +153,69 @@ exports.atualizarMeuRestaurante = async (req, res) => {
         db.run(sqlUpdate, valoresParaAtualizar, function (err) {
             if (err) {
                 console.error("Erro ao atualizar restaurante no banco:", err.message);
-                 if (err.message.includes("FOREIGN KEY constraint failed") && err.message.toLowerCase().includes("cozinhas")) {
+                if (err.message.includes("FOREIGN KEY constraint failed") && err.message.toLowerCase().includes("cozinhas")) {
                      return res.status(400).json({ message: "ID da cozinha inválido ou não encontrado." });
                 }
                 return res.status(500).json({ message: "Erro interno ao atualizar o restaurante.", error: err.message });
             }
-            if (this.changes === 0) {
-                return res.status(404).json({ message: "Restaurante não encontrado ou nenhum dado alterado." });
-            }
+            if (this.changes === 0) { return res.status(404).json({ message: "Restaurante não encontrado ou nenhum dado alterado." }); }
             
-            // Buscar o restaurante atualizado para retornar ao frontend
             const sqlSelectUpdated = `SELECT r.*, c.nome AS nome_cozinha FROM restaurantes r LEFT JOIN cozinhas c ON r.id_cozinha = c.id_cozinha WHERE r.id_restaurante = ?`;
             db.get(sqlSelectUpdated, [id_restaurante], (errSelect, updatedRow) => {
-                if (errSelect) {
-                    return res.status(200).json({ message: "Restaurante atualizado, mas erro ao buscar dados atualizados." });
-                }
+                if (errSelect) { return res.status(200).json({ message: "Restaurante atualizado, mas erro ao buscar dados atualizados." }); }
                 res.status(200).json({ message: "Restaurante atualizado com sucesso!", restaurante: updatedRow });
             });
         });
     } catch (error) {
         console.error("Erro no processo de atualização de restaurante (controller catch):", error.message);
-        if (error.message === "Erro interno ao verificar restaurante.") {
+        if (error.message === "Erro interno ao verificar restaurante.") { return res.status(500).json({ message: error.message });}
+        res.status(500).json({ message: "Erro interno no servidor ao tentar atualizar restaurante." });
+    }
+};
+
+// --- APAGAR O "MEU RESTAURANTE" ---
+exports.apagarMeuRestaurante = async (req, res) => {
+    const id_usuario_responsavel = req.usuarioDecodificado.id_usuario;
+
+    try {
+        const restauranteDoUsuario = await new Promise((resolve, reject) => {
+            db.get("SELECT id_restaurante FROM restaurantes WHERE id_usuario_responsavel = ?",
+                [id_usuario_responsavel],
+                (err, row) => {
+                    if (err) {
+                        console.error("Erro ao buscar restaurante do usuário para exclusão:", err.message);
+                        return reject(new Error("Erro interno ao verificar dados do restaurante."));
+                    }
+                    resolve(row);
+                });
+        });
+
+        if (!restauranteDoUsuario) {
+            return res.status(404).json({ message: "Nenhum restaurante encontrado para este usuário para apagar." });
+        }
+
+        const id_restaurante_a_deletar = restauranteDoUsuario.id_restaurante;
+        
+        
+
+        const sqlDelete = "DELETE FROM restaurantes WHERE id_restaurante = ?";
+        db.run(sqlDelete, [id_restaurante_a_deletar], function (err) {
+            if (err) {
+                console.error("Erro ao apagar restaurante:", err.message);
+                return res.status(500).json({ message: "Erro interno ao apagar o restaurante.", error: err.message });
+            }
+            if (this.changes === 0) {
+                return res.status(404).json({ message: "Restaurante não encontrado para apagar (verifique o ID)." });
+            }
+            res.status(200).json({ message: "Restaurante apagado com sucesso." });
+            // Ou res.status(204).send();
+        });
+
+    } catch (error) {
+        console.error("Erro no processo de exclusão de restaurante:", error.message);
+        if (error.message === "Erro interno ao verificar dados do restaurante." || error.message === "Erro ao deletar produtos associados.") {
             return res.status(500).json({ message: error.message });
         }
-        res.status(500).json({ message: "Erro interno no servidor ao tentar atualizar restaurante." });
+        res.status(500).json({ message: "Erro interno no servidor ao tentar apagar restaurante." });
     }
 };

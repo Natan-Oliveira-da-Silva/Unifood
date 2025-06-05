@@ -111,6 +111,12 @@ function LoginCliente() {
               Recuperar senha
             </span>
           </p>
+          <p className={styles.linkLoginRestaurante}>
+            
+            <span className={styles.linkLoginRestaurante} onClick={() => navigate('/restaurante/login')}>
+              Login Restaurante
+            </span>
+          </p>
 
 
         </div>

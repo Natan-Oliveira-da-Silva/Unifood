@@ -107,7 +107,15 @@ function LoginRestaurante() {
             Cadastrar
           </span>
         </p>
+
+      <p className={styles.linkLoginRestaurante}>
+         
+          <span className={styles.linkLoginRestaurante} onClick={irParaCadastro}>
+            Login Cliente
+          </span>
+        </p>
       </div>
+      
 
       <div className={styles.logoContainer}>
         <img src={logo} alt="Logo Unifood" className={styles.logo} />

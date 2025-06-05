@@ -1,23 +1,61 @@
-.pesquisa{
-    background-color: #D9D9D9;
-    width: 48vw;
-    height: 4vh;
-    margin-left: 21rem;
-    margin-top: 6rem;
-    padding-left: 3rem;
+/* src/pages/Cliente/InicioCliente/InicioCliente.module.css */
+.container {
+    width: 90%;
+    max-width: 1400px;
+    margin: 0 auto; /* Centraliza o container principal */
+    padding: 2rem 1rem;
 }
 
-.recomendacoes{
+.buscaContainer {
     display: flex;
-    justify-content: center;
-    margin-top: 4rem;
-}
-.Restaurantes{
-    display: flex;
-    width: 80vw;
-    justify-self: center;
-    justify-content: space-between;
-    margin-top: 3rem;
+    justify-content: center; /* Centraliza a barra de busca */
+    margin-bottom: 3rem;
 }
 
+.buscaInput {
+    width: 100%;
+    max-width: 600px; /* Define uma largura máxima para a busca */
+    padding: 0.9rem 1.2rem;
+    font-size: 1rem;
+    border: 1px solid #ccc;
+    border-radius: 25px; /* Deixa a barra com cantos bem arredondados */
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+}
+.buscaInput:focus {
+    outline: none;
+    border-color: #aaa;
+}
 
+.secaoTitulo {
+    text-align: center;
+    font-size: 1.5rem;
+    font-weight: 500; /* Um peso de fonte médio */
+    color: #444;
+    margin-bottom: 2rem;
+}
+
+.conteudoPrincipal {
+    width: 100%;
+}
+
+.listaRestaurantes {
+    display: grid;
+    /* Cria 4 colunas em telas grandes, 2 em médias e 1 em pequenas */
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 2rem; /* Espaçamento entre os cards */
+}
+
+.mensagemAviso {
+    text-align: center;
+    font-size: 1.2rem;
+    color: #666;
+    padding: 3rem 0;
+    width: 100%;
+}
+
+.erro {
+    color: #d8000c;
+    background-color: #ffd2d2;
+    padding: 1rem;
+    border-radius: 5px;
+}

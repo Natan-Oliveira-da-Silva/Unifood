@@ -1,104 +1,131 @@
+/* src/pages/Restaurante/MeusProdutos/MeusProdutos.module.css */
+
+.container {
+    width: 90%;
+    max-width: 1200px;
+    margin: 2rem auto;
+    padding: 1rem;
+}
+
 .titulo {
-  font-size: 24px;
-  margin-bottom: 24px;
-  text-align: center;
-  margin-top: 10px;
+    font-size: 2.5rem;
+    text-align: center;
+    margin-bottom: 2rem;
+    color: #333;
 }
 
-.produtoContainer {
-  display: flex;
-  gap: 350px;
-  padding: 20px;
-  border: 1px solid #ccc;
-  border-radius: 12px;
-  background-color: #f9f9f9;
-  max-width: 900px;
-  margin: 0 auto;
-  align-items: center;
+.aviso {
+    font-size: 1.2rem;
+    text-align: center;
+    color: #666;
+    margin-top: 3rem;
 }
 
-.colunaImagem {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+.erro {
+    color: #d8000c;
+    background-color: #ffd2d2;
+    padding: 1rem;
+    border-radius: 5px;
+}
+
+.semProdutos {
+    text-align: center;
+    margin-top: 2rem;
+}
+
+.botaoCriar {
+    margin-top: 1.5rem;
+    padding: 0.8rem 1.5rem;
+    font-size: 1.1rem;
+    font-weight: bold;
+    color: white;
+    background-color: #28a745; /* Verde */
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+.botaoCriar:hover {
+    background-color: #218838;
+}
+
+.listaProdutos {
+    display: grid;
+    /* Cria colunas responsivas: 1 em telas pequenas, 2 em médias, 3 em grandes */
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 1.5rem;
+}
+
+.cardProduto {
+    background-color: #fff;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden; /* Garante que a imagem não vaze para fora das bordas arredondadas */
 }
 
 .imagemProduto {
-  width: 300px;
-  height: 200px;
-  object-fit: cover;
-  border-radius: 8px;
-}
-
-.botaoImagem {
-  margin-top: 12px;
-  padding: 8px 12px;
-  background-color: #007bff;
-  color: white;
-  border: none;
-  border-radius: 6px;
-  cursor: pointer;
-}
-
-.botaoImagem:hover {
-  background-color: #0056b3;
-}
-
-.colunaTexto {
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-  flex: 1;
-}
-
-.itemTexto {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  font-size: 16px;
-}
-
-.itemTexto strong {
-  font-weight: bold;
-}
-
-.itemTexto span {
-  font-weight: normal;
-}
-
-.editar {
-  cursor: pointer;
-  color: #007bff;
-}
-
-@media (max-width: 768px) {
-  .produtoContainer {
-    flex-direction: column;
-    align-items: center;
-    text-align: center;
-    width: 50%;
-    gap: 50px;
-    
-  }
-
-  .colunaTexto {
-    align-items: center;
     width: 100%;
-  }
+    height: 200px;
+    object-fit: cover; /* Faz a imagem cobrir a área sem distorcer */
+}
 
-  .itemTexto {
-    justify-content: center;
-    flex-wrap: wrap;
-  }
+.infoProduto {
+    padding: 1rem;
+    flex-grow: 1; /* Faz esta área crescer para ocupar o espaço disponível */
+}
 
-  .imagemProduto {
-    width: 100%;
-    max-width: 280px;
-    height: auto;
-  }
+.nomeProduto {
+    font-size: 1.3rem;
+    font-weight: bold;
+    margin-bottom: 0.5rem;
+    color: #333;
+}
 
-  .botaoImagem {
-    width: 100%;
-    max-width: 200px;
-  }
+.descricaoProduto {
+    font-size: 0.9rem;
+    color: #666;
+    margin-bottom: 1rem;
+    flex-grow: 1; /* Ajuda a empurrar o preço para baixo se os cards tiverem alturas diferentes */
+}
+
+.precoProduto {
+    font-size: 1.4rem;
+    font-weight: bold;
+    color: #007bff; /* Azul para destaque no preço */
+    text-align: right;
+}
+
+.acoesProduto {
+    display: flex;
+    justify-content: flex-end;
+    padding: 0.5rem 1rem 1rem 1rem;
+    gap: 0.5rem;
+    border-top: 1px solid #eee;
+    background-color: #f9f9f9;
+}
+
+.botaoEditar, .botaoExcluir {
+    padding: 0.4rem 0.8rem;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    cursor: pointer;
+    background-color: #f0f0f0;
+    font-weight: bold;
+}
+
+.botaoEditar:hover {
+    background-color: #10a523;
+}
+
+.botaoExcluir {
+    background-color: #f8d7da;
+    border-color: #f5c6cb;
+    color: #721c24;
+}
+
+.botaoExcluir:hover {
+    background-color: #de1025;
 }

@@ -1,15 +1,22 @@
-
-import React, { useState } from 'react';
+// src/pages/Restaurante/CriarProduto/CriarProduto.jsx
+import React, { useState, useEffect } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
 import styles from './CriarProduto.module.css';
-import CabecalhoRestaurante from '../../../components/CabecalhoRestaurante/CabecalhoRestaurante.jsx';
+import CabecalhoRestaurante from '../../../components/CabecalhoRestaurante/CabecalhoRestaurante';
 
 export default function CriarProduto() {
-    const [nome, setNome] = useState('');
-    const [descricao, setDescricao] = useState('');
-    const [preco, setPreco] = useState('');
-    const [imagemProduto, setImagemProduto] = useState(null);
-    const [previewImagem, setPreviewImagem] = useState(null); 
+    const navigate = useNavigate();
+    const location = useLocation();
 
+    const produtoParaEditar = location.state?.produtoParaEditar;
+    const isEditMode = Boolean(produtoParaEditar);
+
+    const [nome, setNome] = useState(produtoParaEditar?.nome || '');
+    const [descricao, setDescricao] = useState(produtoParaEditar?.descricao || '');
+    const [preco, setPreco] = useState(produtoParaEditar?.preco?.toString() || '');
+    const [imagemProduto, setImagemProduto] = useState(null);
+    const [previewImagem, setPreviewImagem] = useState(produtoParaEditar?.url_imagem_principal || null);
+    
     const [loading, setLoading] = useState(false);
     const [erro, setErro] = useState('');
     const [successMessage, setSuccessMessage] = useState('');
@@ -36,37 +43,33 @@ export default function CriarProduto() {
         formData.append('descricao', descricao);
         formData.append('preco', preco);
         if (imagemProduto) {
-            // O nome do campo 'imagemProduto' deve corresponder ao que o multer espera
             formData.append('imagemProduto', imagemProduto);
         }
 
         const token = localStorage.getItem('authToken');
         if (!token) {
-            setErro("Autenticação necessária."); setLoading(false); return;
+            setErro("Autenticação necessária."); setLoading(false);
+            setTimeout(() => navigate('/restaurante/login'), 2500); return;
         }
 
+        const method = isEditMode ? 'PUT' : 'POST';
+        const apiUrl = isEditMode
+            ? `http://localhost:3001/api/produtos/${produtoParaEditar.id_produto}`
+            : 'http://localhost:3001/api/produtos';
+
         try {
-            const response = await fetch('http://localhost:3001/api/produtos', {
-                method: 'POST',
-                headers: {
-                    // NÃO defina 'Content-Type', o navegador faz isso para FormData
-                    'Authorization': `Bearer ${token}`
-                },
+            const response = await fetch(apiUrl, {
+                method: method,
+                headers: { 'Authorization': `Bearer ${token}` },
                 body: formData
             });
 
             const data = await response.json();
             if (!response.ok) {
-                setErro(data.message || `Erro ${response.status} ao criar o produto.`);
+                setErro(data.message || `Erro ao ${isEditMode ? 'atualizar' : 'criar'} o produto.`);
             } else {
-                setSuccessMessage(data.message || "Produto criado com sucesso!");
-                
-                // Limpa o formulário
-                setNome(''); setDescricao(''); setPreco('');
-                setImagemProduto(null); setPreviewImagem(null);
-                
-                // desaparecer com a msg de sucesso após alguns segundos
-                setTimeout(() => setSuccessMessage(''), 3000);
+                setSuccessMessage(data.message || `Produto ${isEditMode ? 'atualizado' : 'criado'} com sucesso!`);
+                setTimeout(() => navigate('/restaurante/meusprodutos'), 2000);
             }
         } catch (error) {
             setErro("Falha ao conectar com o servidor.");
@@ -79,12 +82,9 @@ export default function CriarProduto() {
         <>
             <CabecalhoRestaurante />
             <div className={styles.paginaContainer}>
-                <h1 className={styles.titulo}>Criar Produto</h1>
-                <p className={styles.instrucao}>Adicione um novo produto ao seu catálogo.</p>
-
+                <h1 className={styles.titulo}>{isEditMode ? 'Editar Produto' : 'Criar Produto'}</h1>
                 {erro && <p className={styles.mensagemErro}>{erro}</p>}
                 {successMessage && <p className={styles.mensagemSucesso}>{successMessage}</p>}
-
                 <form onSubmit={handleSubmit} className={styles.formEstiloProjeto}>
                     <div className={styles.inputs}>
                         <input className={styles.texto} type="text" placeholder="Nome do Produto*" value={nome} onChange={(e) => setNome(e.target.value)} required disabled={loading} />
@@ -94,12 +94,13 @@ export default function CriarProduto() {
                             <label htmlFor="imagemProduto">Foto do Produto:</label>
                             {previewImagem && <img src={previewImagem} alt="Preview do produto" className={styles.previewLogo} />}
                             <input type="file" id="imagemProduto" onChange={handleImagemChange} accept="image/*" disabled={loading} />
+                            {isEditMode && <p className={styles.aviso}>Selecione uma nova imagem apenas se desejar substituí-la.</p>}
                         </div>
                         
                         <input className={styles.texto} type="number" placeholder="Preço (R$)*" value={preco} onChange={(e) => setPreco(e.target.value)} required step="0.01" min="0" disabled={loading} />
                         
-                        <button type="submit" className={styles.criar} disabled={loading}>
-                            {loading ? 'Criando...' : 'Criar Produto'}
+                        <button type="submit" className={styles.criar} disabled={loading || successMessage}>
+                            {loading ? (isEditMode ? 'Salvando...' : 'Criando...') : (isEditMode ? 'Salvar Alterações' : 'Criar Produto')}
                         </button>
                     </div>
                 </form>

@@ -1,31 +1,33 @@
-
+// src/pages/Restaurante/CadastrarDetalhesRestaurante/CadastrarDetalhesRestaurante.jsx
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-import styles from './CadastrarDetalhesRestaurante.module.css'; 
+import { useNavigate, useLocation } from 'react-router-dom';
+import styles from './CadastrarDetalhesRestaurante.module.css'; // Use o seu CSS aqui
 import CabecalhoRestaurante from '../../../components/CabecalhoRestaurante/CabecalhoRestaurante';
 
 export default function CadastrarDetalhesRestaurante() {
     const navigate = useNavigate();
+    const location = useLocation();
 
-    // Estados para os campos do formulário (a lista de estados permanece a mesma)
-    const [nome, setNome] = useState('');
-    const [idCozinha, setIdCozinha] = useState('');
-    const [taxaFrete, setTaxaFrete] = useState('');
-    const [urlImagemLogo, setUrlImagemLogo] = useState('');
-    const [enderecoCep, setEnderecoCep] = useState('');
-    const [enderecoLogradouro, setEnderecoLogradouro] = useState('');
-    const [enderecoNumero, setEnderecoNumero] = useState('');
-    const [enderecoComplemento, setEnderecoComplemento] = useState('');
-    const [enderecoBairro, setEnderecoBairro] = useState('');
-    const [enderecoCidade, setEnderecoCidade] = useState('');
-    const [enderecoEstado, setEnderecoEstado] = useState('');
+    const restauranteParaEditar = location.state?.restauranteParaEditar;
+    const isEditMode = Boolean(restauranteParaEditar);
+
+    const [nome, setNome] = useState(restauranteParaEditar?.nome || '');
+    const [idCozinha, setIdCozinha] = useState(restauranteParaEditar?.id_cozinha?.toString() || '');
+    const [taxaFrete, setTaxaFrete] = useState(restauranteParaEditar?.taxa_frete?.toString() || '0.00');
+    const [urlImagemLogo, setUrlImagemLogo] = useState(restauranteParaEditar?.url_imagem_logo || '');
+    const [enderecoCep, setEnderecoCep] = useState(restauranteParaEditar?.endereco_cep || '');
+    const [enderecoLogradouro, setEnderecoLogradouro] = useState(restauranteParaEditar?.endereco_logradouro || '');
+    const [enderecoNumero, setEnderecoNumero] = useState(restauranteParaEditar?.endereco_numero || '');
+    const [enderecoComplemento, setEnderecoComplemento] = useState(restauranteParaEditar?.endereco_complemento || '');
+    const [enderecoBairro, setEnderecoBairro] = useState(restauranteParaEditar?.endereco_bairro || '');
+    const [enderecoCidade, setEnderecoCidade] = useState(restauranteParaEditar?.endereco_cidade || '');
+    const [enderecoEstado, setEnderecoEstado] = useState(restauranteParaEditar?.endereco_estado || '');
 
     const [cozinhas, setCozinhas] = useState([]);
     const [loading, setLoading] = useState(false);
     const [erro, setErro] = useState('');
     const [successMessage, setSuccessMessage] = useState('');
 
-    // useEffect para buscar cozinhas (lógica permanece a mesma)
     useEffect(() => {
         const fetchCozinhas = async () => {
             setLoading(true);
@@ -50,10 +52,10 @@ export default function CadastrarDetalhesRestaurante() {
         fetchCozinhas();
     }, []);
 
-    // handleSubmit (lógica permanece a mesma)
     const handleSubmit = async (e) => {
         e.preventDefault();
         setLoading(true); setErro(''); setSuccessMessage('');
+
         if (!nome || !idCozinha || !enderecoLogradouro || !enderecoNumero || !enderecoBairro || !enderecoCidade || !enderecoEstado || !enderecoCep) {
             setErro("Por favor, preencha todos os campos obrigatórios (Nome, Cozinha, Endereço completo).");
             setLoading(false); return;
@@ -62,7 +64,8 @@ export default function CadastrarDetalhesRestaurante() {
              setErro("Taxa de frete deve ser um número válido ou vazia.");
              setLoading(false); return;
         }
-        const dadosRestaurante = { /* ... (objeto com dados do restaurante como antes) ... */
+
+        const dadosRestaurante = {
             nome, id_cozinha: parseInt(idCozinha, 10),
             taxa_frete: taxaFrete ? parseFloat(taxaFrete) : 0.0,
             url_imagem_logo: urlImagemLogo || null, endereco_cep: enderecoCep,
@@ -70,25 +73,52 @@ export default function CadastrarDetalhesRestaurante() {
             endereco_complemento: enderecoComplemento || null, endereco_bairro: enderecoBairro,
             endereco_cidade: enderecoCidade, endereco_estado: enderecoEstado,
         };
+
         const token = localStorage.getItem('authToken');
         if (!token) {
-            setErro("Usuário não autenticado."); setLoading(false);
+            setErro("Usuário não autenticado. Faça login novamente."); setLoading(false);
             setTimeout(() => navigate('/restaurante/login'), 2500); return;
         }
+
+        const method = isEditMode ? 'PUT' : 'POST';
+        const apiUrl = isEditMode
+            ? `http://localhost:3001/api/restaurantes/meu-restaurante` // Para PUT
+            : 'http://localhost:3001/api/restaurantes';             // Para POST
+
+        // Logs para depuração da requisição
+        console.log("--- Preparando para enviar para API ---");
+        console.log("Modo de Edição:", isEditMode);
+        console.log("Método HTTP:", method);
+        console.log("URL da API:", apiUrl);
+        console.log("Dados Enviados:", JSON.stringify(dadosRestaurante, null, 2));
+        console.log("Token:", token ? "Presente" : "Ausente");
+        console.log("------------------------------------");
+
+
         try {
-            const response = await fetch('http://localhost:3001/api/restaurantes', {
-                method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}`},
+            const response = await fetch(apiUrl, {
+                method: method,
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                },
                 body: JSON.stringify(dadosRestaurante)
             });
-            const data = await response.json();
+
+            const data = await response.json(); // Tenta ler o corpo da resposta, mesmo se não for 'ok'
+
             if (!response.ok) {
-                setErro(data.message || `Erro ${response.status} ao cadastrar restaurante.`);
+                console.error(`Erro ${response.status} ao ${isEditMode ? 'atualizar' : 'cadastrar'} restaurante:`, data);
+                setErro(data.message || `Erro ${response.status} - Não foi possível completar a operação.`);
             } else {
-                setSuccessMessage("Restaurante cadastrado com sucesso! Redirecionando...");
-                setTimeout(() => { navigate('/restaurante/inicio'); }, 2500);
+                setSuccessMessage(`Restaurante ${isEditMode ? 'atualizado' : 'cadastrado'} com sucesso! Redirecionando...`);
+                setTimeout(() => {
+                    navigate('/restaurante/inicio');
+                }, 2000);
             }
         } catch (error) {
-            setErro("Falha ao conectar com o servidor.");
+            console.error(`Falha na requisição de ${isEditMode ? 'atualização' : 'cadastro'}:`, error);
+            setErro("Falha grave ao conectar com o servidor. Verifique o console e o backend.");
         } finally {
             setLoading(false);
         }
@@ -97,19 +127,22 @@ export default function CadastrarDetalhesRestaurante() {
     return (
         <>
             <CabecalhoRestaurante />
-            <div className={styles.paginaContainer}> {/* Container para centralizar o .inputs */}
-                <h1 className={styles.titulo}>Cadastrar Detalhes do Restaurante</h1>
-                <p className={styles.instrucao}>Preencha os dados abaixo para cadastrar seu estabelecimento.</p>
+            <div className={styles.paginaContainer}> {/* Use sua classe CSS aqui */}
+                <h1 className={styles.tituloPrincipal}> {/* Use sua classe CSS aqui */}
+                    {isEditMode ? "Editar Detalhes do Restaurante" : "Cadastrar Detalhes do Restaurante"}
+                </h1>
+                <p className={styles.instrucao}> {/* Use sua classe CSS aqui */}
+                    {isEditMode ? "Altere os dados abaixo do seu estabelecimento." : "Preencha os dados abaixo para cadastrar seu estabelecimento."}
+                </p>
 
-                {erro && <p className={styles.mensagemErro}>{erro}</p>}
-                {successMessage && <p className={styles.mensagemSucesso}>{successMessage}</p>}
+                {erro && <p className={styles.mensagemErro}>{erro}</p>} {/* Use sua classe CSS aqui */}
+                {successMessage && <p className={styles.mensagemSucesso}>{successMessage}</p>} {/* Use sua classe CSS aqui */}
 
-                <form onSubmit={handleSubmit}>
-                    <div className={styles.inputs}> {/* Container para os campos, conforme seu CSS */}
+                <form onSubmit={handleSubmit} className={styles.formEstiloProjeto}> {/* Use sua classe CSS aqui */}
+                    <div className={styles.inputs}> {/* Use sua classe CSS aqui */}
                         <input className={styles.texto} type="text" placeholder="Nome do Restaurante*" value={nome} onChange={(e) => setNome(e.target.value)} required disabled={loading} />
-                        
-                        <select className={styles.texto} value={idCozinha} onChange={(e) => setIdCozinha(e.target.value)} required disabled={loading || cozinhas.length === 0}>
-                            <option value="">{loading && cozinhas.length === 0 ? "Carregando..." : "Tipo de Cozinha*"}</option>
+                        <select className={styles.texto} value={idCozinha} onChange={(e) => setIdCozinha(e.target.value)} required disabled={loading || (cozinhas.length === 0 && !isEditMode) }>
+                            <option value="">{loading && cozinhas.length === 0 && !idCozinha ? "Carregando..." : "Tipo de Cozinha*"}</option>
                             {cozinhas.map(cozinha => (
                                 <option key={cozinha.id_cozinha} value={cozinha.id_cozinha}>
                                     {cozinha.nome}
@@ -121,7 +154,6 @@ export default function CadastrarDetalhesRestaurante() {
                         <input className={styles.texto} type="number" placeholder="Taxa de Frete (R$) (Ex: 5.00)" value={taxaFrete} onChange={(e) => setTaxaFrete(e.target.value)} step="0.01" min="0" disabled={loading} />
                         <input className={styles.texto} type="url" placeholder="URL da Imagem do Logo" value={urlImagemLogo} onChange={(e) => setUrlImagemLogo(e.target.value)} disabled={loading} />
                         
-                        {/* Poderia adicionar um subtítulo para endereço aqui se quisesse, usando .instrucao ou .titulo com outra margem */}
                         <h2 className={styles.instrucao} style={{marginTop: '1.5rem', fontSize: '1.2rem', fontWeight:'bold'}}>Endereço</h2>
                         <input className={styles.texto} type="text" placeholder="CEP*" value={enderecoCep} onChange={(e) => setEnderecoCep(e.target.value)} required disabled={loading} />
                         <input className={styles.texto} type="text" placeholder="Logradouro*" value={enderecoLogradouro} onChange={(e) => setEnderecoLogradouro(e.target.value)} required disabled={loading} />
@@ -132,7 +164,7 @@ export default function CadastrarDetalhesRestaurante() {
                         <input className={styles.texto} type="text" placeholder="Estado (UF)* (Ex: BA)" value={enderecoEstado} onChange={(e) => setEnderecoEstado(e.target.value)} required maxLength="2" disabled={loading} />
 
                         <button type="submit" className={styles.criar} disabled={loading || successMessage !== ''}>
-                            {loading ? 'Cadastrando...' : 'Cadastrar Restaurante'}
+                            {loading ? (isEditMode ? 'Salvando...' : 'Cadastrando...') : (isEditMode ? 'Salvar Alterações' : 'Cadastrar Restaurante')}
                         </button>
                     </div>
                 </form>

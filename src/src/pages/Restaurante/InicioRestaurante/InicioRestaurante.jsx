@@ -1,4 +1,5 @@
-import React, { useEffect, useState } from 'react';
+
+import React, { useEffect, useState, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import styles from "./InicioRestaurante.module.css";
 import CabecalhoRestaurante from "../../../components/CabecalhoRestaurante/CabecalhoRestaurante.jsx";
@@ -10,64 +11,82 @@ export default function InicioRestaurante() {
   const [erro, setErro] = useState('');
   const navigate = useNavigate();
 
-  useEffect(() => {
-    const fetchMeuRestaurante = async () => {
-      setLoading(true);
-      setErro('');
-      const token = localStorage.getItem('authToken');
+ 
+  const fetchMeuRestaurante = useCallback(async () => {
+    setLoading(true);
+    setErro('');
+    const token = localStorage.getItem('authToken');
 
-      if (!token) {
-        setErro("Autenticação necessária. Redirecionando para login...");
-        setLoading(false);
-        setTimeout(() => navigate('/restaurante/login'), 2500);
-        return;
-      }
+    if (!token) {
+      setErro("Autenticação necessária. Redirecionando para login...");
+      setLoading(false);
+      setTimeout(() => navigate('/restaurante/login'), 2500);
+      return;
+    }
 
-      try {
-        const response = await fetch('http://localhost:3001/api/restaurantes/meu-restaurante', {
-          method: 'GET',
-          headers: {
-            'Authorization': `Bearer ${token}`,
-            'Content-Type': 'application/json'
-          }
-        });
-        const data = await response.json();
-
-        if (!response.ok) {
-          console.error("Erro ao buscar restaurante:", data.message || `Status: ${response.status}`);
-          if (response.status === 401 || response.status === 403) {
-            localStorage.removeItem('authToken');
-            localStorage.removeItem('userData');
-            setErro(data.message || "Sessão inválida ou expirada. Por favor, faça login novamente.");
-            setTimeout(() => navigate('/restaurante/login'), 2500);
-          } else if (response.status === 404) {
-            setErro("Você ainda não cadastrou os dados do seu restaurante.");
-          } else {
-            setErro(data.message || "Não foi possível carregar os dados do restaurante.");
-          }
-          setRestaurante(null); 
-        } else {
-          setRestaurante(data);
+    try {
+      const response = await fetch('http://localhost:3001/api/restaurantes/meu-restaurante', {
+        method: 'GET',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
         }
-      } catch (fetchError) {
-        console.error("Falha na requisição para buscar restaurante:", fetchError);
-        setErro("Falha ao conectar com o servidor.");
+      });
+      const data = await response.json();
+
+      if (!response.ok) {
+        console.error("Erro ao buscar restaurante:", data.message || `Status: ${response.status}`);
+        if (response.status === 401 || response.status === 403) {
+          localStorage.removeItem('authToken');
+          localStorage.removeItem('userData');
+          setErro(data.message || "Sessão inválida ou expirada. Por favor, faça login novamente.");
+          setTimeout(() => navigate('/restaurante/login'), 2500);
+        } else if (response.status === 404) {
+          setErro("Você ainda não cadastrou os dados do seu restaurante.");
+        } else {
+          setErro(data.message || "Não foi possível carregar os dados do restaurante.");
+        }
         setRestaurante(null);
-      } finally {
-        setLoading(false);
+      } else {
+        setRestaurante(data);
       }
-    };
-    fetchMeuRestaurante();
+    } catch (fetchError) {
+      console.error("Falha na requisição para buscar restaurante:", fetchError);
+      setErro("Falha ao conectar com o servidor.");
+      setRestaurante(null);
+    } finally {
+      setLoading(false);
+    }
   }, [navigate]);
 
-  const handleMudarNome = () => alert('Funcionalidade "Mudar Nome" a ser implementada.');
-  const handleMudarImagem = () => alert('Funcionalidade "Mudar Imagem" a ser implementada.');
-  const handleApagarRestaurante = () => {
-    if (window.confirm('Tem certeza que deseja apagar este restaurante?')) {
-      alert('Funcionalidade "Apagar Restaurante" a ser implementada.');
+  useEffect(() => {
+    fetchMeuRestaurante();
+  }, [fetchMeuRestaurante]);
+
+  // Função para navegar para o formulário de edição, passando os dados atuais
+  const handleEditarDetalhes = () => {
+    if (restaurante) {
+      navigate('/restaurante/cadastrar-detalhes', {
+        state: { restauranteParaEditar: restaurante }
+      });
+    } else {
+      // Se não houver restaurante, talvez o usuário queira cadastrar um novo
+      // ou pode ser um erro se o botão de editar apareceu indevidamente.
+      // Por agora, vamos assumir que o botão só aparece se 'restaurante' existir.
+      setErro("Dados do restaurante não disponíveis para edição.");
     }
   };
 
+  const handleApagarRestaurante = () => {
+    if (window.confirm('Tem certeza que deseja apagar este restaurante? Esta ação não pode ser desfeita.')) {
+      alert('Funcionalidade "Apagar Restaurante" a ser implementada.');
+      // TODO: Chamar API DELETE /api/restaurantes/meu-restaurante
+      // E depois, talvez, fetchMeuRestaurante() para atualizar a tela ou navegar para outro lugar.
+    }
+  };
+
+
+  
   if (loading) {
     return (
       <>
@@ -80,7 +99,6 @@ export default function InicioRestaurante() {
     );
   }
 
-  // Prioriza exibir erros de autenticação/sessão
   if (erro && (erro.includes("Autenticação necessária") || erro.includes("Sessão inválida"))) {
     return (
       <>
@@ -93,7 +111,6 @@ export default function InicioRestaurante() {
     );
   }
   
-  
   if (!restaurante && erro === "Você ainda não cadastrou os dados do seu restaurante.") {
     return (
       <>
@@ -103,18 +120,18 @@ export default function InicioRestaurante() {
           <div style={{padding: '2rem', textAlign: 'center'}}> 
             <p className={styles.avisoRestauranteNaoCadastrado}>{erro}</p>
             <button
-              className={styles.botaoAcaoPrincipal}
+              className={styles.botaoAcaoPrincipal} 
               onClick={() => navigate('/restaurante/cadastrar-detalhes')} 
             >
-              Cadastrar Restaurante
+              Cadastrar Detalhes do Restaurante
             </button>
           </div>
         </div>
       </>
     );
   }
-
-    if (erro) {
+    
+  if (erro) { 
      return (
       <>
         <CabecalhoRestaurante />
@@ -126,8 +143,7 @@ export default function InicioRestaurante() {
     );
   }
   
-   if (!restaurante) {
-      
+  if (!restaurante) {
       return (
            <>
             <CabecalhoRestaurante />
@@ -139,7 +155,8 @@ export default function InicioRestaurante() {
       );
   }
 
-   return (
+  
+  return (
     <>
       <CabecalhoRestaurante />
       <h1 className={styles.titulo}>Meu Restaurante</h1>
@@ -155,7 +172,8 @@ export default function InicioRestaurante() {
           <img
             src={restaurante.url_imagem_logo || imagemRestaurantePadrao}
             alt={`Logo de ${restaurante.nome}`}
-           />
+            
+          />
         </section>
         
         {restaurante.nome_cozinha && (
@@ -164,12 +182,23 @@ export default function InicioRestaurante() {
                 <h3 className={styles.texto}>{restaurante.nome_cozinha}</h3>
             </section>
         )}
-      
+        
 
         <section className={styles.opcoes}>
-          <button type="button" className={styles.botaoMudar} onClick={handleMudarNome}>Mudar Nome</button>
-          <button type="button" className={styles.botaoMudar} onClick={handleMudarImagem}>Mudar Imagem</button>
-          <button type="button" className={styles.botaoExcluir} onClick={handleApagarRestaurante}>Apagar Restaurante</button>
+          <button 
+            type="button" 
+            className={styles.botaoMudar} 
+            onClick={handleEditarDetalhes}
+          >
+            Editar Detalhes
+          </button>
+          <button 
+            type="button" 
+            className={styles.botaoExcluir}
+            onClick={handleApagarRestaurante}
+          >
+            Apagar Restaurante
+          </button>
         </section>
       </div>
     </>

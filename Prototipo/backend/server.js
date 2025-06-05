@@ -8,6 +8,7 @@ const multer = require('multer');
 const usuarioRoutes = require('./routes/usuario.routes.js');
 const cozinhaRoutes = require('./routes/cozinha.routes.js');
 const restauranteRoutes = require('./routes/restaurante.routes.js');
+const produtoRoutes = require('./routes/produto.routes.js')
 
 const app = express();
 const port = process.env.PORT || 3001;
@@ -16,6 +17,7 @@ const port = process.env.PORT || 3001;
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+app.use('/api/produtos', produtoRoutes);
 
 // Isso permite que o frontend acesse as imagens salvas via uma URL
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));

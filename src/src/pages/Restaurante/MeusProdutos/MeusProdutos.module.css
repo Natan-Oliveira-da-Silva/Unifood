@@ -1,5 +1,3 @@
-/* src/pages/Restaurante/MeusProdutos/MeusProdutos.module.css */
-
 .container {
     width: 90%;
     max-width: 1200px;
@@ -39,7 +37,7 @@
     font-size: 1.1rem;
     font-weight: bold;
     color: white;
-    background-color: #28a745; /* Verde */
+    background-color: #28a745; 
     border: none;
     border-radius: 5px;
     cursor: pointer;
@@ -51,7 +49,6 @@
 
 .listaProdutos {
     display: grid;
-    /* Cria colunas responsivas: 1 em telas pequenas, 2 em médias, 3 em grandes */
     grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
     gap: 1.5rem;
 }
@@ -63,18 +60,18 @@
     box-shadow: 0 2px 5px rgba(0,0,0,0.1);
     display: flex;
     flex-direction: column;
-    overflow: hidden; /* Garante que a imagem não vaze para fora das bordas arredondadas */
+    overflow: hidden; 
 }
 
 .imagemProduto {
     width: 100%;
     height: 200px;
-    object-fit: cover; /* Faz a imagem cobrir a área sem distorcer */
+    object-fit: cover; 
 }
 
 .infoProduto {
     padding: 1rem;
-    flex-grow: 1; /* Faz esta área crescer para ocupar o espaço disponível */
+    flex-grow: 1; 
 }
 
 .nomeProduto {
@@ -88,13 +85,13 @@
     font-size: 0.9rem;
     color: #666;
     margin-bottom: 1rem;
-    flex-grow: 1; /* Ajuda a empurrar o preço para baixo se os cards tiverem alturas diferentes */
+    flex-grow: 1; 
 }
 
 .precoProduto {
     font-size: 1.4rem;
     font-weight: bold;
-    color: #007bff; /* Azul para destaque no preço */
+    color: #007bff; 
     text-align: right;
 }
 
@@ -117,7 +114,7 @@
 }
 
 .botaoEditar:hover {
-    background-color: #10a523;
+    background-color: #218838;
 }
 
 .botaoExcluir {

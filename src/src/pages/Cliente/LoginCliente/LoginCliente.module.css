@@ -73,6 +73,26 @@
   cursor: pointer;
   font-weight: bold;
 }
+.criar:hover {
+  color: #050a0f; 
+}
+
+.linkRecuperarSenha{
+ font-size: 14px;
+  text-align: center;
+  margin-top: 10px;
+}
+
+
+.recuperarSenha {
+  
+   color: #2220aa;
+  cursor: pointer;
+  font-weight: bold;
+}
+.recuperarSenha:hover {
+  color: #050a0f; 
+}
 
 .logoContainer {
  background-color: #fff;

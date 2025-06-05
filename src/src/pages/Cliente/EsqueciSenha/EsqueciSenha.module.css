@@ -1,0 +1,89 @@
+
+.container {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    height: 100vh;
+    padding: 2rem;
+    box-sizing: border-box;
+}
+
+.formulario {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    max-width: 400px;
+}
+
+.formulario h2 {
+    font-size: 2rem;
+    margin-bottom: 1rem;
+}
+
+.instrucao {
+    text-align: center;
+    margin-bottom: 1.5rem;
+    color: #666;
+    max-width: 350px;
+}
+
+.form {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.input {
+    padding: 0.8rem;
+    margin-bottom: 1rem;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 1rem;
+}
+
+.botao {
+    padding: 0.9rem;
+    background-color: #28a745; /* Verde */
+    color: white;
+    border: none;
+    border-radius: 4px;
+    font-size: 1.1rem;
+    font-weight: bold;
+    cursor: pointer;
+}
+.botao:disabled {
+    background-color: #aaa;
+}
+
+.divisor {
+    width: 100%;
+    margin: 1.5rem 0;
+    border-top: 1px solid #eee;
+}
+
+.linkVoltar {
+    color: #007bff;
+    text-decoration: underline;
+    cursor: pointer;
+}
+
+.mensagemErro, .mensagemSucesso {
+    width: 100%;
+    text-align: center;
+    padding: 0.8rem;
+    margin-bottom: 1rem;
+    border-radius: 5px;
+    box-sizing: border-box;
+}
+
+.mensagemErro {
+    background-color: #f8d7da;
+    color: #721c24;
+}
+
+.mensagemSucesso {
+    background-color: #d4edda;
+    color: #155724;
+}
+

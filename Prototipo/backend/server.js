@@ -19,7 +19,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use('/api/produtos', produtoRoutes);
 
-// Isso permite que o frontend acesse as imagens salvas via uma URL
+// permite que o frontend acesse as imagens salvas via URL
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 

@@ -10,6 +10,8 @@ module.exports = (db) => {
             tipo_usuario TEXT NOT NULL CHECK(tipo_usuario IN ('C', 'R')), -- 'C' para Cliente, 'R' para Restaurante,
             data_cadastro TEXT DEFAULT CURRENT_TIMESTAMP,
             ativo INTEGER DEFAULT 1
+            reset_token TEXT,
+            reset_token_expires TEXT
         )
     `;
     db.run(sql, (err) => {

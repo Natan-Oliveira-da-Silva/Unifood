@@ -15,6 +15,7 @@ import MeusProdutos from "./pages/Restaurante/MeusProdutos/MeusProdutos.jsx";
 import ConsultarPedidos from "./pages/Cliente/ConsultarPedidos/ConsultarPedidos.jsx";
 import Perfil from "./pages/Cliente/Perfil/Perfil.jsx";
 import Carrinho from "./pages/Cliente/Carrinho/Carrinho.jsx";
+import CadastrarDetalhesRestaurante from "./pages/Restaurante/CadastrarDetalhesRestaurante/CadastrarDetalhesRestaurante.jsx"
 
 const router = createBrowserRouter([
   {

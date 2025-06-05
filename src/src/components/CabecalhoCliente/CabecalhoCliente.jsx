@@ -25,13 +25,13 @@ function CabecalhoCliente({ nomeUsuario }) {
         <p>Olá, {nomeUsuario || 'Cliente'}</p>
 
         {/* Links de navegação usando botões com navigate */}
-        <button onClick={() => navigate('/cliente/inicio')} className={styles.navLink}>Home</button>
-        <button onClick={() => navigate('/cliente/consultarpedidos')} className={styles.navLink}>Consultar Pedidos</button>
-        <button onClick={() => navigate('/cliente/perfil')} className={styles.navLink}>Perfil</button>
-        <button onClick={() => navigate('/cliente/carrinho')} className={styles.navLink}>Carrinho</button>
+        <a onClick={() => navigate('/cliente/inicio')} className={styles.navLink}>Home</a>
+        <a onClick={() => navigate('/cliente/consultarpedidos')} className={styles.navLink}>Consultar Pedidos</a>
+        <a onClick={() => navigate('/cliente/perfil')} className={styles.navLink}>Perfil</a>
+        <a onClick={() => navigate('/cliente/carrinho')} className={styles.navLink}>Carrinho</a>
         
         {/* Botão "Sair" agora chama a função handleSair */}
-        <button onClick={handleSair} className={styles.botaoSair}>Sair</button>
+        <a onClick={handleSair} className={styles.botaoSair}>Sair</a>
       </nav>
     </header>
   );

@@ -21,7 +21,7 @@
 
 }
 
-a:hover {
+a, p:hover {
   color: #28a745; 
 }
 

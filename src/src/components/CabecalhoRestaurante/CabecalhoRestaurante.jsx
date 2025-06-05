@@ -1,4 +1,3 @@
-// src/components/CabecalhoRestaurante/CabecalhoRestaurante.jsx
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import styles from './CabecalhoRestaurante.module.css';

@@ -128,3 +128,16 @@ select.texto {
     text-align: center;
     width: 100%;
 }
+
+.previewLogo {
+    display: block; 
+    max-width: 150px; 
+    max-height: 150px; 
+    width: auto; 
+    height: auto; 
+    margin-top: 10px;
+    margin-bottom: 10px;
+    border: 1px solid #ddd; 
+    border-radius: 4px; 
+    object-fit: cover;
+}

@@ -1,7 +1,7 @@
 // src/pages/Restaurante/CadastrarDetalhesRestaurante/CadastrarDetalhesRestaurante.jsx
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import styles from './CadastrarDetalhesRestaurante.module.css'; // Use o seu CSS aqui
+import styles from './CadastrarDetalhesRestaurante.module.css';
 import CabecalhoRestaurante from '../../../components/CabecalhoRestaurante/CabecalhoRestaurante';
 
 export default function CadastrarDetalhesRestaurante() {
@@ -13,8 +13,9 @@ export default function CadastrarDetalhesRestaurante() {
 
     const [nome, setNome] = useState(restauranteParaEditar?.nome || '');
     const [idCozinha, setIdCozinha] = useState(restauranteParaEditar?.id_cozinha?.toString() || '');
-    const [taxaFrete, setTaxaFrete] = useState(restauranteParaEditar?.taxa_frete?.toString() || '0.00');
-    const [urlImagemLogo, setUrlImagemLogo] = useState(restauranteParaEditar?.url_imagem_logo || '');
+    const [taxaFrete, setTaxaFrete] = useState(restauranteParaEditar?.taxa_frete?.toString() || '');
+    const [imagemLogo, setImagemLogo] = useState(null);
+    const [previewImagem, setPreviewImagem] = useState(restauranteParaEditar?.url_imagem_logo || null);
     const [enderecoCep, setEnderecoCep] = useState(restauranteParaEditar?.endereco_cep || '');
     const [enderecoLogradouro, setEnderecoLogradouro] = useState(restauranteParaEditar?.endereco_logradouro || '');
     const [enderecoNumero, setEnderecoNumero] = useState(restauranteParaEditar?.endereco_numero || '');
@@ -22,14 +23,14 @@ export default function CadastrarDetalhesRestaurante() {
     const [enderecoBairro, setEnderecoBairro] = useState(restauranteParaEditar?.endereco_bairro || '');
     const [enderecoCidade, setEnderecoCidade] = useState(restauranteParaEditar?.endereco_cidade || '');
     const [enderecoEstado, setEnderecoEstado] = useState(restauranteParaEditar?.endereco_estado || '');
-
     const [cozinhas, setCozinhas] = useState([]);
-    const [loading, setLoading] = useState(false);
+    const [loading, setLoading] = useState(true); 
     const [erro, setErro] = useState('');
     const [successMessage, setSuccessMessage] = useState('');
 
     useEffect(() => {
         const fetchCozinhas = async () => {
+            
             setLoading(true);
             try {
                 const token = localStorage.getItem('authToken');
@@ -43,7 +44,6 @@ export default function CadastrarDetalhesRestaurante() {
                 const data = await response.json();
                 setCozinhas(data);
             } catch (error) {
-                console.error("Erro ao buscar cozinhas:", error);
                 setErro(error.message || "Não foi possível carregar a lista de cozinhas.");
             } finally {
                 setLoading(false);
@@ -51,6 +51,14 @@ export default function CadastrarDetalhesRestaurante() {
         };
         fetchCozinhas();
     }, []);
+
+    const handleImagemChange = (e) => {
+        if (e.target.files && e.target.files[0]) {
+            const file = e.target.files[0];
+            setImagemLogo(file);
+            setPreviewImagem(URL.createObjectURL(file));
+        }
+    };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -60,65 +68,52 @@ export default function CadastrarDetalhesRestaurante() {
             setErro("Por favor, preencha todos os campos obrigatórios (Nome, Cozinha, Endereço completo).");
             setLoading(false); return;
         }
-        if (taxaFrete !== '' && isNaN(parseFloat(taxaFrete))) {
-             setErro("Taxa de frete deve ser um número válido ou vazia.");
-             setLoading(false); return;
-        }
 
-        const dadosRestaurante = {
-            nome, id_cozinha: parseInt(idCozinha, 10),
-            taxa_frete: taxaFrete ? parseFloat(taxaFrete) : 0.0,
-            url_imagem_logo: urlImagemLogo || null, endereco_cep: enderecoCep,
-            endereco_logradouro: enderecoLogradouro, endereco_numero: enderecoNumero,
-            endereco_complemento: enderecoComplemento || null, endereco_bairro: enderecoBairro,
-            endereco_cidade: enderecoCidade, endereco_estado: enderecoEstado,
-        };
+        const formData = new FormData();
+        formData.append('nome', nome);
+        formData.append('id_cozinha', idCozinha);
+        formData.append('taxa_frete', taxaFrete || '0.0');
+        formData.append('endereco_cep', enderecoCep);
+        formData.append('endereco_logradouro', enderecoLogradouro);
+        formData.append('endereco_numero', enderecoNumero);
+        formData.append('endereco_complemento', enderecoComplemento || '');
+        formData.append('endereco_bairro', enderecoBairro);
+        formData.append('endereco_cidade', enderecoCidade);
+        formData.append('endereco_estado', enderecoEstado);
+        
+        if (imagemLogo) {
+            formData.append('imagemLogo', imagemLogo);
+        }
 
         const token = localStorage.getItem('authToken');
         if (!token) {
-            setErro("Usuário não autenticado. Faça login novamente."); setLoading(false);
-            setTimeout(() => navigate('/restaurante/login'), 2500); return;
+            setErro("Usuário não autenticado. Faça login novamente.");
+            setLoading(false);
+            setTimeout(() => navigate('/restaurante/login'), 2500);
+            return;
         }
 
         const method = isEditMode ? 'PUT' : 'POST';
         const apiUrl = isEditMode
-            ? `http://localhost:3001/api/restaurantes/meu-restaurante` // Para PUT
-            : 'http://localhost:3001/api/restaurantes';             // Para POST
-
-        // Logs para depuração da requisição
-        console.log("--- Preparando para enviar para API ---");
-        console.log("Modo de Edição:", isEditMode);
-        console.log("Método HTTP:", method);
-        console.log("URL da API:", apiUrl);
-        console.log("Dados Enviados:", JSON.stringify(dadosRestaurante, null, 2));
-        console.log("Token:", token ? "Presente" : "Ausente");
-        console.log("------------------------------------");
-
+            ? `http://localhost:3001/api/restaurantes/meu-restaurante`
+            : 'http://localhost:3001/api/restaurantes';
 
         try {
             const response = await fetch(apiUrl, {
                 method: method,
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${token}`
-                },
-                body: JSON.stringify(dadosRestaurante)
+                headers: { 'Authorization': `Bearer ${token}` },
+                body: formData
             });
 
-            const data = await response.json(); // Tenta ler o corpo da resposta, mesmo se não for 'ok'
-
+            const data = await response.json();
             if (!response.ok) {
-                console.error(`Erro ${response.status} ao ${isEditMode ? 'atualizar' : 'cadastrar'} restaurante:`, data);
-                setErro(data.message || `Erro ${response.status} - Não foi possível completar a operação.`);
+                setErro(data.message || `Erro ${response.status} ao ${isEditMode ? 'atualizar' : 'cadastrar'} restaurante.`);
             } else {
                 setSuccessMessage(`Restaurante ${isEditMode ? 'atualizado' : 'cadastrado'} com sucesso! Redirecionando...`);
-                setTimeout(() => {
-                    navigate('/restaurante/inicio');
-                }, 2000);
+                setTimeout(() => { navigate('/restaurante/inicio'); }, 2000);
             }
         } catch (error) {
-            console.error(`Falha na requisição de ${isEditMode ? 'atualização' : 'cadastro'}:`, error);
-            setErro("Falha grave ao conectar com o servidor. Verifique o console e o backend.");
+            setErro("Falha ao conectar com o servidor. Verifique sua conexão e tente novamente.");
         } finally {
             setLoading(false);
         }
@@ -127,34 +122,33 @@ export default function CadastrarDetalhesRestaurante() {
     return (
         <>
             <CabecalhoRestaurante />
-            <div className={styles.paginaContainer}> {/* Use sua classe CSS aqui */}
-                <h1 className={styles.tituloPrincipal}> {/* Use sua classe CSS aqui */}
+            <div className={styles.paginaContainer}>
+                <h1 className={styles.tituloPrincipal}>
                     {isEditMode ? "Editar Detalhes do Restaurante" : "Cadastrar Detalhes do Restaurante"}
                 </h1>
-                <p className={styles.instrucao}> {/* Use sua classe CSS aqui */}
-                    {isEditMode ? "Altere os dados abaixo do seu estabelecimento." : "Preencha os dados abaixo para cadastrar seu estabelecimento."}
-                </p>
+                
+                {erro && <p className={styles.mensagemErro}>{erro}</p>}
+                {successMessage && <p className={styles.mensagemSucesso}>{successMessage}</p>}
 
-                {erro && <p className={styles.mensagemErro}>{erro}</p>} {/* Use sua classe CSS aqui */}
-                {successMessage && <p className={styles.mensagemSucesso}>{successMessage}</p>} {/* Use sua classe CSS aqui */}
+                <form onSubmit={handleSubmit} className={styles.formEstiloProjeto}>
 
-                <form onSubmit={handleSubmit} className={styles.formEstiloProjeto}> {/* Use sua classe CSS aqui */}
-                    <div className={styles.inputs}> {/* Use sua classe CSS aqui */}
+                    <div className={styles.inputs}>
                         <input className={styles.texto} type="text" placeholder="Nome do Restaurante*" value={nome} onChange={(e) => setNome(e.target.value)} required disabled={loading} />
-                        <select className={styles.texto} value={idCozinha} onChange={(e) => setIdCozinha(e.target.value)} required disabled={loading || (cozinhas.length === 0 && !isEditMode) }>
+                        <select className={styles.texto} value={idCozinha} onChange={(e) => setIdCozinha(e.target.value)} required disabled={loading || cozinhas.length === 0}>
                             <option value="">{loading && cozinhas.length === 0 && !idCozinha ? "Carregando..." : "Tipo de Cozinha*"}</option>
-                            {cozinhas.map(cozinha => (
-                                <option key={cozinha.id_cozinha} value={cozinha.id_cozinha}>
-                                    {cozinha.nome}
-                                </option>
-                            ))}
+                            {cozinhas.map(cozinha => ( <option key={cozinha.id_cozinha} value={cozinha.id_cozinha}>{cozinha.nome}</option> ))}
                         </select>
-                        {cozinhas.length === 0 && !loading && !erro.includes("cozinhas") && <p className={styles.aviso}>Nenhuma cozinha encontrada.</p>}
                         
+                        <div className={styles.campoGrupoUpload}>
+                            <label htmlFor="imagemLogo">Logo do Restaurante {isEditMode ? '(opcional)' : ''}:</label>
+                            {previewImagem && <img src={previewImagem} alt="Preview do logo" className={styles.previewLogo} />}
+                            <input type="file" id="imagemLogo" onChange={handleImagemChange} accept="image/*" disabled={loading} />
+                            {isEditMode && !imagemLogo && <p className={styles.aviso}>Deixe em branco para manter a imagem atual.</p>}
+                        </div>
+
                         <input className={styles.texto} type="number" placeholder="Taxa de Frete (R$) (Ex: 5.00)" value={taxaFrete} onChange={(e) => setTaxaFrete(e.target.value)} step="0.01" min="0" disabled={loading} />
-                        <input className={styles.texto} type="url" placeholder="URL da Imagem do Logo" value={urlImagemLogo} onChange={(e) => setUrlImagemLogo(e.target.value)} disabled={loading} />
                         
-                        <h2 className={styles.instrucao} style={{marginTop: '1.5rem', fontSize: '1.2rem', fontWeight:'bold'}}>Endereço</h2>
+                        <h2 className={styles.subtituloForm}>Endereço</h2>
                         <input className={styles.texto} type="text" placeholder="CEP*" value={enderecoCep} onChange={(e) => setEnderecoCep(e.target.value)} required disabled={loading} />
                         <input className={styles.texto} type="text" placeholder="Logradouro*" value={enderecoLogradouro} onChange={(e) => setEnderecoLogradouro(e.target.value)} required disabled={loading} />
                         <input className={styles.texto} type="text" placeholder="Número*" value={enderecoNumero} onChange={(e) => setEnderecoNumero(e.target.value)} required disabled={loading} />

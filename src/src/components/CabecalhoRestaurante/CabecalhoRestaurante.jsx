@@ -1,6 +1,10 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import styles from './CabecalhoRestaurante.module.css';
+import { useCart } from '../../context/CartContext';
+
+
+
 
 // O componente agora também recebe o nome do usuário para a saudação
 function CabecalhoRestaurante({ nomeUsuario }) {

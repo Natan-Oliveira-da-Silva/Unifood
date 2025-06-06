@@ -5,7 +5,7 @@ import styles from './InicioCliente.module.css';
 import CabecalhoCliente from '../../../components/CabecalhoCliente/CabecalhoCliente.jsx';
 import RestauranteCard from '../../../components/RestauranteCard/RestauranteCard.jsx';
 import Modal from '../../../components/Modal/Modal.jsx';
-import imagemProdutoPadrao from '../../../assets/restaure.png'; // Fallback para imagem de produto no modal
+import ProdutoItem from '../../../components/ProdutoItem/ProdutoItem.jsx'; // Importa o componente para cada item do cardápio
 
 export default function InicioCliente() {
     // Estados da página principal
@@ -22,13 +22,13 @@ export default function InicioCliente() {
     const [loadingModal, setLoadingModal] = useState(false);
 
     useEffect(() => {
-        // Pega os dados do usuário do localStorage
+        // Pega os dados do usuário do localStorage para a saudação
         const userDataString = localStorage.getItem('userData');
         if (userDataString) {
             setUsuario(JSON.parse(userDataString));
         }
 
-        // <<< LÓGICA DE BUSCA DOS RESTAURANTES CORRIGIDA >>>
+        // --- LÓGICA DE BUSCA DOS RESTAURANTES COMPLETA ---
         const fetchRestaurantes = async () => {
             setLoading(true);
             try {
@@ -47,8 +47,9 @@ export default function InicioCliente() {
         };
 
         fetchRestaurantes();
-    }, []); 
-    // Função para abrir o modal e buscar os produtos do restaurante
+    }, []); // Roda apenas uma vez na montagem do componente
+
+    // Função para abrir o modal e buscar os produtos
     const handleRestaurantClick = async (restaurante) => {
         setSelectedRestaurant(restaurante);
         setIsModalOpen(true);
@@ -63,7 +64,6 @@ export default function InicioCliente() {
             setProdutosModal(data);
         } catch (error) {
             console.error("Erro ao buscar produtos para o modal:", error);
-            // Você pode setar um erro específico para o modal aqui se quiser
         } finally {
             setLoadingModal(false);
         }
@@ -74,20 +74,16 @@ export default function InicioCliente() {
         setSelectedRestaurant(null);
     };
 
-    const formatarPreco = (preco) => new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(preco);
-
     return (
         <>
             <CabecalhoCliente nomeUsuario={usuario?.nome_completo} />
 
             <main className={styles.container}>
-                {/* ... Sua barra de busca e título da seção ... */}
                 <div className={styles.buscaContainer}>
                     <input type="text" placeholder="Buscar restaurantes perto de você" className={styles.buscaInput} />
                 </div>
                 <h2 className={styles.secaoTitulo}>Restaurantes recomendados para você</h2>
 
-                {/* Renderização principal */}
                 {loading && <p className={styles.mensagemAviso}>Carregando restaurantes...</p>}
                 {erro && <p className={`${styles.mensagemAviso} ${styles.erro}`}>{erro}</p>}
                 
@@ -108,7 +104,6 @@ export default function InicioCliente() {
                 )}
             </main>
             
-            {/* Renderização do Modal */}
             <Modal isOpen={isModalOpen} onClose={closeModal}>
                 {selectedRestaurant && (
                     <div className={styles.modalProdutoContainer}>
@@ -122,14 +117,7 @@ export default function InicioCliente() {
                             <ul className={styles.listaProdutosModal}>
                                 {produtosModal.length > 0 ? (
                                     produtosModal.map(produto => (
-                                        <li key={produto.id_produto} className={styles.itemProdutoModal}>
-                                            <img src={produto.url_imagem_principal || imagemProdutoPadrao} alt={produto.nome} className={styles.imagemProdutoModal} />
-                                            <div className={styles.infoProdutoModal}>
-                                                <h3 className={styles.nomeProdutoModal}>{produto.nome}</h3>
-                                                <p className={styles.descricaoProdutoModal}>{produto.descricao}</p>
-                                            </div>
-                                            <span className={styles.precoProdutoModal}>{formatarPreco(produto.preco)}</span>
-                                        </li>
+                                        <ProdutoItem key={produto.id_produto} produto={produto} />
                                     ))
                                 ) : (
                                     <p>Este restaurante não possui produtos cadastrados no momento.</p>

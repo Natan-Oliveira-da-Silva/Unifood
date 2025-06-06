@@ -1,37 +1,172 @@
-.CarrinhoPage{
+/* src/pages/Cliente/Carrinho/Carrinho.module.css */
+
+.container {
+    width: 90%;
+    max-width: 1200px;
+    margin: 2rem auto;
+}
+
+.titulo {
+    text-align: center;
+    font-size: 2.5rem;
+    margin-bottom: 2rem;
+    color: #333;
+}
+
+/* Estilos para quando o carrinho está vazio */
+.carrinhoVazio {
+    text-align: center;
+    padding: 4rem 1rem;
+    background-color: #f9f9f9;
+    border-radius: 8px;
+}
+
+.carrinhoVazio p {
+    font-size: 1.2rem;
+    margin-bottom: 1.5rem;
+}
+
+.carrinhoVazio button {
+    padding: 0.8rem 1.5rem;
+    font-size: 1.1rem;
+    font-weight: bold;
+    color: white;
+    background-color: #007bff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.carrinhoVazio button:hover {
+    background-color: #0056b3;
+}
+
+/* Container principal que divide a tela em lista e resumo */
+.carrinhoContainer {
+    display: grid;
+    grid-template-columns: 2fr 1fr; /* 2/3 para a lista, 1/3 para o resumo */
+    gap: 2rem;
+    align-items: flex-start;
+}
+
+/* Em telas menores, o layout vira uma única coluna */
+@media (max-width: 900px) {
+    .carrinhoContainer {
+        grid-template-columns: 1fr;
+    }
+}
+
+.listaItens {
     display: flex;
     flex-direction: column;
-    min-height: 100vh;
-
+    gap: 1rem;
 }
 
-.carrinhoMainContent{
-    flex-grow: 1;
+/* Estilos para cada item na lista do carrinho */
+.itemCarrinho {
+    display: grid;
+    grid-template-columns: 80px 1fr 100px 100px 40px; /* Imagem, Info, Qtd, Subtotal, Remover */
+    align-items: center;
+    gap: 1rem;
+    padding: 1rem;
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.08);
 }
 
-.titulo{
-    font-size:5vh;
-    text-align: center;
-    margin-top: 2rem;
+.imagemItem {
+    width: 80px;
+    height: 80px;
+    border-radius: 4px;
+    object-fit: cover;
 }
 
-.Carrinho{
-    width: 70vw;
-    height: 23vh;
-    background-color: #D9D9D9;
-    justify-self: center;
-    margin-top: 3rem;
+.infoItem h3 {
+    font-weight: bold;
+    margin: 0 0 0.3rem 0;
+}
+
+.infoItem p {
+    color: #666;
+    margin: 0;
+}
+
+.quantidadeItem {
     display: flex;
-    justify-content: space-around ;
-
-}
-.Logo{
-    align-self: center;
-    justify-self: center;
+    align-items: center;
+    gap: 0.5rem;
 }
 
-.foto{
-    width: 120px;
-    height: 120px;
-  
+.quantidadeItem input {
+    width: 50px;
+    text-align: center;
+    padding: 0.4rem;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+.subtotalItem {
+    font-weight: bold;
+    text-align: right;
+}
+
+.botaoRemover {
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    color: #aaa;
+    cursor: pointer;
+    transition: color 0.2s;
+}
+
+.botaoRemover:hover {
+    color: #d8000c;
+}
+
+/* Estilos para a caixa de resumo da compra */
+.resumoCarrinho {
+    background-color: #f9f9f9;
+    padding: 1.5rem;
+    border-radius: 8px;
+    position: sticky; /* Faz o resumo "flutuar" ao rolar a página */
+    top: 2rem;
+}
+
+.resumoCarrinho h2 {
+    font-size: 1.5rem;
+    margin-bottom: 1.5rem;
+    border-bottom: 1px solid #ddd;
+    padding-bottom: 1rem;
+}
+
+.linhaResumo {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 1rem;
+}
+
+.linhaResumo.total {
+    font-weight: bold;
+    font-size: 1.2rem;
+    margin-top: 1.5rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid #ddd;
+}
+
+.botaoFinalizar {
+    width: 100%;
+    padding: 0.9rem;
+    background-color: #28a745; 
+    color: white;
+    border: none;
+    border-radius: 5px;
+    font-size: 1.2rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.botaoFinalizar:hover {
+    background-color: #218838;
 }

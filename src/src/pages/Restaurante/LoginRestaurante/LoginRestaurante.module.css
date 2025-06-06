@@ -72,12 +72,11 @@
 }
 
 .linkLoginRestaurante{
-  color: #00d98b;
+  color: #0e00d9;
    font-size: 14px;
   text-align: center;
-  margin-top: 10px;
-  font-weight: bold;
-  margin-top: 10px;
+   font-weight: bold;
+  margin-top: 20px;
 }
 .linkLoginRestaurante:hover{
   color: black;

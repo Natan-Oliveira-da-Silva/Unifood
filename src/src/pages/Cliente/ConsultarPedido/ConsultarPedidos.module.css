@@ -1,0 +1,131 @@
+/* src/pages/Cliente/ConsultarPedidos/ConsultarPedidos.module.css */
+
+.container {
+    width: 90%;
+    max-width: 900px;
+    margin: 2rem auto;
+    padding: 1rem;
+}
+
+.titulo {
+    text-align: center;
+    font-size: 2.5rem;
+    margin-bottom: 2.5rem;
+    color: #333;
+    font-weight: 500;
+}
+
+.listaPedidos {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.cardPedido {
+    display: grid;
+    grid-template-areas:
+        "titulo titulo"
+        "info   acoes";
+    grid-template-columns: 1fr auto;
+    gap: 0.5rem 2rem;
+    background-color: #f0f0f0;
+    padding: 1.5rem 2rem;
+    border-radius: 8px;
+}
+
+@media (max-width: 600px) {
+    .cardPedido {
+        grid-template-areas:
+            "titulo"
+            "info"
+            "acoes";
+        grid-template-columns: 1fr;
+    }
+}
+
+.pedidoTitulo {
+    grid-area: titulo;
+    font-size: 1.4rem;
+    font-weight: 700;
+    margin: 0 0 1rem 0; /* Adiciona margem inferior */
+    border-bottom: 1px solid #ddd; /* Adiciona uma linha divisória */
+    padding-bottom: 1rem;
+}
+
+.pedidoInfo {
+    grid-area: info;
+}
+
+.pedidoInfo p {
+    margin: 0.4rem 0;
+    color: #555;
+    font-size: 1rem;
+}
+
+.status {
+    font-weight: bold;
+    text-transform: capitalize; /* Deixa a primeira letra maiúscula */
+}
+
+/* Cores para cada status */
+.entregue { color: #28a745; } /* Verde */
+.cancelado { color: #dc3545; } /* Vermelho */
+.criado, .confirmado, .em_preparo, .saiu_para_entrega { color: #007bff; } /* Azul */
+
+
+.pedidoAcoes {
+    grid-area: acoes;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 1.5rem;
+}
+
+@media (max-width: 600px) {
+    .pedidoAcoes {
+        justify-content: flex-start;
+        margin-top: 1rem;
+        border-top: 1px solid #ddd;
+        padding-top: 1rem;
+    }
+}
+
+.botaoAcao {
+    background: none;
+    border: none;
+    color: #555;
+    text-decoration: underline;
+    cursor: pointer;
+    font-size: 1rem;
+    padding: 0;
+}
+
+.botaoAcao:hover {
+    color: #000;
+}
+
+.aviso, .erro {
+    text-align: center;
+    font-size: 1.2rem;
+    color: #666;
+    padding: 3rem 0;
+}
+
+.erro {
+    color: #d8000c;
+}
+
+.semPedidos {
+    text-align: center;
+}
+
+.botaoAcaoPrincipal {
+    margin-top: 1rem;
+    padding: 0.8rem 1.5rem;
+    font-weight: bold;
+    color: white;
+    background-color: #007bff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}

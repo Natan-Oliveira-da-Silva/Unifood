@@ -7,6 +7,15 @@ module.exports = (db) => {
             uf TEXT NOT NULL UNIQUE  -- Sigla do estado
         )
     `;
+
+        const sql = `
+        CREATE TABLE IF NOT EXISTS estados (
+            id_estado INTEGER PRIMARY KEY AUTOINCREMENT,
+            nome TEXT NOT NULL,
+            uf TEXT NOT NULL UNIQUE
+        )
+    `;
+    
     db.run(sqlCreateTable, (err) => {
         if (err) {
             console.error("Erro ao criar tabela estados:", err.message);

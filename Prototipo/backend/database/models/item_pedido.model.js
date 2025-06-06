@@ -13,7 +13,8 @@ module.exports = (db) => {
             FOREIGN KEY (id_produto) REFERENCES produtos (id_produto) ON DELETE RESTRICT
         )
     `;
-       db.run(sql, (err) => {
+
+    db.run(sql, (err) => {
         if (err) {
             console.error("Erro ao criar tabela item_pedido:", err.message);
         } else {

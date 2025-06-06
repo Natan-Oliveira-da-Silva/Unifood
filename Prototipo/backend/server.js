@@ -3,6 +3,8 @@ const cors = require('cors');
 const path = require('path');
 const db = require('./database/db.js');
 const multer = require('multer');
+const pedidoRoutes = require('./routes/pedido.routes.js'); 
+
 
 // Importar os arquivos de rota
 const usuarioRoutes = require('./routes/usuario.routes.js');
@@ -30,6 +32,7 @@ app.use('/api/usuarios', usuarioRoutes);
 app.use('/api/cozinhas', cozinhaRoutes);
 app.use('/api/restaurantes', restauranteRoutes);
 app.use('/api/produtos', produtoRoutes);
+app.use('/api/pedidos', pedidoRoutes);
 
 // --- Tratamento de Rotas Não Encontradas (404) ---
 // Deve vir DEPOIS de todas as rotas da sua API

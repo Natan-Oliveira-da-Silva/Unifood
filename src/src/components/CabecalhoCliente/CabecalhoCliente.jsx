@@ -1,4 +1,3 @@
-// src/components/CabecalhoCliente/CabecalhoCliente.jsx
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import styles from "./CabecalhoCliente.module.css";
@@ -10,7 +9,7 @@ function CabecalhoCliente({ nomeUsuario }) {
 
   // Esta função agora limpa os dados de login e redireciona para a página de login
   const handleSair = () => {
-    // 1. Limpa os dados de autenticação salvos no navegador
+    
     localStorage.removeItem('authToken');
     localStorage.removeItem('userData');
     
@@ -22,7 +21,8 @@ function CabecalhoCliente({ nomeUsuario }) {
     <header className={styles.cabecalho}>
       <nav className={styles.nav}>
         {/* Saudação dinâmica */}
-        <p>Olá, {nomeUsuario || 'Cliente'}</p>
+        <a onClick={() => navigate('/cliente/inicio')} className={styles.navLink}>Olá, {nomeUsuario || 'Cliente'}</a>
+        
 
         {/* Links de navegação usando botões com navigate */}
         <a onClick={() => navigate('/cliente/inicio')} className={styles.navLink}>Home</a>

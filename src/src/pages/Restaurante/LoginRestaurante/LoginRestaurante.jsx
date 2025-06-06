@@ -73,6 +73,9 @@ function LoginRestaurante() {
   function irParaCadastro() {
     navigate("/restaurante/cadastro");
   }
+  function irParaLogin() {
+    navigate("/cliente/login");
+  }
 
   return (
     <div className={styles.container}>
@@ -110,7 +113,7 @@ function LoginRestaurante() {
 
       <p className={styles.linkLoginRestaurante}>
          
-          <span className={styles.linkLoginRestaurante} onClick={irParaCadastro}>
+          <span className={styles.linkLoginRestaurante} onClick={irParaLogin}>
             Login Cliente
           </span>
         </p>

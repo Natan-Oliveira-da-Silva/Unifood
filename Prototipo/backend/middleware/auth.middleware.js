@@ -1,33 +1,22 @@
 const jwt = require('jsonwebtoken');
-const JWT_SECRET = process.env.JWT_SECRET || "SEGREDO_MUITO_SECRETO_PARA_DESENVOLVIMENTO_12345";
 
-module.exports = (req, res, next) => {
+// A constante JWT_SECRET foi REMOVIDA daqui
+
+const authMiddleware = (req, res, next) => {
     const authHeader = req.headers.authorization;
-
-    if (!authHeader) {
-        return res.status(401).json({ message: "Token não fornecido." });
+    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+        return res.status(401).json({ message: 'Acesso negado. Token não fornecido.' });
     }
-
-    // O token geralmente vem como "Bearer SEU_TOKEN_AQUI"
-    const parts = authHeader.split(' ');
-
-    if (parts.length !== 2 || parts[0] !== 'Bearer') {
-        return res.status(401).json({ message: "Token mal formatado ou tipo de token inválido." });
-    }
-
-    const token = parts[1];
-
+    const token = authHeader.split(' ')[1];
     try {
-        const decoded = jwt.verify(token, JWT_SECRET);
+        // ✅ ALTERAÇÃO AQUI: Usando o segredo do arquivo .env
+        const decoded = jwt.verify(token, process.env.JWT_SECRET);
         
-        req.usuarioDecodificado = decoded; 
-
-        return next(); 
+        req.usuarioDecodificado = decoded;
+        next();
     } catch (error) {
-        console.error("Erro na verificação do token:", error.message);
-        if (error.name === 'TokenExpiredError') {
-            return res.status(401).json({ message: "Token expirado." });
-        }
-        return res.status(401).json({ message: "Token inválido." });
+        res.status(401).json({ message: 'Token inválido ou expirado.' });
     }
 };
+
+module.exports = authMiddleware;

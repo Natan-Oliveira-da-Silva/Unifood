@@ -1,20 +1,16 @@
-// backend/routes/produto.routes.js
 const express = require('express');
 const router = express.Router();
 const produtoController = require('../controllers/produto.controller.js');
 const authMiddleware = require('../middleware/auth.middleware.js');
-const { uploadProduto } = require('../middleware/multer.config.js');
 
-// Rota para CRIAR um novo produto com upload de imagem
-router.post('/', authMiddleware, uploadProduto.single('imagemProduto'), produtoController.criarProduto);
+// Rota PÚBLICA para listar os produtos de um restaurante específico pelo ID do restaurante
+// Exemplo de como chamar: /api/produtos/por-restaurante/5
+router.get('/por-restaurante/:id', produtoController.listarProdutosDeUmRestaurante);
 
-// Rota para LISTAR os produtos do restaurante do usuário logado ("Meus Produtos")
-router.get('/meus-produtos', authMiddleware, produtoController.listarProdutosDoMeuRestaurante);
+// Rota PRIVADA para o restaurante logado criar um novo produto
+// Você pode adicionar o middleware de upload de imagem aqui se desejar
+router.post('/', authMiddleware, produtoController.criarProduto);
 
-// Rota para ATUALIZAR um produto específico pelo seu ID
-router.put('/:id', authMiddleware, uploadProduto.single('imagemProduto'), produtoController.atualizarProduto);
-
-// Rota para DELETAR um produto específico pelo seu ID
-router.delete('/:id', authMiddleware, produtoController.deletarProduto);
+// (Futuramente, aqui entrariam as rotas PUT e DELETE para gerenciar produtos)
 
 module.exports = router;

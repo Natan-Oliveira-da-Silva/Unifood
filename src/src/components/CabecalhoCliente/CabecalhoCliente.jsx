@@ -13,7 +13,7 @@ export default function CabecalhoCliente({ nomeUsuario }) {
     const handleSair = () => {
         localStorage.removeItem('authToken');
         localStorage.removeItem('userData');
-        navigate('/cliente/login');
+        navigate('/');
     };
 
     return (

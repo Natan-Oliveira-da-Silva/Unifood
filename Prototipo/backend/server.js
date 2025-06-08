@@ -1,16 +1,16 @@
+require('dotenv').config();
+
 const express = require('express');
 const cors = require('cors');
 const path = require('path');
-const db = require('./database/db.js');
-const multer = require('multer');
-const pedidoRoutes = require('./routes/pedido.routes.js'); 
+const { initDb } = require('./database/db.js');
 
-
-// Importar os arquivos de rota
+// Importar todos os arquivos de rota
 const usuarioRoutes = require('./routes/usuario.routes.js');
 const cozinhaRoutes = require('./routes/cozinha.routes.js');
 const restauranteRoutes = require('./routes/restaurante.routes.js');
 const produtoRoutes = require('./routes/produto.routes.js');
+const pedidoRoutes = require('./routes/pedido.routes.js');
 
 const app = express();
 const port = process.env.PORT || 3001;
@@ -20,44 +20,39 @@ app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// Servir arquivos estáticos da pasta 'uploads'
+// Servir arquivos estáticos (imagens de uploads)
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
-// --- Rotas da Aplicação ---
-app.get('/api', (req, res) => {
-  res.json({ message: 'Bem-vindo à API do UNIFOOD!' });
-});
-
+// --- Montagem das Rotas da Aplicação ---
 app.use('/api/usuarios', usuarioRoutes);
 app.use('/api/cozinhas', cozinhaRoutes);
 app.use('/api/restaurantes', restauranteRoutes);
 app.use('/api/produtos', produtoRoutes);
 app.use('/api/pedidos', pedidoRoutes);
 
-// --- Tratamento de Rotas Não Encontradas (404) ---
-// Deve vir DEPOIS de todas as rotas da sua API
+// --- Middlewares de Tratamento de Erro (devem vir por último) ---
+
+// Tratamento de Rotas Não Encontradas (404)
 app.use((req, res, next) => {
-  res.status(404).json({ message: "Desculpe, o endpoint solicitado não foi encontrado." });
+    res.status(404).json({ message: "Endpoint não encontrado." });
 });
 
-// --- Tratamento de Erros Global ---
-// Deve vir POR ÚLTIMO na cadeia de middlewares
+// Tratamento de Erros Global (500)
 app.use((err, req, res, next) => {
-  console.error("Ocorreu um erro na aplicação:", err.stack);
-
-  if (err instanceof multer.MulterError) {
-      return res.status(400).json({ message: `Erro no upload: ${err.message}`});
-  }
-  if (err.message.startsWith("Tipo de arquivo inválido")) {
-       return res.status(400).json({ message: err.message });
-  }
-
-  res.status(500).json({
-    message: "Ocorreu um erro interno no servidor. Por favor, tente novamente mais tarde.",
-  });
+    console.error("ERRO GLOBAL CAPTURADO:", err.stack);
+    res.status(500).json({ message: "Ocorreu um erro interno inesperado no servidor." });
 });
 
-// Iniciar o servidor
-app.listen(port, () => {
-  console.log(`Servidor backend rodando na porta ${port}`);
-});
+
+// --- INICIALIZAÇÃO DO SERVIDOR ---
+try {
+    // Garante que o DB e as tabelas estejam prontos ANTES de iniciar o servidor
+    initDb(); 
+    
+    app.listen(port, () => {
+        console.log(`Servidor backend rodando e ouvindo na porta ${port}`);
+    });
+} catch (error) {
+    console.error("FALHA NA INICIALIZAÇÃO: Não foi possível iniciar o servidor.", error);
+    process.exit(1); // Encerra a aplicação se o DB não puder ser iniciado
+}

@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import styles from "./InicioRestaurante.module.css"; 
@@ -16,34 +15,47 @@ export default function InicioRestaurante() {
         setLoading(true);
         setErro('');
         setSuccessMessage(''); 
-        const token = localStorage.getItem('authToken');
+        
+        // ✅ CORREÇÃO 1: Usando a chave correta 'token'
+        const token = localStorage.getItem('token');
 
         if (!token) {
             setErro("Autenticação necessária. Redirecionando para login...");
             setLoading(false);
-            setTimeout(() => navigate('/restaurante/login'), 2500);
+            setTimeout(() => navigate('/login'), 2500); // Rota de login principal
             return;
         }
 
         try {
             const response = await fetch('http://localhost:3001/api/restaurantes/meu-restaurante', {
                 method: 'GET',
-                headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' }
+                // ✅ MELHORIA: Removido 'Content-Type' desnecessário
+                headers: { 'Authorization': `Bearer ${token}` }
             });
+
             const data = await response.json();
             if (!response.ok) {
                 if (response.status === 401 || response.status === 403) {
-                    localStorage.removeItem('authToken'); localStorage.removeItem('userData');
+                    // ✅ CORREÇÃO 1: Usando a chave correta 'token'
+                    localStorage.removeItem('token'); 
+                    localStorage.removeItem('userData');
                     setErro(data.message || "Sessão inválida. Faça login novamente.");
-                    setTimeout(() => navigate('/restaurante/login'), 2500);
+                    setTimeout(() => navigate('/login'), 2500);
                 } else if (response.status === 404) {
                     setErro("Você ainda não cadastrou os dados do seu restaurante.");
-                } else { setErro(data.message || "Não foi possível carregar os dados."); }
+                } else { 
+                    setErro(data.message || "Não foi possível carregar os dados."); 
+                }
                 setRestaurante(null);
-            } else { setRestaurante(data); }
+            } else { 
+                setRestaurante(data); 
+            }
         } catch (fetchError) {
-            setErro("Falha ao conectar com o servidor."); setRestaurante(null);
-        } finally { setLoading(false); }
+            setErro("Falha ao conectar com o servidor."); 
+            setRestaurante(null);
+        } finally { 
+            setLoading(false); 
+        }
     }, [navigate]);
 
     useEffect(() => {
@@ -52,36 +64,46 @@ export default function InicioRestaurante() {
 
     const handleEditarDetalhes = () => {
         if (restaurante) {
-            navigate('/restaurante/cadastrar-detalhes', { state: { restauranteParaEditar: restaurante } });
-        } else { setErro("Dados do restaurante não disponíveis para edição."); }
+            // A página de cadastro já sabe lidar com edição, não precisa passar state
+            navigate('/restaurante/cadastrar-detalhes');
+        } else { 
+            setErro("Dados do restaurante não disponíveis para edição."); 
+        }
     };
 
     const handleApagarRestaurante = async () => {
-        if (window.confirm('Tem certeza que deseja apagar este restaurante? Esta ação não pode ser desfeita.')) {
+        if (window.confirm('Tem certeza que deseja apagar seu restaurante? Esta ação não pode ser desfeita.')) {
             setLoading(true); setErro(''); setSuccessMessage('');
-            const token = localStorage.getItem('authToken');
+            
+            // ✅ CORREÇÃO 1: Usando a chave correta 'token'
+            const token = localStorage.getItem('token');
 
             if (!token || !restaurante) {
-                setErro("Não é possível apagar. Tente recarregar."); setLoading(false); return;
+                setErro("Não é possível apagar. Tente recarregar a página."); 
+                setLoading(false); 
+                return;
             }
 
             try {
                 const response = await fetch('http://localhost:3001/api/restaurantes/meu-restaurante', {
                     method: 'DELETE',
-                    headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' }
+                    // ✅ MELHORIA: Removido 'Content-Type' desnecessário
+                    headers: { 'Authorization': `Bearer ${token}` }
                 });
                 
-                let data = { message: "Restaurante apagado." };
-                if (response.status !== 204 && response.headers.get("content-type")?.includes("application/json")) {
-                    data = await response.json();
-                }
-
-                if (!response.ok) {
-                    setErro(data.message || `Erro ${response.status} ao apagar restaurante.`);
+                if (response.ok) {
+                    setSuccessMessage("Restaurante apagado com sucesso! Atualizando...");
+                    // Espera 2 segundos e busca os dados novamente para a UI refletir o estado de "não cadastrado"
+                    setTimeout(() => {
+                        fetchMeuRestaurante();
+                    }, 2000);
                 } else {
-                    setSuccessMessage(data.message || "Restaurante apagado com sucesso!");
-                    setRestaurante(null); 
-                    setErro("Você ainda não cadastrou os dados do seu restaurante."); 
+                    // Se a resposta não for OK, tenta ler a mensagem de erro
+                    let data = { message: `Erro ${response.status} ao apagar restaurante.` };
+                    if (response.headers.get("content-type")?.includes("application/json")) {
+                        data = await response.json();
+                    }
+                    setErro(data.message);
                 }
             } catch (error) {
                 setErro("Falha ao conectar com o servidor para apagar.");
@@ -91,25 +113,22 @@ export default function InicioRestaurante() {
         }
     };
 
-    // Lógica de Renderização
+    // --- Lógica de Renderização ---
+    // (O seu código de renderização já estava bom, mantido como está)
     if (loading) {
         return (<> <CabecalhoRestaurante /> <h1 className={styles.titulo}>Meu Restaurante</h1> <div className={styles.containerMensagem}><p className={styles.mensagemCarregando}>Carregando...</p></div> </>);
     }
-    // Mostra mensagem de sucesso primeiro se houver
     if (successMessage) {
-         return (<> <CabecalhoRestaurante /> <h1 className={styles.titulo}>Meu Restaurante</h1> <div className={styles.containerMensagem}><p className={styles.mensagemSucesso}>{successMessage}</p></div> </>);
+        return (<> <CabecalhoRestaurante /> <h1 className={styles.titulo}>Meu Restaurante</h1> <div className={styles.containerMensagem}><p className={styles.mensagemSucesso}>{successMessage}</p></div> </>);
     }
     if (erro && (erro.includes("Autenticação necessária") || erro.includes("Sessão inválida"))) {
         return (<> <CabecalhoRestaurante /> <h1 className={styles.titulo}>Acesso Negado</h1> <div className={styles.containerMensagem}><p className={styles.mensagemErroGeral}>{erro}</p></div> </>);
     }
-    if (!restaurante && erro === "Você ainda não cadastrou os dados do seu restaurante.") {
+    if (!restaurante && erro) {
         return (<> <CabecalhoRestaurante /> <div className={styles.restaurante}><h1 className={styles.titulo}>Meu Restaurante</h1> <div style={{padding: '2rem', textAlign: 'center'}}> <p className={styles.avisoRestauranteNaoCadastrado}>{erro}</p> <button className={styles.botaoAcaoPrincipal} onClick={() => navigate('/restaurante/cadastrar-detalhes')}>Cadastrar Detalhes do Restaurante</button> </div></div> </> );
     }
-    if (erro) {
-         return (<> <CabecalhoRestaurante /> <h1 className={styles.titulo}>Meu Restaurante</h1> <div className={styles.containerMensagem}><p className={styles.mensagemErroGeral}>{erro}</p></div> </>);
-    }
-    if (!restaurante) { // Fallback final
-      return (<> <CabecalhoRestaurante /> <h1 className={styles.titulo}>Meu Restaurante</h1> <div className={styles.containerMensagem}><p className={styles.mensagemErroGeral}>Nenhum restaurante encontrado ou não foi possível carregar.</p></div> </>);
+    if (!restaurante) {
+        return (<> <CabecalhoRestaurante /> <h1 className={styles.titulo}>Meu Restaurante</h1> <div className={styles.containerMensagem}><p className={styles.mensagemErroGeral}>Nenhum restaurante encontrado.</p></div> </>);
     }
 
     return (
@@ -123,7 +142,11 @@ export default function InicioRestaurante() {
                 </section>
                 <section className={styles.secao2}>
                     <h3 className={styles.nome}>Imagem:</h3>
-                    <img src={restaurante.url_imagem_logo || imagemRestaurantePadrao} alt={`Logo de ${restaurante.nome}`} />
+                    <img 
+                        src={restaurante.url_imagem_logo ? `http://localhost:3001${restaurante.url_imagem_logo}` : imagemRestaurantePadrao} 
+                        alt={`Logo de ${restaurante.nome}`} 
+                        className={styles.logo}
+                    />
                 </section>
                 {restaurante.nome_cozinha && (
                     <section className={styles.secao}>

@@ -1,42 +1,39 @@
+// backend/middleware/multer.config.js
 
 const multer = require('multer');
 const path = require('path');
+const fs = require('fs');
 
-
-const createStorage = (destination) => {
-    return multer.diskStorage({
-        destination: function (req, file, cb) {
-            cb(null, destination);
-        },
-        filename: function (req, file, cb) {
-            const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
-            const fileExtension = path.extname(file.originalname);
-            cb(null, file.fieldname + '-' + uniqueSuffix + fileExtension);
-        }
-    });
-};
-
-const fileFilter = (req, file, cb) => {
-    const allowedMimeTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
-    if (allowedMimeTypes.includes(file.mimetype)) {
-        cb(null, true);
-    } else {
-        cb(new Error("Tipo de arquivo inválido. Apenas imagens (jpeg, png, gif, webp) são permitidas."), false);
+// Função para garantir que o diretório de upload exista
+const ensureDirExists = (dirPath) => {
+    if (!fs.existsSync(dirPath)) {
+        fs.mkdirSync(dirPath, { recursive: true });
     }
 };
 
-const limits = { fileSize: 1024 * 1024 * 5 }; // 5MB
+// Configuração de armazenamento para logos de restaurantes
+const restauranteStorage = multer.diskStorage({
+    destination: (req, file, cb) => {
+        const dir = 'uploads/restaurantes/';
+        ensureDirExists(dir);
+        cb(null, dir);
+    },
+    filename: (req, file, cb) => {
+        // Cria um nome de arquivo único para evitar conflitos
+        const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+        cb(null, file.fieldname + '-' + uniqueSuffix + path.extname(file.originalname));
+    }
+});
 
-
-module.exports = {
-    uploadRestaurante: multer({
-        storage: createStorage('uploads/restaurantes/'),
-        limits: limits,
-        fileFilter: fileFilter
-    }),
-    uploadProduto: multer({
-        storage: createStorage('uploads/produtos/'),
-        limits: limits,
-        fileFilter: fileFilter
-    })
+// Filtro para aceitar apenas imagens
+const imageFileFilter = (req, file, cb) => {
+    if (file.mimetype.startsWith('image/')) {
+        cb(null, true);
+    } else {
+        cb(new Error('Tipo de arquivo inválido. Apenas imagens são permitidas.'), false);
+    }
 };
+
+const uploadRestaurante = multer({ storage: restauranteStorage, fileFilter: imageFileFilter });
+
+module.exports = { uploadRestaurante };

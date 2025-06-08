@@ -47,9 +47,9 @@ function LoginCliente() {
       console.log('Login de cliente realizado com sucesso:', data);
 
       if (data.token) {
-        localStorage.setItem('authToken', data.token);
+        localStorage.setItem('token', data.token);
         if(data.usuario) {
-            localStorage.setItem('userData', JSON.stringify(data.usuario));
+            localStorage.setItem('usuario', JSON.stringify(data.usuario));
         }
       }
       navigate("/cliente/inicio");

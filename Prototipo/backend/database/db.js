@@ -1,51 +1,50 @@
+// backend/database/db.js
+
 const sqlite3 = require('sqlite3').verbose();
 const path = require('path');
 
-const DBSOURCE = path.resolve(__dirname, "unifood.sqlite");
-
-// Importa TODAS as funções de criação de tabela
-const criarTabelaUsuarios = require('./models/usuario.model.js');
-const criarTabelaCozinhas = require('./models/cozinha.model.js');
-const criarTabelaEstados = require('./models/estado.model.js');
-const criarTabelaCidades = require('./models/cidade.model.js');
-const criarTabelaFormasPagamento = require('./models/forma_pagamento.model.js');
-const criarTabelaRestaurantes = require('./models/restaurante.model.js');
-const criarTabelaProdutos = require('./models/produto.model.js');
-const criarTabelaPedidos = require('./models/pedido.model.js');
-const criarTabelaItemPedido = require('./models/item_pedido.model.js');
+const DBSOURCE = path.join(__dirname, "unifood.sqlite");
 
 const db = new sqlite3.Database(DBSOURCE, (err) => {
     if (err) {
-        console.error('Erro ao conectar ao banco de dados SQLite:', err.message);
+        console.error('ERRO FATAL: Não foi possível conectar ao banco de dados.', err.message);
         throw err;
-    } else {
-        console.log(`Conectado ao banco de dados SQLite em ${DBSOURCE}`);
-
-        db.run("PRAGMA foreign_keys = ON;");
-
-        db.serialize(() => {
-            console.log("Inicializando criação/verificação das tabelas...");
-
-            
-            criarTabelaUsuarios(db);
-            criarTabelaCozinhas(db);
-            criarTabelaEstados(db);
-            criarTabelaFormasPagamento(db);
-            
-            
-            criarTabelaCidades(db); 
-            criarTabelaRestaurantes(db); 
-            
-          
-            criarTabelaProdutos(db);
-            
-            
-            criarTabelaPedidos(db); 
-            criarTabelaItemPedido(db); 
-
-            console.log("Processo de inicialização de tabelas concluído.");
-        });
     }
 });
 
-module.exports = db;
+const initDb = () => {
+    db.serialize(() => {
+        console.log("Inicializando banco de dados e garantindo que todas as tabelas existam...");
+        db.run("PRAGMA foreign_keys = ON;");
+
+        // Carrega e cria cada tabela em sequência
+        console.log("Carregando modelos...");
+        require('./models/usuario.model.js')(db);
+        require('./models/cozinha.model.js')(db);
+        require('./models/estado.model.js')(db);
+        require('./models/cidade.model.js')(db);
+        require('./models/forma_pagamento.model.js')(db);
+        require('./models/restaurante.model.js')(db);
+        require('./models/produto.model.js')(db);
+        require('./models/pedido.model.js')(db);
+        require('./models/item_pedido.model.js')(db);
+
+        // Adicionando os outros modelos da sua estrutura para garantir a criação
+        require('./models/foto_produto.model.js')(db);
+        require('./models/grupo.model.js')(db);
+        require('./models/permissao.model.js')(db);
+        require('./models/grupo_permissao.model.js')(db);
+        require('./models/restaurante_forma_pagamento.model.js')(db);
+        require('./models/usuario_grupo.model.js')(db);
+        // O modelo 'restaurante_responsavel.model.js' pode não ser necessário
+        // se a relação já está na tabela 'restaurantes', mas incluímos por segurança.
+        require('./models/restaurante_responsavel.model.js')(db); 
+
+        console.log("Banco de dados pronto para receber conexões.");
+    });
+};
+
+module.exports = {
+    db,
+    initDb
+};

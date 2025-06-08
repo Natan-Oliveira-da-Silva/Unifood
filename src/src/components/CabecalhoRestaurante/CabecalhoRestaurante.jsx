@@ -1,10 +1,8 @@
 import React from 'react';
-import { useNavigate } from 'react-router-dom';
+// ✅ Importando o 'Link' para uma navegação mais correta
+import { Link, useNavigate } from 'react-router-dom'; 
 import styles from './CabecalhoRestaurante.module.css';
-import { useCart } from '../../context/CartContext';
-
-
-
+// import { useCart } from '../../context/CartContext'; // Removido pois não estava sendo usado
 
 // O componente agora também recebe o nome do usuário para a saudação
 function CabecalhoRestaurante({ nomeUsuario }) {
@@ -12,24 +10,30 @@ function CabecalhoRestaurante({ nomeUsuario }) {
 
   // Função de logout que limpa os dados e redireciona
   const handleSair = () => {
-    localStorage.removeItem('authToken');
-    localStorage.removeItem('userData');
-    navigate('/restaurante/login');
+    // Adicionando um log para depuração no console (F12)
+    console.log("Executando logout...");
+
+    // ✅ CORREÇÃO PRINCIPAL: Usando a chave correta 'token'
+    localStorage.removeItem('token');
+    localStorage.removeItem('userData'); // Mantido para limpar dados extras do usuário
+    
+    navigate('/'); // Redirecionado para a página de login principal
   };
 
   return (
     <header className={styles.cabecalho}>
       <nav className={styles.nav}>
-        {/* Adicionada saudação para consistência */}
-        <p>Olá, {nomeUsuario || 'Restaurante'}</p>
+        <p className={styles.saudacao}>Olá, {nomeUsuario || 'Restaurante'}</p>
         
-        {/* Links de navegação usando botões com a função navigate */}
-        <a onClick={() => navigate('/restaurante/inicio')} className={styles.navLink}>Meu Restaurante</a>
-        <a onClick={() => navigate('/restaurante/meusprodutos')} className={styles.navLink}>Meus Produtos</a>
-        <a onClick={() => navigate('/restaurante/criarproduto')} className={styles.navLink}>Criar Produto</a>
+        {/* ✅ MELHORIA: Usando o componente <Link> para navegação */}
+        <Link to='/restaurante/cadastrar-detalhes' className={styles.navLink}>Meu Restaurante</Link>
+        <Link to='/restaurante/produtos' className={styles.navLink}>Meus Produtos</Link>
+        <Link to='/restaurante/produtos' className={styles.navLink}>Criar Produto</Link>
         
-        {/* Botão "Sair" agora chama a função de logout */}
-        <a onClick={handleSair} className={styles.botaoSair}>Sair</a>
+        {/* ✅ MELHORIA: Usando <button> para a ação de sair */}
+        <button type="button" onClick={handleSair} className={styles.botaoSair}>
+            Sair
+        </button>
       </nav>
     </header>
   );

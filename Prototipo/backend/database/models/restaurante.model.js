@@ -1,15 +1,14 @@
 module.exports = (db) => {
-    const sqlCreateTable = `
+    const createRestauranteTable = `
         CREATE TABLE IF NOT EXISTS restaurantes (
             id_restaurante INTEGER PRIMARY KEY AUTOINCREMENT,
             nome TEXT NOT NULL,
             taxa_frete REAL DEFAULT 0.0,
-            nota_avaliacao REAL DEFAULT 0.0,
-            ativo INTEGER DEFAULT 1,
-            aberto INTEGER DEFAULT 0,
+            id_cozinha INTEGER,
             url_imagem_logo TEXT,
-            id_cozinha INTEGER NOT NULL,
-            id_usuario_responsavel INTEGER UNIQUE,
+            id_usuario_responsavel INTEGER NOT NULL,
+            
+            -- Colunas de endereço que estavam faltando --
             endereco_cep TEXT,
             endereco_logradouro TEXT,
             endereco_numero TEXT,
@@ -17,16 +16,18 @@ module.exports = (db) => {
             endereco_bairro TEXT,
             endereco_cidade TEXT,
             endereco_estado TEXT,
-            data_cadastro TEXT DEFAULT CURRENT_TIMESTAMP,
-            data_atualizacao TEXT DEFAULT CURRENT_TIMESTAMP,
-            FOREIGN KEY (id_cozinha) REFERENCES cozinhas (id_cozinha) ON UPDATE CASCADE ON DELETE RESTRICT,
-            FOREIGN KEY (id_usuario_responsavel) REFERENCES usuarios (id_usuario) ON DELETE SET NULL
-        )
+            
+            ativo INTEGER DEFAULT 1,
+            nota_avaliacao REAL DEFAULT 0.0,
+            
+            FOREIGN KEY (id_cozinha) REFERENCES cozinhas(id_cozinha),
+            FOREIGN KEY (id_usuario_responsavel) REFERENCES usuarios(id_usuario)
+        );
     `;
 
-    db.run(sqlCreateTable, (err) => {
+    db.run(createRestauranteTable, (err) => {
         if (err) {
-            console.error("Erro ao criar tabela restaurantes:", err.message);
+            console.error("Erro ao criar a tabela 'restaurantes'.", err.message);
         } else {
             console.log("Tabela 'restaurantes' verificada/criada com sucesso.");
         }

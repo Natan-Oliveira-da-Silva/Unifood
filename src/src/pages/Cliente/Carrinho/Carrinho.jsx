@@ -7,12 +7,15 @@ import CabecalhoCliente from '../../../components/CabecalhoCliente/CabecalhoClie
 import imagemProdutoPadrao from '../../../assets/restaure.png';
 
 export default function Carrinho() {
-    // Usando nosso hook useCart para pegar o estado e as funções do carrinho
     const { cartItems, removeFromCart, updateItemQuantity, clearCart } = useCart();
     const navigate = useNavigate();
     
     const [loading, setLoading] = useState(false);
     const [erro, setErro] = useState('');
+    
+    // ✅ Estados para os novos campos do pedido
+    const [observacao, setObservacao] = useState('');
+    const [idFormaPagamento, setIdFormaPagamento] = useState('1'); // Ex: '1' para Dinheiro como padrão
 
     const calcularSubtotalItem = (item) => {
         return item.preco * item.quantity;
@@ -30,26 +33,33 @@ export default function Carrinho() {
         setLoading(true);
         setErro('');
 
-        const subtotal = calcularTotalCarrinho();
-        if (subtotal === 0) {
-            setErro("Seu carrinho está vazio. Adicione itens para continuar.");
+        if (cartItems.length === 0) {
+            setErro("Seu carrinho está vazio.");
             setLoading(false);
             return;
         }
 
-        const id_restaurante = cartItems[0]?.id_restaurante;
-        const taxa_frete = id_restaurante ? 5.00 : 0; // Taxa de frete de exemplo
-        
-        const pedidoData = {
-            itens: cartItems,
-            id_restaurante: id_restaurante,
-            subtotal: subtotal,
-            taxa_frete: taxa_frete,
-            valor_total: subtotal + taxa_frete
-            // Como combinado, estamos usando uma versão simplificada
-        };
+        // ✅ CORREÇÃO 1: Usando a chave correta 'token'
+        const token = localStorage.getItem('token');
+        if (!token) {
+            setErro("Autenticação necessária. Faça o login para continuar.");
+            setLoading(false);
+            return;
+        }
 
-        const token = localStorage.getItem('authToken');
+        // ✅ CORREÇÃO 2: Montando o corpo da requisição no formato esperado pelo backend
+        const pedidoParaEnviar = {
+            id_restaurante: cartItems[0]?.id_restaurante,
+            id_forma_pagamento: parseInt(idFormaPagamento),
+            observacao: observacao,
+            itens: cartItems.map(item => ({
+                id_produto: item.id_produto,
+                // O nome da propriedade no seu context é 'quantity', mas o backend pode esperar 'quantidade'
+                // Ajuste aqui se necessário, vamos assumir que o backend espera 'quantidade'.
+                quantidade: item.quantity 
+            }))
+        };
+        
         try {
             const response = await fetch('http://localhost:3001/api/pedidos', {
                 method: 'POST',
@@ -57,17 +67,24 @@ export default function Carrinho() {
                     'Content-Type': 'application/json',
                     'Authorization': `Bearer ${token}`
                 },
-                body: JSON.stringify(pedidoData)
+                body: JSON.stringify(pedidoParaEnviar)
             });
 
             const data = await response.json();
             if (!response.ok) {
-                throw new Error(data.message || "Não foi possível finalizar o pedido.");
+                // Trata o caso de sessão expirada de forma amigável
+                if (response.status === 401) {
+                    localStorage.removeItem('token');
+                    setErro("Sua sessão expirou. Por favor, faça login novamente.");
+                    setTimeout(() => navigate('/cliente/login'), 3000);
+                } else {
+                    throw new Error(data.message || "Não foi possível finalizar o pedido.");
+                }
+            } else {
+                alert("Pedido realizado com sucesso!");
+                clearCart();
+                navigate('/cliente/consultarpedidos');
             }
-            
-            alert("Pedido realizado com sucesso!");
-            clearCart();
-            navigate('/cliente/consultarpedidos');
 
         } catch (error) {
             setErro(error.message);
@@ -76,7 +93,6 @@ export default function Carrinho() {
         }
     };
 
-    // A ESTRUTURA JSX COMPLETA VAI AQUI DENTRO DO RETURN
     return (
         <>
             <CabecalhoCliente />
@@ -86,7 +102,6 @@ export default function Carrinho() {
                 {erro && <p className={styles.erroGeral}>{erro}</p>}
 
                 {cartItems.length === 0 ? (
-                    // --- TELA PARA CARRINHO VAZIO ---
                     <div className={styles.carrinhoVazio}>
                         <p>Seu carrinho está vazio.</p>
                         <button onClick={() => navigate('/cliente/inicio')}>
@@ -94,7 +109,6 @@ export default function Carrinho() {
                         </button>
                     </div>
                 ) : (
-                    // --- TELA PARA CARRINHO COM ITENS ---
                     <div className={styles.carrinhoContainer}>
                         <div className={styles.listaItens}>
                             {cartItems.map(item => (
@@ -106,26 +120,32 @@ export default function Carrinho() {
                                     </div>
                                     <div className={styles.quantidadeItem}>
                                         <label htmlFor={`qtd-${item.id_produto}`}>Qtd:</label>
-                                        <input
-                                            id={`qtd-${item.id_produto}`}
-                                            type="number"
-                                            min="1"
-                                            value={item.quantity}
-                                            onChange={(e) => updateItemQuantity(item.id_produto, parseInt(e.target.value, 10) || 0)}
-                                        />
+                                        <input id={`qtd-${item.id_produto}`} type="number" min="1" value={item.quantity} onChange={(e) => updateItemQuantity(item.id_produto, parseInt(e.target.value, 10) || 1)} />
                                     </div>
-                                    <p className={styles.subtotalItem}>
-                                        {formatarPreco(calcularSubtotalItem(item))}
-                                    </p>
-                                    <button onClick={() => removeFromCart(item.id_produto)} className={styles.botaoRemover} title="Remover item">
-                                        &times;
-                                    </button>
+                                    <p className={styles.subtotalItem}>{formatarPreco(calcularSubtotalItem(item))}</p>
+                                    <button onClick={() => removeFromCart(item.id_produto)} className={styles.botaoRemover} title="Remover item">&times;</button>
                                 </div>
                             ))}
                         </div>
 
                         <div className={styles.resumoCarrinho}>
                             <h2>Resumo da Compra</h2>
+                            
+                            <div className={styles.campoFormulario}>
+                                <label htmlFor="observacao">Observações:</label>
+                                <textarea id="observacao" value={observacao} onChange={(e) => setObservacao(e.target.value)} placeholder="Ex: tirar a cebola, ponto da carne, etc." />
+                            </div>
+
+                            <div className={styles.campoFormulario}>
+                                <label htmlFor="formaPagamento">Forma de Pagamento:</label>
+                                <select id="formaPagamento" value={idFormaPagamento} onChange={(e) => setIdFormaPagamento(e.target.value)}>
+                                    <option value="1">Dinheiro</option>
+                                    <option value="2">Cartão de Crédito</option>
+                                    <option value="3">Cartão de Débito</option>
+                                    <option value="4">Pix</option>
+                                </select>
+                            </div>
+
                             <div className={styles.linhaResumo}>
                                 <span>Subtotal</span>
                                 <span>{formatarPreco(calcularTotalCarrinho())}</span>

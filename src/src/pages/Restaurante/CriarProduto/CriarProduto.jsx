@@ -8,6 +8,7 @@ export default function CriarProduto() {
     const navigate = useNavigate();
     const location = useLocation();
 
+    // Sua lógica para edição está ótima!
     const produtoParaEditar = location.state?.produtoParaEditar;
     const isEditMode = Boolean(produtoParaEditar);
 
@@ -15,7 +16,10 @@ export default function CriarProduto() {
     const [descricao, setDescricao] = useState(produtoParaEditar?.descricao || '');
     const [preco, setPreco] = useState(produtoParaEditar?.preco?.toString() || '');
     const [imagemProduto, setImagemProduto] = useState(null);
-    const [previewImagem, setPreviewImagem] = useState(produtoParaEditar?.url_imagem_principal || null);
+    // ✅ MELHORIA: Usa o caminho completo para o preview da imagem vinda do backend
+    const [previewImagem, setPreviewImagem] = useState(
+        produtoParaEditar?.url_imagem ? `http://localhost:3001${produtoParaEditar.url_imagem}` : null
+    );
     
     const [loading, setLoading] = useState(false);
     const [erro, setErro] = useState('');
@@ -42,13 +46,17 @@ export default function CriarProduto() {
         formData.append('nome', nome);
         formData.append('descricao', descricao);
         formData.append('preco', preco);
+        
         if (imagemProduto) {
-            formData.append('imagemProduto', imagemProduto);
+            // ✅ CORREÇÃO 1: Usando o nome de campo correto 'imagem'
+            formData.append('imagem', imagemProduto);
         }
 
-        const token = localStorage.getItem('authToken');
+        // ✅ CORREÇÃO 2: Usando a chave correta 'token'
+        const token = localStorage.getItem('token');
         if (!token) {
-            setErro("Autenticação necessária."); setLoading(false);
+            setErro("Autenticação necessária. Redirecionando para login...");
+            setLoading(false);
             setTimeout(() => navigate('/restaurante/login'), 2500); return;
         }
 
@@ -58,21 +66,26 @@ export default function CriarProduto() {
             : 'http://localhost:3001/api/produtos';
 
         try {
+            // ✅ CORREÇÃO 3: Usando a forma mais robusta de enviar o fetch com FormData
+            const headers = new Headers();
+            headers.append('Authorization', `Bearer ${token}`);
+
             const response = await fetch(apiUrl, {
                 method: method,
-                headers: { 'Authorization': `Bearer ${token}` },
+                headers: headers,
                 body: formData
             });
 
             const data = await response.json();
             if (!response.ok) {
-                setErro(data.message || `Erro ao ${isEditMode ? 'atualizar' : 'criar'} o produto.`);
+                throw new Error(data.message || `Erro ao ${isEditMode ? 'atualizar' : 'criar'} o produto.`);
             } else {
                 setSuccessMessage(data.message || `Produto ${isEditMode ? 'atualizado' : 'criado'} com sucesso!`);
-                setTimeout(() => navigate('/restaurante/meusprodutos'), 2000);
+                // Redireciona para uma página de listagem de produtos
+                setTimeout(() => navigate('/restaurante/meusprodutos'), 2000); 
             }
         } catch (error) {
-            setErro("Falha ao conectar com o servidor.");
+            setErro(error.message);
         } finally {
             setLoading(false);
         }
@@ -83,8 +96,10 @@ export default function CriarProduto() {
             <CabecalhoRestaurante />
             <div className={styles.paginaContainer}>
                 <h1 className={styles.titulo}>{isEditMode ? 'Editar Produto' : 'Criar Produto'}</h1>
+                
                 {erro && <p className={styles.mensagemErro}>{erro}</p>}
                 {successMessage && <p className={styles.mensagemSucesso}>{successMessage}</p>}
+
                 <form onSubmit={handleSubmit} className={styles.formEstiloProjeto}>
                     <div className={styles.inputs}>
                         <input className={styles.texto} type="text" placeholder="Nome do Produto*" value={nome} onChange={(e) => setNome(e.target.value)} required disabled={loading} />
@@ -93,7 +108,10 @@ export default function CriarProduto() {
                         <div className={styles.campoGrupoUpload}>
                             <label htmlFor="imagemProduto">Foto do Produto:</label>
                             {previewImagem && <img src={previewImagem} alt="Preview do produto" className={styles.previewLogo} />}
-                            <input type="file" id="imagemProduto" onChange={handleImagemChange} accept="image/*" disabled={loading} />
+                            
+                            {/* ✅ MELHORIA: Adicionando o atributo 'name' para consistência */}
+                            <input type="file" id="imagemProduto" name="imagem" onChange={handleImagemChange} accept="image/*" disabled={loading} />
+                            
                             {isEditMode && <p className={styles.aviso}>Selecione uma nova imagem apenas se desejar substituí-la.</p>}
                         </div>
                         

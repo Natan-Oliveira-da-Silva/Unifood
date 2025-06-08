@@ -26,14 +26,14 @@ function CabecalhoRestaurante({ nomeUsuario }) {
         <p className={styles.saudacao}>Olá, {nomeUsuario || 'Restaurante'}</p>
         
         {/* ✅ MELHORIA: Usando o componente <Link> para navegação */}
-        <Link to='/restaurante/cadastrar-detalhes' className={styles.navLink}>Meu Restaurante</Link>
-        <Link to='/restaurante/produtos' className={styles.navLink}>Meus Produtos</Link>
-        <Link to='/restaurante/produtos' className={styles.navLink}>Criar Produto</Link>
+        <Link to='/restaurante/inicio' className={styles.navLink}>Meu Restaurante</Link>
+        <Link to="/restaurante/meusprodutos" className={styles.navLink}>Meus Produtos</Link>
+        <Link to="/restaurante/criarproduto" className={styles.navLink}>Criar Produto</Link>
         
         {/* ✅ MELHORIA: Usando <button> para a ação de sair */}
-        <button type="button" onClick={handleSair} className={styles.botaoSair}>
+        <a type="button" onClick={handleSair} className={styles.botaoSair}>
             Sair
-        </button>
+        </a>
       </nav>
     </header>
   );

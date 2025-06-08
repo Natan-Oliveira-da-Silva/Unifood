@@ -1,5 +1,3 @@
-// backend/routes/restaurante.routes.js
-
 const express = require('express');
 const router = express.Router();
 
@@ -60,17 +58,11 @@ router.get(
 );
 
 
-/**
- * @route   DELETE /api/restaurantes/meu-restaurante
- * @desc    Apaga o restaurante do usuário logado.
- * @access  Privado
+/*
+ * ==================================================================
+ * ROTAS PÚBLICAS (Não exigem autenticação)
+ * ==================================================================
  */
-// ✅ ADICIONE ESTA ROTA
-router.delete(
-    '/meu-restaurante',
-    authMiddleware,
-    restauranteController.apagarRestaurante
-);
 
 /**
  * @route   GET /api/restaurantes

@@ -2,15 +2,21 @@ import React from 'react';
 import styles from './RestauranteCard.module.css';
 import imagemPadrao from '../../assets/restaure.png';
 
+const API_URL = 'http://localhost:3001';
+
 export default function RestauranteCard({ restaurante, onClick }) {
     if (!restaurante) return null;
 
     const notaFormatada = restaurante.nota_avaliacao != null ? restaurante.nota_avaliacao.toFixed(1).replace('.', ',') : 'N/A';
 
+    const imageUrl = restaurante.url_imagem_logo 
+        ? `${API_URL}${restaurante.url_imagem_logo}` 
+        : imagemPadrao;
+
     return (
         <div className={styles.card} onClick={() => onClick(restaurante)}>
             <img 
-                src={restaurante.url_imagem_logo || imagemPadrao} 
+                src={imageUrl} 
                 alt={`Logo de ${restaurante.nome}`} 
                 className={styles.cardImagem}
                 onError={(e) => { e.target.onerror = null; e.target.src = imagemPadrao; }} 

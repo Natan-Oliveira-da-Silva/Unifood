@@ -1,6 +1,6 @@
 // src/pages/Restaurante/MeusProdutos/MeusProdutos.jsx
 import React, { useEffect, useState, useCallback } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import styles from './MeusProdutos.module.css';
 import CabecalhoRestaurante from '../../../components/CabecalhoRestaurante/CabecalhoRestaurante.jsx';
 import imagemProdutoPadrao from '../../../assets/restaure.png';
@@ -13,7 +13,9 @@ export default function MeusProdutos() {
 
     const fetchMeusProdutos = useCallback(async () => {
         setLoading(true); setErro('');
-        const token = localStorage.getItem('authToken');
+        
+        // ✅ CORREÇÃO 1: Usando a chave correta 'token'
+        const token = localStorage.getItem('token');
         if (!token) {
             setErro("Autenticação necessária."); setLoading(false);
             setTimeout(() => navigate('/restaurante/login'), 2000); return;
@@ -23,31 +25,44 @@ export default function MeusProdutos() {
                 headers: { 'Authorization': `Bearer ${token}` }
             });
             const data = await response.json();
-            if (!response.ok) { setErro(data.message || "Erro ao carregar produtos."); setProdutos([]); }
-            else { setProdutos(data); }
-        } catch (error) { setErro("Falha ao conectar com o servidor.");
-        } finally { setLoading(false); }
+            if (!response.ok) { throw new Error(data.message || "Erro ao carregar produtos."); }
+            setProdutos(data);
+        } catch (error) { 
+            setErro(error.message);
+        } finally { 
+            setLoading(false); 
+        }
     }, [navigate]);
 
     useEffect(() => { fetchMeusProdutos(); }, [fetchMeusProdutos]);
 
     const handleExcluirProduto = async (idProduto) => {
         if (!window.confirm("Tem certeza que deseja excluir este produto?")) return;
-        setLoading(true); // Bloqueia a UI para evitar cliques duplos
-        const token = localStorage.getItem('authToken');
+        setLoading(true); 
+        
+        // ✅ CORREÇÃO 1: Usando a chave correta 'token'
+        const token = localStorage.getItem('token');
         try {
             const response = await fetch(`http://localhost:3001/api/produtos/${idProduto}`, {
-                method: 'DELETE', headers: { 'Authorization': `Bearer ${token}` }
+                method: 'DELETE', 
+                headers: { 'Authorization': `Bearer ${token}` }
             });
-            const data = await response.json();
+            
+            // ✅ MELHORIA: Lida com respostas sem corpo JSON (ex: status 204)
             if (!response.ok) {
-                alert(data.message || `Erro ao excluir produto.`);
-            } else {
-                alert(data.message || "Produto excluído com sucesso!");
-                setProdutos(produtosAtuais => produtosAtuais.filter(p => p.id_produto !== idProduto));
+                const data = await response.json();
+                throw new Error(data.message || `Erro ao excluir produto.`);
             }
-        } catch (error) { alert("Falha de conexão ao excluir.");
-        } finally { setLoading(false); }
+            
+            alert("Produto excluído com sucesso!");
+            // Remove o produto da lista na tela sem precisar recarregar a página
+            setProdutos(produtosAtuais => produtosAtuais.filter(p => p.id_produto !== idProduto));
+
+        } catch (error) { 
+            alert(error.message);
+        } finally { 
+            setLoading(false); 
+        }
     };
 
     const handleEditarProduto = (produtoParaEditar) => {
@@ -56,14 +71,18 @@ export default function MeusProdutos() {
 
     const formatarPreco = (preco) => new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(preco);
 
-    if (loading) { /* ... renderiza loading ... */ }
-    if (erro) { /* ... renderiza erro ... */ }
+    if (loading) return <p>Carregando...</p>; 
+    if (erro) return <p>{erro}</p>;
 
     return (
         <>
             <CabecalhoRestaurante />
             <div className={styles.container}>
-                <h1 className={styles.titulo}>Meus Produtos</h1>
+                <div className={styles.header}>
+                    <h1 className={styles.titulo}>Meus Produtos</h1>
+ 
+                </div>
+                
                 {produtos.length === 0 ? (
                     <div className={styles.semProdutos}>
                         <p className={styles.aviso}>Você ainda não cadastrou nenhum produto.</p>
@@ -75,7 +94,8 @@ export default function MeusProdutos() {
                     <div className={styles.listaProdutos}>
                         {produtos.map(produto => (
                             <div key={produto.id_produto} className={styles.cardProduto}>
-                                <img src={produto.url_imagem_principal || imagemProdutoPadrao} alt={produto.nome} className={styles.imagemProduto}/>
+                                {/* ✅ CORREÇÃO 2: Usando o nome de campo correto 'url_imagem' */}
+                                <img src={produto.url_imagem ? `http://localhost:3001${produto.url_imagem}` : imagemProdutoPadrao} alt={produto.nome} className={styles.imagemProduto}/>
                                 <div className={styles.infoProduto}>
                                     <h2 className={styles.nomeProduto}>{produto.nome}</h2>
                                     <p className={styles.descricaoProduto}>{produto.descricao}</p>

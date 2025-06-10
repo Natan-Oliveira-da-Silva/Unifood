@@ -2,8 +2,8 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import CabecalhoRestaurante from '../../../components/CabecalhoRestaurante/CabecalhoRestaurante.jsx';
 import styles from './PedidosRestaurante.module.css';
+import imagemProdutoPadrao from '../../../assets/restaure.png'; // Imagem padrão
 
-// ✅ Boa prática: Definir a URL base da API como uma constante
 const API_URL = 'http://localhost:3001';
 
 export default function PedidosRestaurante() {
@@ -12,13 +12,11 @@ export default function PedidosRestaurante() {
     const [error, setError] = useState('');
     const navigate = useNavigate();
 
-    // ✅ CORREÇÃO: Removido o useCallback desnecessário para simplificar o fluxo de dados
-    const fetchPedidos = async () => {
+    const fetchPedidos = useCallback(async () => {
         setLoading(true);
-        setError(''); // Limpa erros antigos a cada nova busca
         const token = localStorage.getItem('token');
         if (!token) {
-            setError("Sessão inválida. Por favor, faça o login novamente.");
+            setError("Sessão inválida.");
             setLoading(false);
             return;
         }
@@ -37,12 +35,11 @@ export default function PedidosRestaurante() {
         } finally {
             setLoading(false);
         }
-    };
+    }, []);
 
-    // Busca os pedidos quando a página carrega pela primeira vez
     useEffect(() => {
         fetchPedidos();
-    }, []); // ✅ O array vazio garante que isso rode apenas uma vez na montagem
+    }, [fetchPedidos]);
 
     const handleStatusChange = async (idPedido, novoStatus) => {
         let motivo = '';
@@ -66,7 +63,7 @@ export default function PedidosRestaurante() {
                 throw new Error(errData.message || 'Não foi possível atualizar o status.');
             }
             alert("Status atualizado com sucesso!");
-            fetchPedidos(); // ✅ Recarrega a lista de pedidos para refletir a mudança
+            fetchPedidos();
         } catch (err) {
             alert(err.message);
         }
@@ -101,16 +98,23 @@ export default function PedidosRestaurante() {
                                     <div><strong>Data:</strong> {new Date(pedido.data_pedido).toLocaleString('pt-BR')}</div>
                                     <div><strong>Total:</strong> {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(pedido.valor_total)}</div>
                                     <div><strong>Pagamento:</strong> {pedido.forma_pagamento_nome}</div>
-                                    <div className={styles.endereco}><strong>Endereço:</strong> {`${pedido.endereco_logradouro || ''}, ${pedido.endereco_numero || ''} - ${pedido.endereco_bairro || ''}, ${pedido.endereco_cidade || ''} / ${pedido.endereco_estado || ''}`}</div>
+                                    <div className={styles.endereco}><strong>Endereço:</strong> {`${pedido.endereco_logradouro || 'Rua não informada'}, ${pedido.endereco_numero || 'S/N'} - ${pedido.endereco_bairro || 'Bairro não informado'}`}</div>
                                 </div>
                                 
                                 <div className={styles.itensPedido}>
                                     <strong>Itens:</strong>
                                     <ul>
-                                        {/* ✅ Lógica para exibir os itens (já estava correta) */}
+                                        {/* ✅ LÓGICA ATUALIZADA PARA MOSTRAR IMAGEM E DETALHES */}
                                         {pedido.itens && pedido.itens.map(item => (
-                                            <li key={item.id_item_pedido}>
-                                                {item.quantidade}x {item.nome_produto}
+                                            <li key={item.id_item_pedido} className={styles.item}>
+                                                <img 
+                                                    src={item.url_imagem ? `${API_URL}${item.url_imagem}` : imagemProdutoPadrao} 
+                                                    alt={item.nome_produto} 
+                                                    className={styles.imagemItem}
+                                                />
+                                                <span className={styles.itemInfo}>
+                                                    {item.quantidade}x {item.nome_produto}
+                                                </span>
                                             </li>
                                         ))}
                                     </ul>

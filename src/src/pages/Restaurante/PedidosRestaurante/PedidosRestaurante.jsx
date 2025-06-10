@@ -2,7 +2,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import CabecalhoRestaurante from '../../../components/CabecalhoRestaurante/CabecalhoRestaurante.jsx';
 import styles from './PedidosRestaurante.module.css';
-import imagemProdutoPadrao from '../../../assets/restaure.png'; // Imagem padrão
+import imagemProdutoPadrao from '../../../assets/restaure.png';
 
 const API_URL = 'http://localhost:3001';
 
@@ -10,6 +10,10 @@ export default function PedidosRestaurante() {
     const [pedidos, setPedidos] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
+    
+    // ✅ 1. Adicionando um estado para a mensagem de sucesso
+    const [successMessage, setSuccessMessage] = useState('');
+
     const navigate = useNavigate();
 
     const fetchPedidos = useCallback(async () => {
@@ -41,16 +45,20 @@ export default function PedidosRestaurante() {
         fetchPedidos();
     }, [fetchPedidos]);
 
+    // ✅ 2. Lógica de atualização com a nova mensagem de sucesso
     const handleStatusChange = async (idPedido, novoStatus) => {
         let motivo = '';
         if (novoStatus === 'Cancelado') {
             motivo = prompt("Por favor, informe o motivo do cancelamento (será visível ao cliente):");
             if (motivo === null || motivo.trim() === '') {
-                alert("O motivo do cancelamento é obrigatório.");
-                return;
+                return; // Não faz nada se o usuário cancelar ou deixar em branco
             }
         }
         
+        // Limpa mensagens antigas
+        setError('');
+        setSuccessMessage('');
+
         const token = localStorage.getItem('token');
         try {
             const response = await fetch(`${API_URL}/api/pedidos/${idPedido}/status`, {
@@ -62,10 +70,18 @@ export default function PedidosRestaurante() {
                 const errData = await response.json();
                 throw new Error(errData.message || 'Não foi possível atualizar o status.');
             }
-            alert("Status atualizado com sucesso!");
-            fetchPedidos();
+            
+            // Define a mensagem de sucesso dinâmica
+            setSuccessMessage(`Status do Pedido #${idPedido} atualizado para "${novoStatus}".`);
+            fetchPedidos(); // Recarrega a lista
+
+            // Limpa a mensagem de sucesso após 3 segundos
+            setTimeout(() => {
+                setSuccessMessage('');
+            }, 3000);
+
         } catch (err) {
-            alert(err.message);
+            setError(err.message);
         }
     };
 
@@ -75,13 +91,16 @@ export default function PedidosRestaurante() {
     };
     
     if (loading) return <div><CabecalhoRestaurante /><p className={styles.mensagem}>Carregando pedidos...</p></div>;
-    if (error) return <div><CabecalhoRestaurante /><p className={styles.mensagemErro}>{error}</p></div>;
-
+    
     return (
         <>
             <CabecalhoRestaurante />
             <main className={styles.container}>
                 <h1>Pedidos Recebidos</h1>
+                
+                {error && <p className={styles.mensagemErro}>{error}</p>}
+                {successMessage && <p className={styles.mensagemSucesso}>{successMessage}</p>}
+
                 {pedidos.length === 0 ? (
                     <p className={styles.mensagem}>Nenhum pedido recebido até o momento.</p>
                 ) : (
@@ -92,20 +111,17 @@ export default function PedidosRestaurante() {
                                     <h3>Pedido #{pedido.id_pedido}</h3>
                                     <span className={`${styles.status} ${getStatusClass(pedido.status)}`}>{pedido.status}</span>
                                 </div>
-
                                 <div className={styles.detalhesGrid}>
                                     <div><strong>Cliente:</strong> {pedido.nome_cliente}</div>
                                     <div><strong>Data:</strong> {new Date(pedido.data_pedido).toLocaleString('pt-BR')}</div>
                                     <div><strong>Total:</strong> {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(pedido.valor_total)}</div>
                                     <div><strong>Pagamento:</strong> {pedido.forma_pagamento_nome}</div>
-                                    <div className={styles.endereco}><strong>Endereço:</strong> {`${pedido.endereco_logradouro || 'Rua não informada'}, ${pedido.endereco_numero || 'S/N'} - ${pedido.endereco_bairro || 'Bairro não informado'}`}</div>
+                                    <div className={styles.endereco}><strong>Endereço:</strong> {`${pedido.endereco_logradouro || ''}, ${pedido.endereco_numero || ''} - ${pedido.endereco_bairro || ''}`}</div>
                                 </div>
-                                
                                 <div className={styles.itensPedido}>
                                     <strong>Itens:</strong>
                                     <ul>
-                                        {/* ✅ LÓGICA ATUALIZADA PARA MOSTRAR IMAGEM E DETALHES */}
-                                        {pedido.itens && pedido.itens.map(item => (
+                                        {pedido.itens?.map(item => (
                                             <li key={item.id_item_pedido} className={styles.item}>
                                                 <img 
                                                     src={item.url_imagem ? `${API_URL}${item.url_imagem}` : imagemProdutoPadrao} 
@@ -119,10 +135,8 @@ export default function PedidosRestaurante() {
                                         ))}
                                     </ul>
                                 </div>
-
                                 {pedido.observacao && <p className={styles.observacao}><strong>Observação do Cliente:</strong> {pedido.observacao}</p>}
                                 {pedido.motivo_cancelamento && <p className={styles.cancelamento}><strong>Motivo do Cancelamento:</strong> {pedido.motivo_cancelamento}</p>}
-
                                 <div className={styles.acoes}>
                                     <label htmlFor={`status-${pedido.id_pedido}`}>Alterar Status:</label>
                                     <select 

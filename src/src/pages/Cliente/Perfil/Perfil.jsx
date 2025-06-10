@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom'; // Importa o useNavigate
+import { useNavigate } from 'react-router-dom';
 import CabecalhoCliente from '../../../components/CabecalhoCliente/CabecalhoCliente';
 import styles from './Perfil.module.css';
 
 const API_URL = 'http://localhost:3001';
 
 export default function Perfil() {
-    const navigate = useNavigate(); // Inicializa o hook de navegação
+    const navigate = useNavigate();
     const [formData, setFormData] = useState({
         nome_completo: '',
         email: '',
@@ -82,26 +82,25 @@ export default function Perfil() {
             const data = await response.json();
             if (!response.ok) throw new Error(data.message);
 
-            // ✅ --- LÓGICA DE SUCESSO E REDIRECIONAMENTO ---
-            // 1. Define uma mensagem de sucesso mais informativa
             setSuccess("Perfil atualizado com sucesso! Redirecionando para a página inicial...");
             
-            // 2. Limpa o campo de senha da tela por segurança
             setFormData(prev => ({ ...prev, senha: '' }));
             
-            // 3. Usa o setTimeout para esperar 2 segundos antes de redirecionar
+            const userDataString = localStorage.getItem('usuario');
+            if (userDataString) {
+                const userData = JSON.parse(userDataString);
+                userData.nome_completo = formData.nome_completo;
+                localStorage.setItem('usuario', JSON.stringify(userData));
+            }
+
             setTimeout(() => {
-                navigate('/cliente/inicio');
-            }, 2000); // 2000 milissegundos = 2 segundos
+                window.location.reload(); 
+            }, 2000);
 
         } catch (err) {
             setError(err.message);
         } finally {
-            // Garante que o botão só seja reativado após o redirecionamento
-            // Não vamos mais parar o loading aqui em caso de sucesso
-            if (error) {
-                setLoading(false);
-            }
+            setLoading(false);
         }
     };
 
@@ -109,7 +108,8 @@ export default function Perfil() {
 
     return (
         <>
-            <CabecalhoCliente nomeUsuario={formData.nome_completo} />
+            {/* ✅ CORREÇÃO: O cabeçalho agora é chamado sem nenhuma propriedade */}
+            <CabecalhoCliente />
             <main className={styles.container}>
                 <form onSubmit={handleSubmit} className={styles.form}>
                     <h2>Deseja Alterar os seus dados?</h2>
@@ -128,7 +128,6 @@ export default function Perfil() {
                     <input name="endereco_cidade" value={formData.endereco_cidade} onChange={handleInputChange} placeholder="Cidade" />
                     <input name="endereco_estado" value={formData.endereco_estado} onChange={handleInputChange} placeholder="Estado (UF)" />
 
-                    {/* O botão fica desativado durante o loading ou após o sucesso para evitar cliques duplos */}
                     <button type="submit" disabled={loading || success}>
                         {loading ? 'Salvando...' : 'Alterar Perfil'}
                     </button>

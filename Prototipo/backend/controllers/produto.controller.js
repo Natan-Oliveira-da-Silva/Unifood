@@ -7,9 +7,11 @@ exports.criarProduto = async (req, res) => {
     try {
         const { nome, descricao, preco } = req.body;
         const idUsuarioResponsavel = req.usuarioDecodificado.id_usuario;
+
         if (!nome || !preco) {
             return res.status(400).json({ message: "Nome e preço são obrigatórios." });
         }
+
         const restaurante = await new Promise((resolve, reject) => {
             db.get("SELECT id_restaurante FROM restaurantes WHERE id_usuario_responsavel = ?", [idUsuarioResponsavel], (err, row) => {
                 if (err) return reject(new Error("Erro interno ao localizar restaurante."));
@@ -17,21 +19,24 @@ exports.criarProduto = async (req, res) => {
                 resolve(row);
             });
         });
+
         const urlImagemProduto = req.file ? `/uploads/${req.file.filename}` : null;
+        
         const sql = `INSERT INTO produtos (nome, descricao, preco, url_imagem, id_restaurante) VALUES (?, ?, ?, ?, ?)`;
         const params = [nome, descricao, parseFloat(preco), urlImagemProduto, restaurante.id_restaurante];
-        db.run(sql, params, function (err) {
-            if (err) {
-                console.error("Erro ao cadastrar produto:", err);
-                return res.status(500).json({ message: "Erro ao cadastrar produto no banco de dados." });
-            }
-            res.status(201).json({ message: "Produto criado com sucesso!", id_produto: this.lastID });
+
+        const { lastID } = await new Promise((resolve, reject) => {
+            db.run(sql, params, function (err) {
+                if (err) return reject(new Error("Erro ao cadastrar produto no banco de dados."));
+                resolve(this);
+            });
         });
+        
+        res.status(201).json({ message: "Produto criado com sucesso!", id_produto: lastID });
+
     } catch (error) {
-        if (error.message.includes("Nenhum restaurante encontrado")) {
-            return res.status(403).json({ message: error.message });
-        }
-        res.status(500).json({ message: "Ocorreu um erro inesperado no servidor." });
+        const statusCode = error.message.includes("Nenhum restaurante encontrado") ? 403 : 500;
+        res.status(statusCode).json({ message: error.message || "Ocorreu um erro inesperado no servidor." });
     }
 };
 
@@ -45,7 +50,6 @@ exports.listarMeusProdutos = async (req, res) => {
                 resolve(row);
             });
         });
-
         const sql = "SELECT * FROM produtos WHERE id_restaurante = ? ORDER BY nome ASC";
         db.all(sql, [restaurante.id_restaurante], (err, rows) => {
             if (err) return res.status(500).json({ message: "Erro interno ao buscar seus produtos." });
@@ -116,12 +120,13 @@ exports.atualizarProduto = async (req, res) => {
     }
 };
 
-// --- APAGAR UM PRODUTO ---
+// ✅ --- APAGAR UM PRODUTO (VERSÃO FINAL E COMPLETA) ---
 exports.apagarProduto = async (req, res) => {
     try {
         const idUsuarioLogado = req.usuarioDecodificado.id_usuario;
         const { id: idProduto } = req.params;
 
+        // 1. Segurança: Verifica se o produto a ser apagado pertence ao restaurante do usuário logado
         const sqlVerifica = `
             SELECT p.id_produto, p.url_imagem
             FROM produtos p
@@ -136,20 +141,28 @@ exports.apagarProduto = async (req, res) => {
             });
         });
 
+        // 2. Apaga o registro do produto do banco de dados
         const sqlDelete = "DELETE FROM produtos WHERE id_produto = ?";
-        db.run(sqlDelete, [idProduto], function(err) {
-            if (err) return res.status(500).json({ message: "Erro ao apagar produto."});
-
-            if (produto.url_imagem) {
-                const caminhoImagem = path.join(__dirname, '..', produto.url_imagem);
-                if (fs.existsSync(caminhoImagem)) {
-                    fs.unlink(caminhoImagem, (err) => {
-                        if (err) console.error("Erro ao apagar arquivo de imagem do produto:", err);
-                    });
-                }
-            }
-            res.status(200).json({ message: "Produto apagado com sucesso!" });
+        await new Promise((resolve, reject) => {
+            db.run(sqlDelete, [idProduto], function(err) {
+                if (err) return reject(new Error("Erro ao apagar produto do banco de dados."));
+                resolve(this);
+            });
         });
+
+        // 3. Apaga o arquivo de imagem do servidor, se ele existir
+        if (produto.url_imagem) {
+            const caminhoImagem = path.join(__dirname, '..', produto.url_imagem);
+            if (fs.existsSync(caminhoImagem)) {
+                fs.unlink(caminhoImagem, (err) => {
+                    if (err) console.error("Erro ao apagar arquivo de imagem do produto:", err);
+                });
+            }
+        }
+        
+        // 4. Envia a resposta de sucesso
+        res.status(200).json({ message: "Produto apagado com sucesso!" });
+
     } catch (error) {
         const statusCode = error.message.includes("não encontrado") ? 404 : 500;
         res.status(statusCode).json({ message: error.message });

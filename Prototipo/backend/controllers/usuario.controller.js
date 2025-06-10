@@ -2,7 +2,7 @@ const { db } = require('../database/db.js');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 
-// --- REGISTRAR NOVO USUÁRIO ---
+// --- REGISTRAR NOVO USUÁRIO (LÓGICA RESTAURADA) ---
 exports.registrar = async (req, res) => {
     try {
         const { nome_completo, email, senha, tipo_usuario } = req.body;
@@ -37,7 +37,7 @@ exports.registrar = async (req, res) => {
     }
 };
 
-// --- LOGIN DE USUÁRIO ---
+// --- LOGIN DE USUÁRIO (LÓGICA RESTAURADA) ---
 exports.login = async (req, res) => {
     try {
         const { email, senha, tipo_usuario } = req.body;
@@ -98,7 +98,7 @@ exports.login = async (req, res) => {
     }
 };
 
-// --- FUNÇÕES DE PERFIL ---
+// --- FUNÇÕES DE PERFIL (JÁ ESTAVAM CORRETAS) ---
 exports.buscarMeuPerfil = async (req, res) => {
     try {
         const idUsuario = req.usuarioDecodificado.id_usuario;
@@ -160,6 +160,7 @@ exports.atualizarMeuPerfil = async (req, res) => {
         res.status(500).json({ message: "Ocorreu um erro inesperado no servidor." });
     }
 };
+
 
 // --- EXPORTAÇÕES ---
 module.exports = {

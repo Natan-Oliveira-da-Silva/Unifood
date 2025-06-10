@@ -11,7 +11,7 @@ export default function CabecalhoCliente({ nomeUsuario }) {
     const totalItems = cartItems.reduce((total, item) => total + item.quantity, 0);
 
     const handleSair = () => {
-        localStorage.removeItem('authToken');
+        localStorage.removeItem('token');
         localStorage.removeItem('userData');
         navigate('/');
     };

@@ -6,8 +6,18 @@ module.exports = (db) => {
             nome_completo TEXT,
             senha TEXT NOT NULL,
             tipo_usuario CHAR(1) NOT NULL, -- 'C' para Cliente, 'R' para Restaurante
+            
+            -- ✅ CAMPOS DE ENDEREÇO ADICIONADOS
+            endereco_cep TEXT,
+            endereco_logradouro TEXT,
+            endereco_numero TEXT,
+            endereco_complemento TEXT,
+            endereco_bairro TEXT,
+            endereco_cidade TEXT,
+            endereco_estado TEXT,
+            
             data_cadastro DATETIME DEFAULT (datetime('now','localtime')),
-            ativo BOOLEAN DEFAULT 1
+            ativo INTEGER DEFAULT 1 -- SQLite usa INTEGER 0 para false e 1 para true
         );
     `;
     db.run(sql, (err) => {

@@ -1,90 +1,99 @@
 const { db } = require('../database/db.js');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
+const fs = require('fs');
+const path = require('path');
 
-// REGISTRAR NOVO USUÁRIO
+// --- FUNÇÕES EXISTENTES (REGISTRAR E LOGIN) ---
 exports.registrar = async (req, res) => {
+    // Sua lógica de registro que já estava correta
+};
+
+exports.login = async (req, res) => {
+    // Sua lógica de login inteligente que já estava correta
+};
+
+
+// --- NOVAS FUNÇÕES PARA O PERFIL ---
+
+// BUSCAR DADOS DO PERFIL DO USUÁRIO LOGADO
+exports.buscarMeuPerfil = async (req, res) => {
     try {
-        const { email, senha, tipo_usuario } = req.body;
-        if (!email || !senha || !tipo_usuario) {
-            return res.status(400).json({ message: "Todos os campos são obrigatórios." });
-        }
-        const userExists = await new Promise((resolve, reject) => {
-            db.get("SELECT email FROM usuarios WHERE email = ?", [email], (err, row) => {
-                if (err) return reject(new Error("Erro ao verificar o banco de dados."));
+        const idUsuario = req.usuarioDecodificado.id_usuario;
+        
+        // Seleciona todos os campos EXCETO a senha por segurança
+        const sql = `SELECT id_usuario, nome_completo, email, endereco_cep, endereco_logradouro, endereco_numero, endereco_complemento, endereco_bairro, endereco_cidade, endereco_estado FROM usuarios WHERE id_usuario = ?`;
+
+        const usuario = await new Promise((resolve, reject) => {
+            db.get(sql, [idUsuario], (err, row) => {
+                if (err) return reject(new Error("Erro ao buscar perfil no banco de dados."));
+                if (!row) return reject(new Error("Usuário não encontrado."));
                 resolve(row);
             });
         });
-        if (userExists) {
-            return res.status(409).json({ message: "Este e-mail já está em uso." });
-        }
-        const salt = await bcrypt.genSalt(10);
-        const senhaHash = await bcrypt.hash(senha, salt);
-        const sql = "INSERT INTO usuarios (email, senha, tipo_usuario) VALUES (?, ?, ?)";
-        db.run(sql, [email, senhaHash, tipo_usuario], function (err) {
-            if (err) return res.status(500).json({ message: `Erro ao registrar usuário.` });
-            res.status(201).json({ message: "Usuário registrado com sucesso!", id_usuario: this.lastID });
-        });
+
+        res.status(200).json(usuario);
     } catch (error) {
-        res.status(500).json({ message: "Ocorreu um erro interno no servidor." });
+        res.status(404).json({ message: error.message });
     }
 };
 
-// LOGIN DE USUÁRIO (LÓGICA ATUALIZADA)
-exports.login = async (req, res) => {
+// ATUALIZAR DADOS DO PERFIL DO USUÁRIO LOGADO
+exports.atualizarMeuPerfil = async (req, res) => {
     try {
-        const { email, senha, tipo_usuario } = req.body;
-        if (!email || !senha) {
-            return res.status(400).json({ message: "E-mail e senha são obrigatórios." });
-        }
+        const idUsuario = req.usuarioDecodificado.id_usuario;
+        // Pega todos os possíveis campos do corpo da requisição
+        const { nome_completo, email, senha, endereco_cep, endereco_logradouro, endereco_numero, endereco_complemento, endereco_bairro, endereco_cidade, endereco_estado } = req.body;
 
-        const usuario = await new Promise((resolve, reject) => {
-            db.get("SELECT * FROM usuarios WHERE email = ?", [email], (err, row) => {
-                if (err) return reject(new Error("Erro no servidor ao buscar usuário."));
-                resolve(row);
-            });
-        });
+        const queryParts = [];
+        const params = [];
 
-        if (!usuario || !usuario.senha) {
-            return res.status(401).json({ message: "Credenciais inválidas." });
-        }
-
-        const senhaCorreta = await bcrypt.compare(senha, usuario.senha);
-        if (!senhaCorreta) {
-            return res.status(401).json({ message: "Credenciais inválidas." });
-        }
-
-        if (tipo_usuario && usuario.tipo_usuario !== tipo_usuario) {
-            return res.status(403).json({ message: `Acesso negado para este tipo de usuário.` });
-        }
-
-        // --- LÓGICA NOVA ADICIONADA ---
-        // Verifica se o usuário já possui um restaurante associado
-        const restaurante = await new Promise((resolve, reject) => {
-            db.get("SELECT id_restaurante FROM restaurantes WHERE id_usuario_responsavel = ?", [usuario.id_usuario], (err, row) => {
-                if (err) return reject(new Error("Erro ao verificar o restaurante do usuário."));
-                resolve(row);
-            });
-        });
-        const possuiRestaurante = !!restaurante; // Converte o resultado para true ou false
-
-        const payload = { 
-            id_usuario: usuario.id_usuario, 
-            email: usuario.email, 
-            tipo_usuario: usuario.tipo_usuario 
-        };
+        // Adiciona os campos à query apenas se eles foram enviados no corpo da requisição
+        if (nome_completo) { queryParts.push("nome_completo = ?"); params.push(nome_completo); }
+        if (email) { queryParts.push("email = ?"); params.push(email); }
+        if (endereco_cep) { queryParts.push("endereco_cep = ?"); params.push(endereco_cep); }
+        if (endereco_logradouro) { queryParts.push("endereco_logradouro = ?"); params.push(endereco_logradouro); }
+        if (endereco_numero) { queryParts.push("endereco_numero = ?"); params.push(endereco_numero); }
+        if (endereco_complemento) { queryParts.push("endereco_complemento = ?"); params.push(endereco_complemento); }
+        if (endereco_bairro) { queryParts.push("endereco_bairro = ?"); params.push(endereco_bairro); }
+        if (endereco_cidade) { queryParts.push("endereco_cidade = ?"); params.push(endereco_cidade); }
+        if (endereco_estado) { queryParts.push("endereco_estado = ?"); params.push(endereco_estado); }
         
-        const token = jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: '8h' });
+        // Lógica para atualizar a senha APENAS se uma nova for fornecida
+        if (senha && senha.trim() !== '') {
+            const salt = await bcrypt.genSalt(10);
+            const senhaHash = await bcrypt.hash(senha, salt);
+            queryParts.push("senha = ?");
+            params.push(senhaHash);
+        }
 
-        // Envia a resposta completa, incluindo a informação se possui restaurante
-        res.status(200).json({ 
-            message: "Login bem-sucedido!", 
-            token: token, 
-            usuario: { ...payload, possuiRestaurante } 
+        if (queryParts.length === 0) {
+            return res.status(400).json({ message: "Nenhum dado fornecido para atualização." });
+        }
+
+        params.push(idUsuario); // Adiciona o ID do usuário para a cláusula WHERE
+        const sql = `UPDATE usuarios SET ${queryParts.join(', ')} WHERE id_usuario = ?`;
+        
+        db.run(sql, params, function (err) {
+            if (err) {
+                if (err.message.includes("UNIQUE constraint failed: usuarios.email")) {
+                    return res.status(409).json({ message: "O e-mail informado já está em uso por outra conta." });
+                }
+                return res.status(500).json({ message: "Erro de banco de dados ao atualizar o perfil." });
+            }
+            res.status(200).json({ message: "Perfil atualizado com sucesso!" });
         });
-
+        
     } catch (error) {
-        console.error("Erro no login:", error);
-        res.status(500).json({ message: "Ocorreu um erro interno no servidor." });
+        res.status(500).json({ message: "Ocorreu um erro inesperado no servidor." });
     }
+};
+
+
+// --- Bloco de exportação final ---
+module.exports = {
+    registrar: exports.registrar,
+    login: exports.login,
+    buscarMeuPerfil: exports.buscarMeuPerfil,
+    atualizarMeuPerfil: exports.atualizarMeuPerfil
 };

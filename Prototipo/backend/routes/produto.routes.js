@@ -25,4 +25,6 @@ router.delete('/:id', authMiddleware, produtoController.apagarProduto);
 // LISTAR produtos de um restaurante para um cliente ver
 router.get('/por-restaurante/:id', produtoController.listarProdutosDeUmRestaurante);
 
+
+
 module.exports = router;

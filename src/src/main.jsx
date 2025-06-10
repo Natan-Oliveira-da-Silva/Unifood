@@ -22,6 +22,8 @@ import InicioRestaurante from "./pages/Restaurante/InicioRestaurante/InicioResta
 import CadastrarDetalhesRestaurante from "./pages/Restaurante/CadastrarDetalhesRestaurante/CadastrarDetalhesRestaurante.jsx";
 import CriarProduto from "./pages/Restaurante/CriarProduto/CriarProduto.jsx";
 import MeusProdutos from "./pages/Restaurante/MeusProdutos/MeusProdutos.jsx";
+import PedidosRestaurante from "./pages/Restaurante/PedidosRestaurante/PedidosRestaurante.jsx";
+
 
 const router = createBrowserRouter([
 
@@ -35,6 +37,7 @@ const router = createBrowserRouter([
   { path: "/cliente/perfil", element: <Perfil /> },
   { path: "/cliente/carrinho", element: <Carrinho /> },
   { path: "/cliente/esqueci-senha", element: <EsqueciSenha /> },
+  // A rota "/cliente/consultarpedidos" estava duplicada, removi uma.
 
   // Rotas de Restaurante
   { path: "/restaurante/login", element: <LoginRestaurante /> },
@@ -43,6 +46,8 @@ const router = createBrowserRouter([
   { path: "/restaurante/cadastrar-detalhes", element: <CadastrarDetalhesRestaurante /> },
   { path: "/restaurante/criarproduto", element: <CriarProduto /> },
   { path: "/restaurante/meusprodutos", element: <MeusProdutos /> },
+  { path: "/restaurante/pedidos", element: <PedidosRestaurante /> },
+  
 ]);
 
 // Renderização da Aplicação

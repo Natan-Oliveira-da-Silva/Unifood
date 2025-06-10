@@ -25,3 +25,20 @@ a, p:hover {
   color: #28a745; 
 }
 
+.badge {
+    background-color: #dc3545; /* Vermelho */
+    color: white;
+    border-radius: 50%; /* Faz a forma de círculo */
+    padding: 2px 7px;
+    font-size: 0.75rem;
+    font-weight: bold;
+    position: relative;
+    top: -8px; /* Ajusta a posição vertical */
+    left: 4px; /* Ajusta a posição horizontal */
+    margin-left: 2px;
+}
+
+/* Para o navLink ter um posicionamento de referência */
+.navLink {
+    position: relative;
+}

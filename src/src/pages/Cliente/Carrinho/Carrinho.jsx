@@ -1,10 +1,11 @@
-// src/pages/Cliente/Carrinho/Carrinho.jsx
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useCart } from '../../../context/CartContext';
 import styles from './Carrinho.module.css';
 import CabecalhoCliente from '../../../components/CabecalhoCliente/CabecalhoCliente.jsx';
 import imagemProdutoPadrao from '../../../assets/restaure.png';
+
+const API_URL = 'http://localhost:3001';
 
 export default function Carrinho() {
     const { cartItems, removeFromCart, updateItemQuantity, clearCart } = useCart();
@@ -12,23 +13,52 @@ export default function Carrinho() {
     
     const [loading, setLoading] = useState(false);
     const [erro, setErro] = useState('');
-    
-    // ✅ Estados para os novos campos do pedido
     const [observacao, setObservacao] = useState('');
-    const [idFormaPagamento, setIdFormaPagamento] = useState('1'); // Ex: '1' para Dinheiro como padrão
+    const [idFormaPagamento, setIdFormaPagamento] = useState('1');
+    const [taxaFrete, setTaxaFrete] = useState(0);
+
+    useEffect(() => {
+        const fetchTaxaFrete = async () => {
+            if (cartItems.length > 0) {
+                const idRestaurante = cartItems[0].id_restaurante;
+                if (idRestaurante) {
+                    try {
+                        const response = await fetch(`${API_URL}/api/restaurantes/${idRestaurante}`);
+                        if (response.ok) {
+                            const data = await response.json();
+                            setTaxaFrete(data.taxa_frete);
+                        }
+                    } catch (error) {
+                        console.error("Erro ao buscar taxa de frete:", error);
+                        setTaxaFrete(0);
+                    }
+                }
+            } else {
+                setTaxaFrete(0); // Zera o frete se o carrinho estiver vazio
+            }
+        };
+        fetchTaxaFrete();
+    }, [cartItems]);
 
     const calcularSubtotalItem = (item) => {
         return item.preco * item.quantity;
     };
-
-    const calcularTotalCarrinho = () => {
+    
+    const calcularSubtotalCarrinho = () => {
         return cartItems.reduce((total, item) => total + calcularSubtotalItem(item), 0);
     };
 
+    const calcularTotalCarrinho = () => {
+        const subtotal = calcularSubtotalCarrinho();
+        return subtotal + (Number(taxaFrete) || 0);
+    };
+
     const formatarPreco = (preco) => {
+        if (isNaN(preco)) return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(0);
         return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(preco);
     };
 
+    // ✅ --- FUNÇÃO FINALIZAR COMPRA COMPLETA --- ✅
     const handleFinalizarCompra = async () => {
         setLoading(true);
         setErro('');
@@ -39,29 +69,28 @@ export default function Carrinho() {
             return;
         }
 
-        // ✅ CORREÇÃO 1: Usando a chave correta 'token'
         const token = localStorage.getItem('token');
         if (!token) {
             setErro("Autenticação necessária. Faça o login para continuar.");
             setLoading(false);
+            // Opcional: redirecionar para o login
+            setTimeout(() => navigate('/cliente/login'), 2500);
             return;
         }
 
-        // ✅ CORREÇÃO 2: Montando o corpo da requisição no formato esperado pelo backend
+        // Monta o objeto do pedido no formato que o backend espera
         const pedidoParaEnviar = {
             id_restaurante: cartItems[0]?.id_restaurante,
             id_forma_pagamento: parseInt(idFormaPagamento),
             observacao: observacao,
             itens: cartItems.map(item => ({
                 id_produto: item.id_produto,
-                // O nome da propriedade no seu context é 'quantity', mas o backend pode esperar 'quantidade'
-                // Ajuste aqui se necessário, vamos assumir que o backend espera 'quantidade'.
-                quantidade: item.quantity 
+                quantidade: item.quantity
             }))
         };
         
         try {
-            const response = await fetch('http://localhost:3001/api/pedidos', {
+            const response = await fetch(`${API_URL}/api/pedidos`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -72,19 +101,12 @@ export default function Carrinho() {
 
             const data = await response.json();
             if (!response.ok) {
-                // Trata o caso de sessão expirada de forma amigável
-                if (response.status === 401) {
-                    localStorage.removeItem('token');
-                    setErro("Sua sessão expirou. Por favor, faça login novamente.");
-                    setTimeout(() => navigate('/cliente/login'), 3000);
-                } else {
-                    throw new Error(data.message || "Não foi possível finalizar o pedido.");
-                }
-            } else {
-                alert("Pedido realizado com sucesso!");
-                clearCart();
-                navigate('/cliente/consultarpedidos');
+                throw new Error(data.message || "Não foi possível finalizar o pedido.");
             }
+            
+            alert("Pedido realizado com sucesso!");
+            clearCart(); // Limpa o carrinho após o sucesso
+            navigate('/cliente/consultarpedidos'); // Redireciona para a tela de histórico
 
         } catch (error) {
             setErro(error.message);
@@ -104,28 +126,38 @@ export default function Carrinho() {
                 {cartItems.length === 0 ? (
                     <div className={styles.carrinhoVazio}>
                         <p>Seu carrinho está vazio.</p>
-                        <button onClick={() => navigate('/cliente/inicio')}>
-                            Ver Restaurantes
-                        </button>
+                        <button onClick={() => navigate('/cliente/inicio')}>Ver Restaurantes</button>
                     </div>
                 ) : (
                     <div className={styles.carrinhoContainer}>
                         <div className={styles.listaItens}>
-                            {cartItems.map(item => (
-                                <div key={item.id_produto} className={styles.itemCarrinho}>
-                                    <img src={item.url_imagem_principal || imagemProdutoPadrao} alt={item.nome} className={styles.imagemItem} />
-                                    <div className={styles.infoItem}>
-                                        <h3>{item.nome}</h3>
-                                        <p>{formatarPreco(item.preco)} / unidade</p>
+                            {cartItems.map(item => {
+                                const imageUrl = item.url_imagem 
+                                    ? `${API_URL}${item.url_imagem}` 
+                                    : imagemProdutoPadrao;
+
+                                return (
+                                    <div key={item.id_produto} className={styles.itemCarrinho}>
+                                        <img src={imageUrl} alt={item.nome} className={styles.imagemItem} onError={(e) => e.target.src = imagemProdutoPadrao} />
+                                        <div className={styles.infoItem}>
+                                            <h3>{item.nome}</h3>
+                                            <p>{formatarPreco(item.preco)} / unidade</p>
+                                        </div>
+                                        <div className={styles.quantidadeItem}>
+                                            <label htmlFor={`qtd-${item.id_produto}`}>Qtd:</label>
+                                            <input
+                                                id={`qtd-${item.id_produto}`}
+                                                type="number"
+                                                min="1"
+                                                value={item.quantity}
+                                                onChange={(e) => updateItemQuantity(item.id_produto, parseInt(e.target.value, 10) || 1)}
+                                            />
+                                        </div>
+                                        <p className={styles.subtotalItem}>{formatarPreco(calcularSubtotalItem(item))}</p>
+                                        <button onClick={() => removeFromCart(item.id_produto)} className={styles.botaoRemover} title="Remover item">&times;</button>
                                     </div>
-                                    <div className={styles.quantidadeItem}>
-                                        <label htmlFor={`qtd-${item.id_produto}`}>Qtd:</label>
-                                        <input id={`qtd-${item.id_produto}`} type="number" min="1" value={item.quantity} onChange={(e) => updateItemQuantity(item.id_produto, parseInt(e.target.value, 10) || 1)} />
-                                    </div>
-                                    <p className={styles.subtotalItem}>{formatarPreco(calcularSubtotalItem(item))}</p>
-                                    <button onClick={() => removeFromCart(item.id_produto)} className={styles.botaoRemover} title="Remover item">&times;</button>
-                                </div>
-                            ))}
+                                );
+                            })}
                         </div>
 
                         <div className={styles.resumoCarrinho}>
@@ -148,15 +180,15 @@ export default function Carrinho() {
 
                             <div className={styles.linhaResumo}>
                                 <span>Subtotal</span>
-                                <span>{formatarPreco(calcularTotalCarrinho())}</span>
+                                <span>{formatarPreco(calcularSubtotalCarrinho())}</span>
                             </div>
                             <div className={styles.linhaResumo}>
-                                <span>Taxa de Entrega (exemplo)</span>
-                                <span>{formatarPreco(5.00)}</span>
+                                <span>Taxa de Entrega</span>
+                                <span>{formatarPreco(taxaFrete)}</span>
                             </div>
                             <div className={`${styles.linhaResumo} ${styles.total}`}>
                                 <span>Total</span>
-                                <span>{formatarPreco(calcularTotalCarrinho() + 5.00)}</span>
+                                <span>{formatarPreco(calcularTotalCarrinho())}</span>
                             </div>
                             <button onClick={handleFinalizarCompra} className={styles.botaoFinalizar} disabled={loading}>
                                 {loading ? 'Processando...' : 'Finalizar Compra'}

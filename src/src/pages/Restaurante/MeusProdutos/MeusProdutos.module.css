@@ -1,128 +1,132 @@
+
 .container {
-    width: 90%;
-    max-width: 1200px;
-    margin: 2rem auto;
-    padding: 1rem;
+  width: 90%;
+  max-width: 1200px;
+  margin: 2rem auto;
+  padding: 1rem;
 }
 
 .titulo {
-    font-size: 2.5rem;
-    text-align: center;
-    margin-bottom: 2rem;
-    color: #333;
+  font-size: 2.5rem;
+  text-align: center;
+  margin-bottom: 2rem;
+  color: #333;
 }
 
 .aviso {
-    font-size: 1.2rem;
-    text-align: center;
-    color: #666;
-    margin-top: 3rem;
-}
-
-.erro {
-    color: #d8000c;
-    background-color: #ffd2d2;
-    padding: 1rem;
-    border-radius: 5px;
+  font-size: 1.2rem;
+  text-align: center;
+  color: #666;
+  margin-top: 3rem;
 }
 
 .semProdutos {
-    text-align: center;
-    margin-top: 2rem;
+  text-align: center;
+  margin-top: 2rem;
 }
 
 .botaoCriar {
-    margin-top: 1.5rem;
-    padding: 0.8rem 1.5rem;
-    font-size: 1.1rem;
-    font-weight: bold;
-    color: white;
-    background-color: #28a745; 
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
+  margin-top: 1.5rem;
+  padding: 0.8rem 1.5rem;
+  font-size: 1.1rem;
+  font-weight: bold;
+  color: white;
+  background-color: #00d98b;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
 }
+
 .botaoCriar:hover {
-    background-color: #218838;
+  background-color: #00c07a;
 }
 
 .listaProdutos {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-    gap: 1.5rem;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 1.5rem;
 }
 
 .cardProduto {
-    background-color: #fff;
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-    display: flex;
-    flex-direction: column;
-    overflow: hidden; 
+  background-color: #fff;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  transition: transform 0.2s ease;
+}
+
+.cardProduto:hover {
+  transform: scale(1.02);
 }
 
 .imagemProduto {
-    width: 100%;
-    height: 200px;
-    object-fit: cover; 
+  width: 100%;
+  height: 180px;
+  object-fit: cover;
+  display: block;
+  border-top-left-radius: 8px;
+  border-top-right-radius: 8px;
 }
 
 .infoProduto {
-    padding: 1rem;
-    flex-grow: 1; 
+  padding: 1rem;
+  flex-grow: 1;
 }
 
 .nomeProduto {
-    font-size: 1.3rem;
-    font-weight: bold;
-    margin-bottom: 0.5rem;
-    color: #333;
+  font-size: 1.3rem;
+  font-weight: bold;
+  margin-bottom: 0.5rem;
+  color: #333;
 }
 
 .descricaoProduto {
-    font-size: 0.9rem;
-    color: #666;
-    margin-bottom: 1rem;
-    flex-grow: 1; 
+  font-size: 0.95rem;
+  color: #555;
+  margin-bottom: 1rem;
 }
 
 .precoProduto {
-    font-size: 1.4rem;
-    font-weight: bold;
-    color: #007bff; 
-    text-align: right;
+  font-size: 1.2rem;
+  font-weight: bold;
+  color: #00d98b;
+  text-align: right;
 }
 
 .acoesProduto {
-    display: flex;
-    justify-content: flex-end;
-    padding: 0.5rem 1rem 1rem 1rem;
-    gap: 0.5rem;
-    border-top: 1px solid #eee;
-    background-color: #f9f9f9;
+  display: flex;
+  justify-content: space-between;
+  padding: 0.8rem 1rem;
+  border-top: 1px solid #eee;
+  background-color: #f9f9f9;
 }
 
 .botaoEditar, .botaoExcluir {
-    padding: 0.4rem 0.8rem;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    cursor: pointer;
-    background-color: #f0f0f0;
-    font-weight: bold;
+  padding: 0.4rem 0.8rem;
+  border-radius: 5px;
+  font-weight: bold;
+  cursor: pointer;
+  border: none;
+}
+
+.botaoEditar {
+  background-color: #007bff;
+  color: white;
 }
 
 .botaoEditar:hover {
-    background-color: #218838;
+  background-color: #0056b3;
 }
 
 .botaoExcluir {
-    background-color: #f8d7da;
-    border-color: #f5c6cb;
-    color: #721c24;
+  background-color: #dc3545;
+  color: white;
 }
 
 .botaoExcluir:hover {
-    background-color: #de1025;
+  background-color: #c82333;
 }

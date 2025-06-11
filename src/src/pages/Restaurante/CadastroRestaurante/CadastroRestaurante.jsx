@@ -1,7 +1,7 @@
 import styles from './CadastroRestaurante.module.css';
 import { useNavigate, Link } from 'react-router-dom';
 import { useState } from 'react';
-import logo from '../../../assets/logo.png'; // Verifique se o caminho do logo está correto
+import logo from '../../../assets/logo.png';
 
 const API_URL = 'http://localhost:3001';
 
@@ -22,10 +22,17 @@ function CadastroRestaurante() {
         setFormData(prev => ({ ...prev, [name]: value }));
     };
 
+    function timeoutPromise(promise, ms = 8000) {
+        return Promise.race([
+            promise,
+            new Promise((_, reject) =>
+                setTimeout(() => reject(new Error("Tempo de resposta excedido.")), ms)
+            )
+        ]);
+    }
+
     async function handleSubmit(e) {
         e.preventDefault();
-        
-        // ✅ CORREÇÃO: Usando o nome correto da função, 'setErro'
         setErro('');
         setSuccess('');
 
@@ -48,27 +55,29 @@ function CadastroRestaurante() {
                 nome_completo: formData.nome_completo,
                 email: formData.email,
                 senha: formData.senha,
-                tipo_usuario: 'R' // Define o tipo como 'Restaurante'
+                tipo_usuario: 'R'
             };
 
-            const response = await fetch(`${API_URL}/api/usuarios/registrar`, {
+            const response = await timeoutPromise(fetch(`${API_URL}/api/usuarios/registrar`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(dadosParaEnviar),
-            });
+            }));
 
             const data = await response.json();
+            console.log("Resposta do servidor:", data);
+
             if (!response.ok) {
                 throw new Error(data.message || 'Não foi possível realizar o cadastro.');
             }
 
-            setSuccess('Conta de usuário criada! Você será redirecionado para o login.');
+            setSuccess('Conta de restaurante criada com sucesso! Redirecionando...');
             setTimeout(() => {
                 navigate("/restaurante/login");
             }, 2500);
 
         } catch (error) {
-            setErro(error.message);
+            setErro(error.message || 'Erro inesperado. Tente novamente.');
         } finally {
             setLoading(false);
         }

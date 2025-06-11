@@ -1,25 +1,30 @@
 .container {
   display: flex;
-  height: 100vh;
+  flex-wrap: wrap;
+  min-height: 100vh;
   justify-content: center;
   align-items: center;
   background-color: #ffffff;
   font-family: 'Arial', sans-serif;
+  padding: 20px;
 }
 
 .formulario {
   background-color: #fff;
   padding: 40px;
-  border-radius: 10px;
-  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
-  width: 350px;
-  margin-right: 60px;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  max-width: 400px;
+  margin: 20px;
 }
 
 .formulario h2 {
-  font-size: 18px;
+  font-size: 22px;
   font-weight: bold;
-  margin-bottom: 20px;
+  margin-bottom: 24px;
+  color: #333;
+  text-align: center;
 }
 
 .form {
@@ -28,29 +33,46 @@
 }
 
 .input {
-  padding: 12px;
-  margin-bottom: 12px;
-  border: none;
-  background-color: #f2f2f2;
-  border-radius: 20px;
-  font-size: 14px;
+  padding: 14px;
+  margin-bottom: 14px;
+  border: 1px solid #ccc;
+  background-color: #f9f9f9;
+  border-radius: 12px;
+  font-size: 15px;
+  transition: all 0.2s;
+}
+
+.input:focus {
+  background-color: #fff;
+  border-color: #00d98b;
+  outline: none;
 }
 
 .erro {
-  color: red;
-  font-size: 12px;
+  color: #c00;
+  font-size: 13px;
   margin-bottom: 10px;
+  text-align: center;
+}
+
+.sucesso {
+  color: #00a86b;
+  font-size: 13px;
+  margin-bottom: 10px;
+  text-align: center;
 }
 
 .botao {
   background-color: #00d98b;
   color: white;
-  padding: 12px;
+  padding: 14px;
   border: none;
-  border-radius: 20px;
+  border-radius: 12px;
   font-weight: bold;
+  font-size: 15px;
   cursor: pointer;
-  margin-top: 8px;
+  margin-top: 10px;
+  transition: background-color 0.3s;
 }
 
 .botao:hover {
@@ -58,7 +80,7 @@
 }
 
 .divisor {
-  margin: 40px 0;
+  margin: 30px 0;
   border: none;
   border-top: 1px solid #ddd;
 }
@@ -70,29 +92,38 @@
 
 .criar {
   color: #00d98b;
-  cursor: pointer;
   font-weight: bold;
+  cursor: pointer;
+  text-decoration: none;
+}
+
+.criar:hover {
+  text-decoration: underline;
 }
 
 .logoContainer {
- background-color: #fff;
-  padding: 40px;
-  border-radius: 10px;
-  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
-  margin-right: 60px;
+  background-color: #fff;
+  padding: 40px 30px;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  text-align: center;
+  max-width: 300px;
+  margin: 20px;
 }
 
 .logo {
-  width: 120px;
+  width: 100px;
   margin-bottom: 20px;
 }
 
 .unifood {
-  font-size: 24px;
+  font-size: 26px;
   font-weight: bold;
+  color: #333;
 }
 
 .subtitulo {
   font-size: 16px;
   font-weight: 600;
+  color: #666;
 }

@@ -1,13 +1,12 @@
 import styles from './CadastroCliente.module.css';
 import { useNavigate, Link } from 'react-router-dom';
 import { useState } from 'react';
-import logo from '../../../assets/logo.png'; // Verifique se este caminho para o logo está correto
+import logo from '../../../assets/logo.png';
 
 const API_URL = 'http://localhost:3001';
 
 function CadastroCliente() {
     const navigate = useNavigate();
-    // ✅ Usando um único estado para o formulário, que é mais organizado
     const [formData, setFormData] = useState({
         nome_completo: '',
         email: '',
@@ -23,12 +22,21 @@ function CadastroCliente() {
         setFormData(prev => ({ ...prev, [name]: value }));
     };
 
+    // Função auxiliar para timeout
+    function timeoutPromise(promise, ms = 8000) {
+        return Promise.race([
+            promise,
+            new Promise((_, reject) =>
+                setTimeout(() => reject(new Error("Tempo de resposta excedido.")), ms)
+            )
+        ]);
+    }
+
     async function handleSubmit(e) {
         e.preventDefault();
         setErro('');
         setSuccess('');
 
-        // Validações dos campos
         if (!formData.nome_completo || !formData.email || !formData.senha || !formData.confirmaSenha) {
             setErro("Preencha todos os campos.");
             return;
@@ -44,22 +52,22 @@ function CadastroCliente() {
 
         setLoading(true);
         try {
-            // ✅ Prepara os dados para enviar, incluindo o nome_completo
             const dadosParaEnviar = {
                 nome_completo: formData.nome_completo,
                 email: formData.email,
                 senha: formData.senha,
-                tipo_usuario: 'C' // Define o tipo como 'Cliente'
+                tipo_usuario: 'C'
             };
 
-            // ✅ URL CORRIGIDA: Apontando para /api/usuarios/registrar
-            const response = await fetch(`${API_URL}/api/usuarios/registrar`, {
+            const response = await timeoutPromise(fetch(`${API_URL}/api/usuarios/registrar`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(dadosParaEnviar),
-            });
+            }));
 
             const data = await response.json();
+            console.log("Resposta do servidor:", data);
+
             if (!response.ok) {
                 throw new Error(data.message || 'Não foi possível realizar o cadastro.');
             }
@@ -70,7 +78,7 @@ function CadastroCliente() {
             }, 2500);
 
         } catch (error) {
-            setErro(error.message);
+            setErro(error.message || 'Erro inesperado. Tente novamente.');
         } finally {
             setLoading(false);
         }
@@ -84,7 +92,6 @@ function CadastroCliente() {
                     {erro && <p className={styles.erro}>{erro}</p>}
                     {success && <p className={styles.sucesso}>{success}</p>}
                     
-                    {/* ✅ CAMPO ADICIONADO: Nome Completo */}
                     <input
                         className={styles.input}
                         type="text"

@@ -133,3 +133,36 @@
     color: #007bff; 
     white-space: nowrap; 
 }
+
+.buscaContainer {
+  position: relative; /* Necessário para posicionar o ícone dentro dele */
+  width: 100%;
+  max-width: 500px; /* Ou o tamanho que preferir */
+  margin: 0 auto 2.5rem auto; /* Centraliza o container */
+}
+
+.lupaIcon {
+  position: absolute;
+  top: 50%;
+  left: 1rem;
+  transform: translateY(-50%); 
+  width: 1.25rem;
+  height: 1.25rem;
+  fill: #a0aec0; 
+  pointer-events: none; 
+}
+
+.buscaInput {
+  width: 100%;
+  padding: 0.8rem 1rem 0.8rem 3rem; 
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.buscaInput:focus {
+  outline: none;
+  border-color: #4299e1;
+  box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.5);
+}

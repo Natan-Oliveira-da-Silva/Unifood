@@ -20,7 +20,6 @@ export default function ConsultarPedidos() {
             return;
         }
         try {
-            // A rota GET /api/pedidos agora busca os pedidos do cliente logado
             const response = await fetch(`${API_URL}/api/pedidos`, {
                 headers: { 'Authorization': `Bearer ${token}` },
             });
@@ -50,7 +49,6 @@ export default function ConsultarPedidos() {
             return;
         }
 
-        setLoading(true);
         const token = localStorage.getItem('token');
         try {
             const response = await fetch(`${API_URL}/api/pedidos/${idPedido}/status`, {
@@ -63,14 +61,12 @@ export default function ConsultarPedidos() {
                 throw new Error(errData.message || 'Falha ao cancelar o pedido.');
             }
             alert(`Pedido #${idPedido} cancelado com sucesso.`);
-            fetchPedidos(); // Atualiza a lista para mostrar o novo status
+            fetchPedidos(); // Atualiza a lista
         } catch (err) {
             alert(err.message);
-        } finally {
-            setLoading(false);
         }
     };
-
+    
     const getStatusClass = (status) => {
         const statusClass = status?.toLowerCase().replace(/ /g, '') || 'recebido';
         return styles[statusClass] || styles.recebido;
@@ -99,17 +95,14 @@ export default function ConsultarPedidos() {
                                 </div>
                                 
                                 <div className={styles.itensPedido}>
-                                    <strong>Itens do pedido:</strong>
+                                    <strong>Itens:</strong>
                                     <ul>
                                         {pedido.itens?.map(item => (
-                                            <li key={item.id_item_pedido}>
-                                                {item.quantidade}x {item.nome_produto}
-                                            </li>
+                                            <li key={item.id_item_pedido}>{item.quantidade}x {item.nome_produto}</li>
                                         ))}
                                     </ul>
                                 </div>
 
-                                {pedido.observacao && <p className={styles.observacao}><strong>Observação:</strong> {pedido.observacao}</p>}
                                 {pedido.motivo_cancelamento && <p className={styles.cancelamento}><strong>Motivo do Cancelamento:</strong> {pedido.motivo_cancelamento}</p>}
 
                                 <div className={styles.acoes}>
@@ -117,7 +110,7 @@ export default function ConsultarPedidos() {
                                         <button onClick={() => handleCancelarPedido(pedido.id_pedido)} className={styles.botaoCancelar}>Cancelar Pedido</button>
                                     )}
                                     {pedido.status === 'Finalizado' && !pedido.nota_avaliacao && (
-                                        <button onClick={() => alert('Função de avaliar ainda não implementada.')} className={styles.botaoAvaliar}>Avaliar</button>
+                                        <button className={styles.botaoAvaliar}>Avaliar</button>
                                     )}
                                 </div>
                             </div>

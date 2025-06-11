@@ -71,11 +71,11 @@
     letter-spacing: 0.5px;
 }
 
-.recebido { background-color: #4299e1; } /* Azul */
-.empreparo { background-color: #ecc94b; color: #2d3748; } /* Amarelo */
-.saiuparaentrega { background-color: #48bb78; } /* Verde-azulado */
-.finalizado { background-color: #38a169; } /* Verde */
-.cancelado { background-color: #e53e3e; } /* Vermelho */
+.recebido { background-color: #4299e1; }
+.empreparo { background-color: #ecc94b; color: #2d3748; }
+.saiuparaentrega { background-color: #48bb78; }
+.finalizado { background-color: #38a169; }
+.cancelado { background-color: #e53e3e; }
 
 .pedidoInfo {
     display: grid;
@@ -94,14 +94,15 @@
 .itensPedido ul { list-style: none; padding-left: 0; color: #4a5568; }
 .itensPedido li { padding: 0.25rem 0; }
 
-.observacao, .cancelamento {
+.cancelamento {
     font-style: italic;
     padding: 1rem;
     margin-top: 1rem;
     border-radius: 6px;
+    color: #9b2c2c;
+    background-color: #fed7d7;
+    border-left: 4px solid #e53e3e;
 }
-.observacao { background-color: #f7fafc; border-left: 4px solid #a0aec0; }
-.cancelamento { color: #9b2c2c; background-color: #fed7d7; border-left: 4px solid #e53e3e; }
 
 .acoes {
     margin-top: 1.5rem;

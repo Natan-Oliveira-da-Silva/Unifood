@@ -1,59 +1,141 @@
-.HistoricoPage{
+.container {
+    width: 90%;
+    max-width: 900px;
+    margin: 2rem auto;
+    font-family: 'Inter', sans-serif;
+}
+
+.container h1 {
+    text-align: center;
+    font-size: 2.2rem;
+    margin-bottom: 2.5rem;
+    color: #2d3748;
+}
+
+.mensagem, .mensagemErro {
+    text-align: center;
+    font-size: 1.2rem;
+    padding: 3rem 1rem;
+    background-color: #f7fafc;
+    border-radius: 8px;
+    color: #718096;
+}
+
+.mensagemErro {
+    color: #9b2c2c;
+    background-color: #fed7d7;
+}
+
+.listaPedidos {
     display: flex;
     flex-direction: column;
-    width: 100vw;  
-    height: 90vh; 
-    gap: 2rem;
+    gap: 1.5rem;
 }
 
-.titulo{
-    align-self: center;
-    font-size: 30px;
-    padding-top: 2rem;
+.pedidoCard {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    padding: 1.5rem;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    transition: box-shadow 0.2s ease-in-out;
 }
 
-.pedidos{
-    width: 70%;
-    height: 100%;
-    align-self: center;
+.pedidoCard:hover {
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
 }
 
-.p1{
-    width: 100%;
-    height: 20dvh;
-    background-color: #D9D9D9;
-}
-
-.tituloPedido{
-    justify-self: center;
-    padding-top: 1rem;
-    font-size: 20px;
-    font-weight: bold;
-}
-
-.resto{
-    width: 100%;
+.pedidoHeader {
     display: flex;
-    flex-direction: row;
-    justify-content: space-around;
-    padding-top: 2rem;
+    justify-content: space-between;
+    align-items: center;
+    padding-bottom: 1rem;
+    margin-bottom: 1rem;
+    border-bottom: 1px solid #edf2f7;
 }
 
-.dados{
-    font-size: 15px;
-   
+.pedidoHeader h3 {
+    margin: 0;
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: #2d3748;
 }
 
-.links{
-    font-size: 13px;
+.status {
+    padding: 0.3rem 0.8rem;
+    border-radius: 99px;
+    color: #fff;
+    font-weight: bold;
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.recebido { background-color: #4299e1; } /* Azul */
+.empreparo { background-color: #ecc94b; color: #2d3748; } /* Amarelo */
+.saiuparaentrega { background-color: #48bb78; } /* Verde-azulado */
+.finalizado { background-color: #38a169; } /* Verde */
+.cancelado { background-color: #e53e3e; } /* Vermelho */
+
+.pedidoInfo {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.5rem 1.5rem;
+    color: #4a5568;
+    margin-bottom: 1rem;
+}
+
+.itensPedido {
+    margin-top: 1rem;
+    padding-top: 1rem;
+    border-top: 1px solid #edf2f7;
+}
+.itensPedido strong { color: #2d3748; }
+.itensPedido ul { list-style: none; padding-left: 0; color: #4a5568; }
+.itensPedido li { padding: 0.25rem 0; }
+
+.observacao, .cancelamento {
+    font-style: italic;
+    padding: 1rem;
+    margin-top: 1rem;
+    border-radius: 6px;
+}
+.observacao { background-color: #f7fafc; border-left: 4px solid #a0aec0; }
+.cancelamento { color: #9b2c2c; background-color: #fed7d7; border-left: 4px solid #e53e3e; }
+
+.acoes {
+    margin-top: 1.5rem;
     display: flex;
     gap: 1rem;
-    justify-self: flex-end;
-    padding-top: 2rem;
-
+    justify-content: flex-end;
 }
 
-.links a{
+.botaoCancelar, .botaoAvaliar, .botaoPrimario {
+    padding: 0.6rem 1.2rem;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 600;
+    color: white;
     text-decoration: none;
-    color: black;
+    font-size: 0.9rem;
+    transition: background-color 0.2s ease, transform 0.2s ease;
+}
+.botaoCancelar { background-color: #c53030; }
+.botaoCancelar:hover { background-color: #9b2c2c; transform: translateY(-2px); }
+.botaoAvaliar { background-color: #3182ce; }
+.botaoAvaliar:hover { background-color: #2b6cb0; transform: translateY(-2px); }
+
+.semPedidos {
+    text-align: center;
+    padding: 2rem;
+}
+.botaoPrimario {
+    display: inline-block;
+    margin-top: 1rem;
+    background-color: #3182ce;
+}
+.botaoPrimario:hover {
+    background-color: #2b6cb0;
+    transform: translateY(-2px);
 }

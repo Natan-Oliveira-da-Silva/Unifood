@@ -6,6 +6,13 @@ module.exports = (db) => {
             status TEXT NOT NULL DEFAULT 'Recebido',
             data_pedido DATETIME DEFAULT (datetime('now','localtime')),
             observacao TEXT,
+            
+            -- ✅ COLUNA ADICIONADA PARA O MOTIVO DO CANCELAMENTO
+            motivo_cancelamento TEXT,
+
+            -- Colunas de avaliação (se você as tiver)
+            nota_avaliacao INTEGER,
+            comentario_avaliacao TEXT,
 
             -- Chaves Estrangeiras
             id_usuario_cliente INTEGER,
@@ -18,6 +25,10 @@ module.exports = (db) => {
         );
     `;
     db.run(sql, (err) => {
-        if (err) console.error("Erro ao criar tabela 'pedidos':", err.message);
+        if (err) {
+            console.error("Erro ao criar tabela 'pedidos':", err.message);
+        } else {
+            console.log("Tabela 'pedidos' verificada/criada com sucesso.");
+        }
     });
 };

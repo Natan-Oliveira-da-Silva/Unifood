@@ -38,7 +38,6 @@
     color: white;
 }
 
-/* Container para agrupar carrinho e botão de sair e empurrá-los para a direita */
 .acoesDireita {
     margin-left: auto;
     display: flex;

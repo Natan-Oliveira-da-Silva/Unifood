@@ -20,7 +20,7 @@ export default function ProdutoItem({ produto }) {
     return (
         <li className={styles.itemProduto}>
             <img 
-                src={produto.url_imagem_principal || imagemProdutoPadrao} 
+                src={produto.url_imagem ? `http://localhost:3001${produto.url_imagem}` : imagemProdutoPadrao} 
                 alt={produto.nome} 
                 className={styles.imagemProduto}
                 onError={(e) => { e.target.onerror = null; e.target.src = imagemProdutoPadrao; }}

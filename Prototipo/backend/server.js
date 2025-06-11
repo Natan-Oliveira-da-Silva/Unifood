@@ -15,44 +15,45 @@ const pedidoRoutes = require('./routes/pedido.routes.js');
 const app = express();
 const port = process.env.PORT || 3001;
 
-// Middlewares Globais
-app.use(cors());
+// ✅ CORS configurado corretamente para permitir frontend (localhost:5173)
+app.use(cors({
+    origin: 'http://localhost:5173',
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization']
+}));
+
+// ✅ Middlewares Globais
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// Servir arquivos estáticos (imagens de uploads)
+// ✅ Servir arquivos estáticos (como imagens de uploads)
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
-// --- Montagem das Rotas da Aplicação ---
+// ✅ Rotas da Aplicação
 app.use('/api/usuarios', usuarioRoutes);
 app.use('/api/cozinhas', cozinhaRoutes);
 app.use('/api/restaurantes', restauranteRoutes);
 app.use('/api/produtos', produtoRoutes);
 app.use('/api/pedidos', pedidoRoutes);
 
-// --- Middlewares de Tratamento de Erro (devem vir por último) ---
-
-// Tratamento de Rotas Não Encontradas (404)
+// ✅ Middleware 404 - Rota não encontrada
 app.use((req, res, next) => {
     res.status(404).json({ message: "Endpoint não encontrado." });
 });
 
-// Tratamento de Erros Global (500)
+// ✅ Middleware Global de Erro
 app.use((err, req, res, next) => {
     console.error("ERRO GLOBAL CAPTURADO:", err.stack);
     res.status(500).json({ message: "Ocorreu um erro interno inesperado no servidor." });
 });
 
-
-// --- INICIALIZAÇÃO DO SERVIDOR ---
+// ✅ Inicialização do Servidor
 try {
-    // Garante que o DB e as tabelas estejam prontos ANTES de iniciar o servidor
-    initDb(); 
-    
+    initDb(); // Inicializa o banco de dados e garante que está pronto
     app.listen(port, () => {
         console.log(`Servidor backend rodando e ouvindo na porta ${port}`);
     });
 } catch (error) {
     console.error("FALHA NA INICIALIZAÇÃO: Não foi possível iniciar o servidor.", error);
-    process.exit(1); // Encerra a aplicação se o DB não puder ser iniciado
+    process.exit(1); // Encerra o servidor caso o banco não inicie corretamente
 }

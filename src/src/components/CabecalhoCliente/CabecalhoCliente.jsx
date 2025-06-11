@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Link, useNavigate } from 'react-router-dom'; // Usando Link para navegação
+import { Link, useNavigate } from 'react-router-dom';
 import styles from "./CabecalhoCliente.module.css";
 import { useCart } from '../../context/CartContext';
 import { FaShoppingCart } from 'react-icons/fa'; 
@@ -31,17 +31,15 @@ export default function CabecalhoCliente() {
     const handleSair = () => {
         localStorage.removeItem('token');
         localStorage.removeItem('usuario'); 
-        navigate('/'); // Redireciona para a tela inicial geral
+        navigate('/');
     };
 
     return (
         <header className={styles.cabecalho}>
             <nav className={styles.nav}>
-                <p>Olá, {primeiroNome}</p>
-                
+                <Link to='/cliente/inicio' className={styles.navLink}><p>Olá, {primeiroNome}</p></Link>
                 <div className={styles.linksNavegacao}> 
-                    {/* 5. MELHORIA: Usando o componente Link para navegação correta */}
-                    <Link to='/cliente/inicio' className={styles.navLink}>Home</Link>
+                    
                     <Link to='/cliente/consultarpedidos' className={styles.navLink}>Meus Pedidos</Link>
                     <Link to='/cliente/perfil' className={styles.navLink}>Perfil</Link>
                 </div>
@@ -51,7 +49,6 @@ export default function CabecalhoCliente() {
                         <FaShoppingCart className={styles.iconeCarrinho} />
                         {totalItems > 0 && <span className={styles.cartBadge}>{totalItems}</span>}
                     </Link>
-                    {/* 6. MELHORIA: Usando <button> para a ação de sair */}
                     <button type="button" onClick={handleSair} className={styles.botaoSair}>Sair</button>
                 </div>
             </nav>

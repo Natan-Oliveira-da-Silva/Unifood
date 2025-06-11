@@ -1,19 +1,125 @@
 const { db } = require('../database/db.js');
 
 // --- FUNÇÕES DO CLIENTE ---
-// (As suas funções de cliente que já estavam corretas permanecem aqui)
-exports.criarPedido = async (req, res) => { /* ...código existente... */ };
-exports.listarMeusPedidos = async (req, res) => { /* ...código existente... */ };
-exports.avaliarPedido = async (req, res) => { /* ...código existente... */ };
+
+exports.criarPedido = async (req, res) => {
+    try {
+        const idUsuarioCliente = req.usuarioDecodificado?.id_usuario;
+
+        if (!idUsuarioCliente) {
+            return res.status(401).json({ message: "Usuário não autenticado." });
+        }
+
+        const { id_restaurante, id_forma_pagamento, observacao, itens, taxa_frete } = req.body;
+
+        if (!id_restaurante || !id_forma_pagamento || !Array.isArray(itens) || itens.length === 0) {
+            return res.status(400).json({ message: "Dados do pedido incompletos." });
+        }
+
+        const dataPedido = new Date().toISOString();
+        const subtotal = itens.reduce((total, item) => total + (item.preco * item.quantidade), 0);
+        const valorTotal = subtotal + (Number(taxa_frete) || 0);
+
+        const idPedido = await new Promise((resolve, reject) => {
+            const sql = `
+                INSERT INTO pedidos (
+                    id_usuario_cliente, id_restaurante, id_forma_pagamento,
+                    observacao, data_pedido, status, valor_total
+                ) VALUES (?, ?, ?, ?, ?, 'pendente', ?)
+            `;
+            db.run(sql, [idUsuarioCliente, id_restaurante, id_forma_pagamento, observacao, dataPedido, valorTotal], function (err) {
+                if (err) {
+                    console.error("Erro ao inserir pedido:", err.message);
+                    return reject(err);
+                }
+                resolve(this.lastID);
+            });
+        });
+
+        const sqlItem = `
+            INSERT INTO item_pedido (id_pedido, id_produto, quantidade, preco_unitario)
+            VALUES (?, ?, ?, ?)
+        `;
+
+        const promises = itens.map(item => {
+            return new Promise((resolve, reject) => {
+                db.run(sqlItem, [idPedido, item.id_produto, item.quantidade, item.preco], (err) => {
+                    if (err) {
+                        console.error("Erro ao inserir item:", item, err.message);
+                        return reject(err);
+                    }
+                    resolve();
+                });
+            });
+        });
+
+        await Promise.all(promises);
+        res.status(201).json({ message: "Pedido criado com sucesso!", id_pedido: idPedido });
+    } catch (error) {
+        console.error("Erro ao criar pedido:", error.message);
+        res.status(500).json({ message: "Erro ao processar o pedido. Tente novamente." });
+    }
+};
+
+exports.listarMeusPedidos = async (req, res) => {
+    try {
+        const idUsuario = req.usuarioDecodificado?.id_usuario;
+        if (!idUsuario) {
+            return res.status(401).json({ message: "Usuário não autenticado." });
+        }
+
+const pedidos = await new Promise((resolve, reject) => {
+    db.all(`
+        SELECT p.*, r.nome AS nome_restaurante, fp.nome AS forma_pagamento_nome
+        FROM pedidos p
+        JOIN restaurantes r ON p.id_restaurante = r.id_restaurante
+        LEFT JOIN formas_pagamento fp ON p.id_forma_pagamento = fp.id_forma_pagamento
+        WHERE p.id_usuario_cliente = ?
+        ORDER BY p.data_pedido DESC
+    `, [idUsuario], (err, rows) => {
+        if (err) return reject(err);
+        resolve(rows);
+    });
+});
+
+        if (pedidos.length === 0) return res.status(200).json([]);
+
+        const idsPedidos = pedidos.map(p => p.id_pedido);
+        const placeholders = idsPedidos.map(() => '?').join(',');
+
+        const itens = await new Promise((resolve, reject) => {
+            db.all(`
+                SELECT ip.*, prod.nome AS nome_produto, prod.url_imagem 
+                FROM item_pedido ip
+                JOIN produtos prod ON ip.id_produto = prod.id_produto
+                WHERE ip.id_pedido IN (${placeholders})
+            `, idsPedidos, (err, rows) => {
+                if (err) return reject(err);
+                resolve(rows);
+            });
+        });
+
+        const pedidosComItens = pedidos.map(p => ({
+            ...p,
+            itens: itens.filter(i => i.id_pedido === p.id_pedido)
+        }));
+
+        res.status(200).json(pedidosComItens);
+    } catch (error) {
+        console.error("Erro ao listar pedidos do cliente:", error.message);
+        res.status(500).json({ message: "Erro ao buscar seus pedidos." });
+    }
+};
+exports.avaliarPedido = async (req, res) => {
+    // ... implementar futuramente
+};
 
 // --- FUNÇÕES DO RESTAURANTE ---
 
-// ✅ LISTAR PEDIDOS RECEBIDOS PELO RESTAURANTE (VERSÃO FINAL E MAIS ROBUSTA)
 exports.listarPedidosRestaurante = async (req, res) => {
     try {
         const idUsuarioLogado = req.usuarioDecodificado.id_usuario;
 
-        // 1. Acha o restaurante do usuário logado
         const restaurante = await new Promise((resolve, reject) => {
             db.get("SELECT id_restaurante FROM restaurantes WHERE id_usuario_responsavel = ?", [idUsuarioLogado], (err, row) => {
                 if (err || !row) return reject(new Error("Restaurante não encontrado para este usuário."));
@@ -21,7 +127,6 @@ exports.listarPedidosRestaurante = async (req, res) => {
             });
         });
 
-        // 2. Busca os pedidos principais, juntando dados de outras tabelas com LEFT JOIN para ser mais seguro
         const sqlPedidos = `
             SELECT 
                 p.*, 
@@ -34,6 +139,7 @@ exports.listarPedidosRestaurante = async (req, res) => {
             WHERE p.id_restaurante = ? 
             ORDER BY p.data_pedido DESC
         `;
+
         const pedidos = await new Promise((resolve, reject) => {
             db.all(sqlPedidos, [restaurante.id_restaurante], (err, rows) => {
                 if (err) return reject(new Error("Erro ao buscar pedidos."));
@@ -45,7 +151,6 @@ exports.listarPedidosRestaurante = async (req, res) => {
             return res.status(200).json([]);
         }
 
-        // 3. Busca todos os itens de todos os pedidos de uma só vez (muito eficiente)
         const idsPedidos = pedidos.map(p => p.id_pedido);
         const placeholders = idsPedidos.map(() => '?').join(',');
         const sqlItens = `
@@ -54,14 +159,14 @@ exports.listarPedidosRestaurante = async (req, res) => {
             JOIN produtos prod ON ip.id_produto = prod.id_produto 
             WHERE ip.id_pedido IN (${placeholders})
         `;
+
         const todosOsItens = await new Promise((resolve, reject) => {
             db.all(sqlItens, idsPedidos, (err, rows) => {
                 if (err) return reject(new Error("Erro ao buscar itens do pedido."));
                 resolve(rows);
             });
         });
-        
-        // 4. "Encaixa" os itens nos seus respectivos pedidos
+
         const pedidosCompletos = pedidos.map(pedido => ({
             ...pedido,
             itens: todosOsItens.filter(item => item.id_pedido === pedido.id_pedido)
@@ -75,18 +180,14 @@ exports.listarPedidosRestaurante = async (req, res) => {
     }
 };
 
-// ATUALIZAR STATUS DE UM PEDIDO
 exports.atualizarStatusPedido = async (req, res) => {
-    // ...Sua lógica de atualizar status, que já está correta...
+    // ... implementar futuramente
 };
 
-// CONTAR PEDIDOS NÃO FINALIZADOS
 exports.contarPedidosNaoFinalizados = async (req, res) => {
-    // ...Sua lógica de contar pedidos, que já está correta...
+    // ... implementar futuramente
 };
 
-
-// --- EXPORTAÇÕES ---
 module.exports = {
     criarPedido: exports.criarPedido,
     listarMeusPedidos: exports.listarMeusPedidos,

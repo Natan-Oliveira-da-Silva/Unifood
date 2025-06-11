@@ -1,6 +1,5 @@
 const { db } = require('../database/db.js');
 
-// --- FUNÇÕES DO CLIENTE ---
 
 // CRIAR UM NOVO PEDIDO
 exports.criarPedido = async (req, res) => {
@@ -63,7 +62,6 @@ exports.criarPedido = async (req, res) => {
     }
 };
 
-// ✅ LISTAR OS PEDIDOS DO CLIENTE LOGADO (VERSÃO COM A CORREÇÃO NO NOME DA TABELA)
 exports.listarMeusPedidos = async (req, res) => {
     try {
         const id_usuario_cliente = req.usuarioDecodificado.id_usuario;
@@ -83,7 +81,6 @@ exports.listarMeusPedidos = async (req, res) => {
         const idsPedidos = pedidos.map(p => p.id_pedido);
         const placeholders = idsPedidos.map(() => '?').join(',');
         
-        // ✅ A CORREÇÃO ESTÁ AQUI: 'item_pedido' em vez de 'itens_pedido'
         const sqlItens = `
             SELECT ip.*, prod.nome as nome_produto 
             FROM item_pedido ip 

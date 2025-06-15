@@ -1,4 +1,3 @@
-// backend/routes/pedido.routes.js
 const express = require('express');
 const router = express.Router();
 const pedidoController = require('../controllers/pedido.controller.js');
@@ -6,25 +5,28 @@ const authMiddleware = require('../middleware/auth.middleware.js');
 
 // --- ROTAS DO CLIENTE ---
 
-// Rota para um cliente CRIAR um novo pedido
+// POST /api/pedidos/ -> Cria um novo pedido
 router.post('/', authMiddleware, pedidoController.criarPedido);
 
-// Rota para um cliente LISTAR seus próprios pedidos
+// GET /api/pedidos/ -> Lista os pedidos do cliente logado
 router.get('/', authMiddleware, pedidoController.listarMeusPedidos);
 
-// Rota para um cliente AVALIAR um pedido
+// POST /api/pedidos/:id_pedido/avaliar -> Avalia um pedido específico
 router.post('/:id_pedido/avaliar', authMiddleware, pedidoController.avaliarPedido);
+
+// PUT /api/pedidos/cancelar/:id_pedido -> Cancela um pedido
+router.put('/cancelar/:id_pedido', authMiddleware, pedidoController.cancelarPedido);
 
 
 // --- ROTAS DO RESTAURANTE ---
 
-
+// GET /api/pedidos/restaurante -> Lista os pedidos recebidos pelo restaurante logado
 router.get('/restaurante', authMiddleware, pedidoController.listarPedidosRestaurante);
 
-// Rota para o restaurante obter a CONTAGEM de novos pedidos
+// GET /api/pedidos/restaurante/contagem-novos -> Conta os pedidos não finalizados
 router.get('/restaurante/contagem-novos', authMiddleware, pedidoController.contarPedidosNaoFinalizados);
 
-
+// PATCH /api/pedidos/:id_pedido/status -> Atualiza o status de um pedido
 router.patch('/:id_pedido/status', authMiddleware, pedidoController.atualizarStatusPedido);
 
 

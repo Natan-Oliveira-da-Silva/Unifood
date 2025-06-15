@@ -1,7 +1,7 @@
 require('dotenv').config();
 
 const express = require('express');
-const cors = require('cors');
+const cors = require("cors");
 const path = require('path');
 const { initDb } = require('./database/db.js');
 
@@ -15,11 +15,10 @@ const pedidoRoutes = require('./routes/pedido.routes.js');
 const app = express();
 const port = process.env.PORT || 3001;
 
-// ✅ CORS configurado corretamente para permitir frontend (localhost:5173)
 app.use(cors({
-    origin: 'http://localhost:5173',
-    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-    allowedHeaders: ['Content-Type', 'Authorization']
+  origin: "http://localhost:5173", // frontend
+  methods: ["GET", "POST", "PUT", "PATCH", "DELETE"],
+  allowedHeaders: ["Content-Type", "Authorization"]
 }));
 
 // ✅ Middlewares Globais

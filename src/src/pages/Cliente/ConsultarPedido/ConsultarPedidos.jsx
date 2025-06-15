@@ -1,100 +1,104 @@
-// src/pages/Cliente/ConsultarPedidos/ConsultarPedidos.jsx
-import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-import styles from './ConsultarPedidos.module.css';
-import CabecalhoCliente from '../../../components/CabecalhoCliente/CabecalhoCliente.jsx';
+import React from "react";
 
-export default function ConsultarPedidos() {
-    const [pedidos, setPedidos] = useState([]);
-    const [loading, setLoading] = useState(true);
-    const [erro, setErro] = useState('');
-    const navigate = useNavigate();
+function CardPedido({ pedido, token, atualizarListaPedidos }) {
+  async function alterarStatusPedido(id_pedido, novoStatus) {
+    const confirmar = window.confirm(`Deseja realmente alterar o status para "${novoStatus}"?`);
+    if (!confirmar) return;
 
-    useEffect(() => {
-        const fetchPedidos = async () => {
-            setLoading(true);
-            const token = localStorage.getItem('authToken');
-            if (!token) {
-                // Redireciona para o login se não houver token
-                navigate('/cliente/login');
-                return;
-            }
+    // Se cliente está tentando cancelar
+    if (novoStatus.toLowerCase() === "cancelado") {
+      const motivo = prompt("Por favor, informe o motivo do cancelamento:");
+      if (!motivo || motivo.trim() === "") {
+        alert("O motivo do cancelamento é obrigatório.");
+        return;
+      }
 
-            try {
-                const response = await fetch('http://localhost:3001/api/pedidos', {
-                    headers: { 'Authorization': `Bearer ${token}` }
-                });
-                const data = await response.json();
-                if (!response.ok) {
-                    throw new Error(data.message || 'Erro ao buscar o histórico de pedidos.');
-                }
-                setPedidos(data);
-            } catch (error) {
-                console.error("Erro ao buscar pedidos:", error);
-                setErro(error.message);
-            } finally {
-                setLoading(false);
-            }
-        };
-        fetchPedidos();
-    }, [navigate]);
+      try {
+        const response = await fetch(`http://localhost:3001/api/pedidos/cancelar/${id_pedido}`, {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({ motivo }),
+        });
 
-    const handlePedirNovamente = (pedido) => {
-        // Lógica futura: buscar os itens deste pedido e adicioná-los ao carrinho.
-        alert(`Funcionalidade "Pedir Novamente" para o pedido #${pedido.codigo_pedido} a ser implementada!`);
-    };
-    
-    // Como não temos um "título" do pedido, usaremos o nome do restaurante
-    const gerarTituloPedido = (pedido) => {
-        return `Pedido em ${pedido.nome_restaurante}`;
-    };
+        if (!response.ok) {
+          const erro = await response.json();
+          throw new Error(erro.message || "Erro ao cancelar o pedido.");
+        }
 
-    return (
-        <>
-            <CabecalhoCliente />
-            <div className={styles.container}>
-                <h1 className={styles.titulo}>Histórico de pedidos</h1>
+        alert("Pedido cancelado com sucesso!");
+        atualizarListaPedidos();
+      } catch (error) {
+        console.error("Erro ao cancelar pedido:", error);
+        alert("Erro ao tentar cancelar o pedido.");
+      }
 
-                {loading && <p className={styles.aviso}>Carregando seu histórico...</p>}
-                {erro && <p className={`${styles.aviso} ${styles.erro}`}>{erro}</p>}
+      return;
+    }
 
-                {!loading && !erro && (
-                    <div className={styles.listaPedidos}>
-                        {pedidos.length === 0 ? (
-                            <div className={styles.semPedidos}>
-                                <p className={styles.aviso}>Você ainda não fez nenhum pedido.</p>
-                                <button onClick={() => navigate('/cliente/inicio')} className={styles.botaoAcaoPrincipal}>
-                                    Fazer meu primeiro pedido
-                                </button>
-                            </div>
-                        ) : (
-                            pedidos.map(pedido => (
-                                <div key={pedido.id_pedido} className={styles.cardPedido}>
-                                    {/* Usando o nome do restaurante como título principal do card */}
-                                    <h2 className={styles.pedidoTitulo}>{gerarTituloPedido(pedido)}</h2>
-                                    
-                                    <div className={styles.pedidoInfo}>
-                                        <p>ID do pedido: {pedido.codigo_pedido.toUpperCase()}</p>
-                                        <p>Status: 
-                                            {/* A classe do status muda de acordo com o valor para aplicarmos cores diferentes */}
-                                            <span className={`${styles.status} ${styles[pedido.status_pedido.toLowerCase()]}`}>
-                                                {pedido.status_pedido.replace('_', ' ')}
-                                            </span>
-                                        </p>
-                                        <p>Restaurante: {pedido.nome_restaurante}</p>
-                                    </div>
+    // Para status diferentes de "cancelado", segue fluxo normal (PATCH)
+    fetch(`http://localhost:3001/api/pedidos/${id_pedido}/status`, {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`
+      },
+      body: JSON.stringify({ status: novoStatus })
+    })
+      .then(response => {
+        if (!response.ok) {
+          throw new Error("Erro ao atualizar o status do pedido.");
+        }
+        return response.json();
+      })
+      .then(data => {
+        alert("Status atualizado com sucesso!");
+        atualizarListaPedidos();
+      })
+      .catch(error => {
+        console.error("Erro ao atualizar status:", error);
+        alert("Erro ao tentar atualizar o status.");
+      });
+  }
 
-                                    <div className={styles.pedidoAcoes}>
-                                        <button className={styles.botaoAcao}>Avaliar</button>
-                                        <button onClick={() => handlePedirNovamente(pedido)} className={styles.botaoAcao}>Pedir novamente</button>
-                                        <button className={styles.botaoAcao}>Ajuda</button>
-                                    </div>
-                                </div>
-                            ))
-                        )}
-                    </div>
-                )}
-            </div>
-        </>
-    );
+  return (
+    <div className="cardPedido">
+      <div className="cabecalho">
+        <h2>Pedido #{pedido.id_pedido}</h2>
+        <span className="status">{pedido.status?.toUpperCase()}</span>
+      </div>
+
+      <p><strong>Cliente:</strong> {pedido.nome_cliente}</p>
+      <p><strong>Pagamento:</strong> {pedido.forma_pagamento_nome}</p>
+      <p><strong>Endereço:</strong> {pedido.endereco_logradouro || "-"}, {pedido.endereco_numero || "-"}</p>
+      <p><strong>Data:</strong> {new Date(pedido.data_pedido).toLocaleString()}</p>
+      <p><strong>Total:</strong> R$ {pedido.valor_total?.toFixed(2) || "0,00"}</p>
+
+      <p><strong>Itens:</strong></p>
+      {pedido.itens.map((item, index) => (
+        <div key={item.id_item_pedido || index} style={{ display: "flex", alignItems: "center", marginBottom: "4px" }}>
+          <img src={item.url_imagem} alt={item.nome_produto} width={40} />
+          <span style={{ marginLeft: "0.5rem" }}>{item.quantidade}x {item.nome_produto}</span>
+        </div>
+      ))}
+
+      <div style={{ marginTop: '1rem' }}>
+        <label><strong>Alterar Status:</strong></label>{" "}
+        <select
+          value={pedido.status}
+          onChange={(e) => alterarStatusPedido(pedido.id_pedido, e.target.value)}
+        >
+          <option value="pendente">Pendente</option>
+          <option value="recebido">Recebido</option>
+          <option value="em preparo">Em Preparo</option>
+          <option value="finalizado">Finalizado</option>
+          <option value="cancelado">Cancelado</option>
+        </select>
+      </div>
+    </div>
+  );
 }
+
+export default CardPedido;

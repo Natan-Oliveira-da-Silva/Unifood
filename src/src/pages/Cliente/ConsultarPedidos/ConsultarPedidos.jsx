@@ -61,7 +61,7 @@ export default function ConsultarPedidos() {
                 throw new Error(errData.message || 'Falha ao cancelar o pedido.');
             }
             alert(`Pedido #${idPedido} cancelado com sucesso.`);
-            fetchPedidos(); // Atualiza a lista
+            fetchPedidos();
         } catch (err) {
             alert(err.message);
         }

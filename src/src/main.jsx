@@ -7,7 +7,7 @@ import { CartProvider } from "./context/CartContext.jsx";
 import "./reset.css";
 import "./index.css";
 
-// --- Importação das Páginas ---
+//  Importação das Páginas 
 import TelaInicial from "./pages/TelaInicial/TelaInicial.jsx";
 import LoginCliente from "./pages/Cliente/LoginCliente/LoginCliente.jsx";
 import CadastroCliente from "./pages/Cliente/CadastroCliente/CadastroCliente.jsx";
@@ -37,7 +37,6 @@ const router = createBrowserRouter([
   { path: "/cliente/perfil", element: <Perfil /> },
   { path: "/cliente/carrinho", element: <Carrinho /> },
   { path: "/cliente/esqueci-senha", element: <EsqueciSenha /> },
-  // A rota "/cliente/consultarpedidos" estava duplicada, removi uma.
 
   // Rotas de Restaurante
   { path: "/restaurante/login", element: <LoginRestaurante /> },

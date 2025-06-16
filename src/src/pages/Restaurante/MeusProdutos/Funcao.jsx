@@ -38,7 +38,6 @@ const Funcao = () => {
       <h1 className={styles.titulo}>Meus Produtos</h1>
       <div className={styles.produtoContainer}>
         
-        {/* Coluna da imagem */}
         <div className={styles.colunaImagem}>
           <img src={imagemUrl} alt="Produto" className={styles.imagemProduto} />
           <button onClick={alterarImagem} className={styles.botaoImagem}>
@@ -46,7 +45,6 @@ const Funcao = () => {
           </button>
         </div>
 
-        {/* Coluna da descrição */}
         <div className={styles.colunaTexto}>
           <div className={styles.itemTexto}>
             <Pencil size={14} className={styles.editar} onClick={() => editarCampo(nome, setNome, "nome")} />

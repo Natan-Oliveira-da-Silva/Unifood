@@ -1,4 +1,3 @@
-// src/pages/Cliente/LoginCliente/LoginCliente.jsx
 import styles from './LoginCliente.module.css';
 import { useNavigate } from 'react-router-dom';
 import React, { useState } from 'react';

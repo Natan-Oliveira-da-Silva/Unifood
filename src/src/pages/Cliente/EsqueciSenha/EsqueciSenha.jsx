@@ -31,8 +31,7 @@ export default function EsqueciSenha() {
             
             const data = await response.json();
             
-            // Sempre mostramos a mesma mensagem de sucesso por segurança,
-            // independentemente de o e-mail existir ou não no banco.
+
             setSuccessMessage(data.message || "Se uma conta com este e-mail existir, um link de recuperação foi enviado.");
 
         } catch (error) {

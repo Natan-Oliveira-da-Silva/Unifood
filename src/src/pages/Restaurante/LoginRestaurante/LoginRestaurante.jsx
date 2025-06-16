@@ -46,7 +46,6 @@ function LoginRestaurante() {
             localStorage.setItem('token', data.token);
 
             if (data.usuario) {
-                // ✅ Salva os campos necessários para o cabeçalho
                 localStorage.setItem('usuario', JSON.stringify({
                     id_usuario: data.usuario.id_usuario,
                     nome_completo: data.usuario.nome_completo,

@@ -2,7 +2,7 @@ const { db } = require('../database/db.js');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 
-// --- REGISTRAR NOVO USUÁRIO ---
+//  REGISTRAR NOVO USUÁRIO
 exports.registrar = async (req, res) => {
     try {
         const { nome_completo, email, senha, tipo_usuario } = req.body;
@@ -37,7 +37,7 @@ exports.registrar = async (req, res) => {
     }
 };
 
-// --- LOGIN DE USUÁRIO (LÓGICA RESTAURADA) ---
+//  LOGIN DE USUÁRIO
 exports.login = async (req, res) => {
     try {
         const { email, senha, tipo_usuario } = req.body;
@@ -109,7 +109,7 @@ exports.login = async (req, res) => {
 };
 
 
-// --- FUNÇÕES DE PERFIL (JÁ ESTAVAM CORRETAS) ---
+// FUNÇÕES DE PERFIL
 exports.buscarMeuPerfil = async (req, res) => {
     try {
         const idUsuario = req.usuarioDecodificado.id_usuario;
@@ -173,7 +173,6 @@ exports.atualizarMeuPerfil = async (req, res) => {
 };
 
 
-// --- EXPORTAÇÕES ---
 module.exports = {
     registrar: exports.registrar,
     login: exports.login,

@@ -108,7 +108,6 @@ export default function Perfil() {
 
     return (
         <>
-            {/* ✅ CORREÇÃO: O cabeçalho agora é chamado sem nenhuma propriedade */}
             <CabecalhoCliente />
             <main className={styles.container}>
                 <form onSubmit={handleSubmit} className={styles.form}>

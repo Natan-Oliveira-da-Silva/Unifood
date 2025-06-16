@@ -55,7 +55,7 @@ export default function MeusProdutos() {
         } catch (err) {
           tentativa++;
           ultimaMensagem = err.message;
-          await new Promise(res => setTimeout(res, 1000)); // espera antes de repetir
+          await new Promise(res => setTimeout(res, 1000));
         }
       }
 

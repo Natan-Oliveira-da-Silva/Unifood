@@ -1,4 +1,3 @@
-// src/pages/cliente/ConsultarPedidos/ConsultarPedidos.jsx
 import React, { useState, useEffect, useCallback } from 'react';
 import { Link } from 'react-router-dom';
 import CabecalhoCliente from '../../../components/CabecalhoCliente/CabecalhoCliente.jsx';
@@ -10,14 +9,11 @@ export default function ConsultarPedidos() {
     const [error, setError] = useState('');
 
     const fetchMeusPedidos = useCallback(async () => {
-        // ... (lógica de busca que já implementamos) ...
     }, []);
 
     useEffect(() => {
-        // ...
     }, [fetchMeusPedidos]);
 
-    // Função para pegar a classe CSS baseada no status
     const getStatusClass = (status) => {
         switch (status?.toLowerCase()) {
             case 'finalizado': return styles.finalizado;
@@ -27,7 +23,6 @@ export default function ConsultarPedidos() {
         }
     };
     
-    // JSX para renderizar um único pedido
     const PedidoCard = ({ pedido }) => {
         const [nota, setNota] = useState(pedido.nota_avaliacao || '');
         const [comentario, setComentario] = useState(pedido.comentario_avaliacao || '');
@@ -43,7 +38,6 @@ export default function ConsultarPedidos() {
                 });
                 if(!res.ok) throw new Error("Não foi possível salvar a avaliação.");
                 alert("Avaliação salva com sucesso!");
-                // O ideal seria atualizar o estado do pedido aqui para refletir a avaliação
             } catch (err) {
                 alert(err.message);
             }

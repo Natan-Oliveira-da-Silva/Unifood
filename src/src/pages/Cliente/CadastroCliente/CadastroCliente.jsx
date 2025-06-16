@@ -22,7 +22,6 @@ function CadastroCliente() {
         setFormData(prev => ({ ...prev, [name]: value }));
     };
 
-    // Função auxiliar para timeout
     function timeoutPromise(promise, ms = 8000) {
         return Promise.race([
             promise,

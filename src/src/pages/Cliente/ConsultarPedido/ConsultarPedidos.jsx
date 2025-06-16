@@ -5,7 +5,7 @@ function CardPedido({ pedido, token, atualizarListaPedidos }) {
     const confirmar = window.confirm(`Deseja realmente alterar o status para "${novoStatus}"?`);
     if (!confirmar) return;
 
-    // Se cliente está tentando cancelar
+    // Se o cliente está tentando cancelar
     if (novoStatus.toLowerCase() === "cancelado") {
       const motivo = prompt("Por favor, informe o motivo do cancelamento:");
       if (!motivo || motivo.trim() === "") {
@@ -38,7 +38,6 @@ function CardPedido({ pedido, token, atualizarListaPedidos }) {
       return;
     }
 
-    // Para status diferentes de "cancelado", segue fluxo normal (PATCH)
     fetch(`http://localhost:3001/api/pedidos/${id_pedido}/status`, {
       method: "PATCH",
       headers: {

@@ -16,27 +16,24 @@ export default function InicioRestaurante() {
         setErro('');
         setSuccessMessage(''); 
         
-        // ✅ CORREÇÃO 1: Usando a chave correta 'token'
         const token = localStorage.getItem('token');
 
         if (!token) {
             setErro("Autenticação necessária. Redirecionando para login...");
             setLoading(false);
-            setTimeout(() => navigate('/login'), 2500); // Rota de login principal
+            setTimeout(() => navigate('/login'), 2500); 
             return;
         }
 
         try {
             const response = await fetch('http://localhost:3001/api/restaurantes/meu-restaurante', {
                 method: 'GET',
-                // ✅ MELHORIA: Removido 'Content-Type' desnecessário
                 headers: { 'Authorization': `Bearer ${token}` }
             });
 
             const data = await response.json();
             if (!response.ok) {
                 if (response.status === 401 || response.status === 403) {
-                    // ✅ CORREÇÃO 1: Usando a chave correta 'token'
                     localStorage.removeItem('token'); 
                     localStorage.removeItem('userData');
                     setErro(data.message || "Sessão inválida. Faça login novamente.");
@@ -64,7 +61,6 @@ export default function InicioRestaurante() {
 
     const handleEditarDetalhes = () => {
         if (restaurante) {
-            // A página de cadastro já sabe lidar com edição, não precisa passar state
             navigate('/restaurante/cadastrar-detalhes');
         } else { 
             setErro("Dados do restaurante não disponíveis para edição."); 
@@ -75,7 +71,6 @@ export default function InicioRestaurante() {
         if (window.confirm('Tem certeza que deseja apagar seu restaurante? Esta ação não pode ser desfeita.')) {
             setLoading(true); setErro(''); setSuccessMessage('');
             
-            // ✅ CORREÇÃO 1: Usando a chave correta 'token'
             const token = localStorage.getItem('token');
 
             if (!token || !restaurante) {
@@ -87,18 +82,15 @@ export default function InicioRestaurante() {
             try {
                 const response = await fetch('http://localhost:3001/api/restaurantes/meu-restaurante', {
                     method: 'DELETE',
-                    // ✅ MELHORIA: Removido 'Content-Type' desnecessário
                     headers: { 'Authorization': `Bearer ${token}` }
                 });
                 
                 if (response.ok) {
                     setSuccessMessage("Restaurante apagado com sucesso! Atualizando...");
-                    // Espera 2 segundos e busca os dados novamente para a UI refletir o estado de "não cadastrado"
                     setTimeout(() => {
                         fetchMeuRestaurante();
                     }, 2000);
                 } else {
-                    // Se a resposta não for OK, tenta ler a mensagem de erro
                     let data = { message: `Erro ${response.status} ao apagar restaurante.` };
                     if (response.headers.get("content-type")?.includes("application/json")) {
                         data = await response.json();
@@ -113,8 +105,7 @@ export default function InicioRestaurante() {
         }
     };
 
-    // --- Lógica de Renderização ---
-    // (O seu código de renderização já estava bom, mantido como está)
+ 
     if (loading) {
         return (<> <CabecalhoRestaurante /> <h1 className={styles.titulo}>Meu Restaurante</h1> <div className={styles.containerMensagem}><p className={styles.mensagemCarregando}>Carregando...</p></div> </>);
     }

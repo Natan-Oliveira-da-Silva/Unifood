@@ -6,7 +6,6 @@ import CabecalhoRestaurante from '../../../components/CabecalhoRestaurante/Cabec
 export default function CadastrarDetalhesRestaurante() {
     const navigate = useNavigate();
 
-    // Estados para os campos do formulário
     const [isEditMode, setIsEditMode] = useState(false);
     const [nome, setNome] = useState('');
     const [idCozinha, setIdCozinha] = useState('');
@@ -36,7 +35,6 @@ export default function CadastrarDetalhesRestaurante() {
 
         const fetchData = async () => {
             setLoading(true);
-            // Limpa erros antigos ao buscar dados novamente
             setErro(''); 
             
             try {
@@ -53,10 +51,7 @@ export default function CadastrarDetalhesRestaurante() {
                 const cozinhasData = await cozinhasRes.json();
                 setCozinhas(cozinhasData);
 
-                // --- LÓGICA CORRIGIDA AQUI ---
                 if (restauranteRes.ok) {
-                    // Se a resposta for OK (200), significa que o restaurante EXISTE.
-                    // Entramos em modo de edição e preenchemos o formulário.
                     const rData = await restauranteRes.json();
                     setIsEditMode(true);
                     setNome(rData.nome || '');
@@ -73,12 +68,9 @@ export default function CadastrarDetalhesRestaurante() {
                         setPreviewImagem(`http://localhost:3001${rData.url_imagem_logo}`);
                     }
                 } else if (restauranteRes.status === 404) {
-                    // Se for 404, significa que o restaurante NÃO EXISTE.
-                    // Isso NÃO é um erro. Apenas deixamos o formulário no modo de criação.
                     console.log("Nenhum restaurante encontrado. Formulário em modo de criação.");
                     setIsEditMode(false);
                 } else {
-                    // Se for qualquer outro erro (500, 401, etc.), aí sim mostramos a mensagem.
                     const errorData = await restauranteRes.json();
                     throw new Error(errorData.message || "Erro ao buscar dados do restaurante.");
                 }
@@ -111,7 +103,6 @@ export default function CadastrarDetalhesRestaurante() {
         const formData = new FormData();
         formData.append('nome', nome);
         formData.append('id_cozinha', idCozinha);
-        // ... (resto do seu código do handleSubmit, que já está correto) ...
         formData.append('taxa_frete', taxaFrete);
         formData.append('endereco_cep', enderecoCep);
         formData.append('endereco_logradouro', enderecoLogradouro);
@@ -158,7 +149,6 @@ export default function CadastrarDetalhesRestaurante() {
         }
     };
 
-    // O return com o JSX permanece o mesmo
     return (
         <>
            <CabecalhoRestaurante />
@@ -171,7 +161,6 @@ export default function CadastrarDetalhesRestaurante() {
                 {successMessage && <p className={styles.mensagemSucesso}>{successMessage}</p>}
 
                 <form onSubmit={handleSubmit} className={styles.formEstiloProjeto}>
-                    {/* ... seu formulário JSX que já está correto ... */}
                     <div className={styles.inputs}>
                         <input className={styles.texto} type="text" placeholder="Nome do Restaurante*" value={nome} onChange={(e) => setNome(e.target.value)} required disabled={loading} />
                         

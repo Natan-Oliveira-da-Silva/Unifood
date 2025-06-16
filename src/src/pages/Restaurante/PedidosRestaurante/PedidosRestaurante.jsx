@@ -11,7 +11,7 @@ export default function PedidosRestaurante() {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
     
-    // ✅ 1. Adicionando um estado para a mensagem de sucesso
+    // estado para a mensagem de sucesso
     const [successMessage, setSuccessMessage] = useState('');
 
     const navigate = useNavigate();
@@ -45,17 +45,15 @@ export default function PedidosRestaurante() {
         fetchPedidos();
     }, [fetchPedidos]);
 
-    // ✅ 2. Lógica de atualização com a nova mensagem de sucesso
     const handleStatusChange = async (idPedido, novoStatus) => {
         let motivo = '';
         if (novoStatus === 'Cancelado') {
             motivo = prompt("Por favor, informe o motivo do cancelamento (será visível ao cliente):");
             if (motivo === null || motivo.trim() === '') {
-                return; // Não faz nada se o usuário cancelar ou deixar em branco
+                return;
             }
         }
         
-        // Limpa mensagens antigas
         setError('');
         setSuccessMessage('');
 
@@ -71,11 +69,9 @@ export default function PedidosRestaurante() {
                 throw new Error(errData.message || 'Não foi possível atualizar o status.');
             }
             
-            // Define a mensagem de sucesso dinâmica
             setSuccessMessage(`Status do Pedido #${idPedido} atualizado para "${novoStatus}".`);
-            fetchPedidos(); // Recarrega a lista
+            fetchPedidos();
 
-            // Limpa a mensagem de sucesso após 3 segundos
             setTimeout(() => {
                 setSuccessMessage('');
             }, 3000);

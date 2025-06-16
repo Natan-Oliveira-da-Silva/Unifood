@@ -1,168 +1,235 @@
 /* src/pages/Cliente/InicioCliente/InicioCliente.module.css */
+
 .container {
-    width: 90%;
-    max-width: 1400px;
-    margin: 0 auto; /* Centraliza o container principal */
-    padding: 2rem 1rem;
+  width: 90%;
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 2rem 1rem;
+  box-sizing: border-box;
 }
 
 .buscaContainer {
-    display: flex;
-    justify-content: center; /* Centraliza a barra de busca */
-    margin-bottom: 3rem;
-}
-
-.buscaInput {
-    width: 100%;
-    max-width: 600px; /* Define uma largura máxima para a busca */
-    padding: 0.9rem 1.2rem;
-    font-size: 1rem;
-    border: 1px solid #ccc;
-    border-radius: 25px; /* Deixa a barra com cantos bem arredondados */
-    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
-}
-.buscaInput:focus {
-    outline: none;
-    border-color: #aaa;
-}
-
-.secaoTitulo {
-    text-align: center;
-    font-size: 1.5rem;
-    font-weight: 500; /* Um peso de fonte médio */
-    color: #444;
-    margin-bottom: 2rem;
-}
-
-.conteudoPrincipal {
-    width: 100%;
-}
-
-.listaRestaurantes {
-    display: grid;
-    /* Cria 4 colunas em telas grandes, 2 em médias e 1 em pequenas */
-    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-    gap: 2rem; /* Espaçamento entre os cards */
-}
-
-.mensagemAviso {
-    text-align: center;
-    font-size: 1.2rem;
-    color: #666;
-    padding: 3rem 0;
-    width: 100%;
-}
-
-.erro {
-    color: #d8000c;
-    background-color: #ffd2d2;
-    padding: 1rem;
-    border-radius: 5px;
-}
-
-
-.modalTitulo {
-    font-size: 2rem;
-    font-weight: bold;
-    color: #333;
-    margin-bottom: 0.5rem;
-    text-align: center;
-}
-
-.modalSubtitulo {
-    font-size: 1.2rem;
-    color: #666;
-    text-align: center;
-    margin-bottom: 1.5rem;
-}
-
-.modalDivisor {
-    border: none;
-    border-top: 1px solid #eee;
-    margin-bottom: 1.5rem;
-}
-
-
-.listaProdutosModal {
-    list-style: none; 
-    padding: 0;
-    margin: 0;
-}
-
-
-.itemProdutoModal {
-    display: flex;
-    align-items: center; 
-    padding: 1rem 0;
-    gap: 1rem; 
-}
-
-
-.itemProdutoModal:not(:last-child) {
-    border-bottom: 1px solid #f0f0f0;
-}
-
-.imagemProdutoModal {
-    width: 80px;
-    height: 80px;
-    border-radius: 8px;
-    object-fit: cover; 
-    flex-shrink: 0;
-}
-
-.infoProdutoModal {
-    flex-grow: 1; 
-}
-
-.nomeProdutoModal {
-    font-size: 1.1rem;
-    font-weight: bold;
-    color: #333;
-    margin: 0 0 0.3rem 0;
-}
-
-.descricaoProdutoModal {
-    font-size: 0.9rem;
-    color: #777;
-    margin: 0;
-}
-
-.precoProdutoModal {
-    font-size: 1.1rem;
-    font-weight: bold;
-    color: #007bff; 
-    white-space: nowrap; 
-}
-
-.buscaContainer {
-  position: relative; /* Necessário para posicionar o ícone dentro dele */
+  position: relative;
   width: 100%;
-  max-width: 500px; /* Ou o tamanho que preferir */
-  margin: 0 auto 2.5rem auto; /* Centraliza o container */
+  max-width: 500px;
+  margin: 0 auto 2.5rem auto;
 }
 
 .lupaIcon {
   position: absolute;
   top: 50%;
   left: 1rem;
-  transform: translateY(-50%); 
+  transform: translateY(-50%);
   width: 1.25rem;
   height: 1.25rem;
-  fill: #a0aec0; 
-  pointer-events: none; 
+  fill: #a0aec0;
+  pointer-events: none;
 }
 
 .buscaInput {
   width: 100%;
-  padding: 0.8rem 1rem 0.8rem 3rem; 
+  padding: 0.8rem 1rem 0.8rem 3rem;
   border: 1px solid #e2e8f0;
   border-radius: 8px;
   box-shadow: 0 1px 3px rgba(0,0,0,0.05);
   transition: border-color 0.2s, box-shadow 0.2s;
+  font-size: 1rem;
 }
 
 .buscaInput:focus {
   outline: none;
   border-color: #4299e1;
   box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.5);
+}
+
+.secaoTitulo {
+  text-align: center;
+  font-size: 1.5rem;
+  font-weight: 500;
+  color: #444;
+  margin-bottom: 2rem;
+}
+
+.conteudoPrincipal {
+  width: 100%;
+}
+
+.listaRestaurantes {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 2rem;
+}
+
+.mensagemAviso {
+  text-align: center;
+  font-size: 1.2rem;
+  color: #666;
+  padding: 3rem 0;
+  width: 100%;
+}
+
+.erro {
+  color: #d8000c;
+  background-color: #ffd2d2;
+  padding: 1rem;
+  border-radius: 5px;
+}
+
+.modalProdutoContainer {
+  max-width: 100%;
+  overflow-x: hidden;
+}
+
+.modalTitulo {
+  font-size: 2rem;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 0.5rem;
+  text-align: center;
+}
+
+.modalSubtitulo {
+  font-size: 1.2rem;
+  color: #666;
+  text-align: center;
+  margin-bottom: 1.5rem;
+}
+
+.modalDivisor {
+  border: none;
+  border-top: 1px solid #eee;
+  margin-bottom: 1.5rem;
+}
+
+.listaProdutosModal {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.itemProdutoModal {
+  display: flex;
+  align-items: center;
+  padding: 1rem 0;
+  gap: 1rem;
+}
+
+.itemProdutoModal:not(:last-child) {
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.imagemProdutoModal {
+  width: 80px;
+  height: 80px;
+  border-radius: 8px;
+  object-fit: cover;
+  flex-shrink: 0;
+}
+
+.infoProdutoModal {
+  flex-grow: 1;
+}
+
+.nomeProdutoModal {
+  font-size: 1.1rem;
+  font-weight: bold;
+  color: #333;
+  margin: 0 0 0.3rem 0;
+}
+
+.descricaoProdutoModal {
+  font-size: 0.9rem;
+  color: #777;
+  margin: 0;
+}
+
+.precoProdutoModal {
+  font-size: 1.1rem;
+  font-weight: bold;
+  color: #007bff;
+  white-space: nowrap;
+}
+
+/* Responsividade para tablets */
+@media (max-width: 1024px) {
+  .container {
+    padding: 1.5rem 1rem;
+  }
+
+  .listaRestaurantes {
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: 1.5rem;
+  }
+
+  .modalTitulo {
+    font-size: 1.6rem;
+  }
+
+  .modalSubtitulo {
+    font-size: 1rem;
+  }
+
+  .imagemProdutoModal {
+    width: 60px;
+    height: 60px;
+  }
+
+  .precoProdutoModal {
+    font-size: 1rem;
+  }
+}
+
+/* Responsividade para celulares */
+@media (max-width: 600px) {
+  .container {
+    padding: 1rem 0.5rem;
+  }
+
+  .buscaContainer {
+    padding: 0 1rem;
+    max-width: 100%;
+  }
+
+  .buscaInput {
+    font-size: 0.95rem;
+    padding-left: 2.5rem;
+  }
+
+  .secaoTitulo {
+    font-size: 1.3rem;
+  }
+
+  .modalTitulo {
+    font-size: 1.5rem;
+  }
+
+  .modalSubtitulo {
+    font-size: 0.95rem;
+  }
+
+  .nomeProdutoModal {
+    font-size: 1rem;
+  }
+
+  .descricaoProdutoModal {
+    font-size: 0.85rem;
+  }
+
+  .itemProdutoModal {
+    gap: 0.5rem;
+  }
+
+  .imagemProdutoModal {
+    width: 50px;
+    height: 50px;
+  }
+
+  .precoProdutoModal {
+    font-size: 0.95rem;
+  }
+
+  .mensagemAviso {
+    font-size: 1rem;
+    padding: 2rem 0;
+  }
 }

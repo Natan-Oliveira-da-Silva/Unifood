@@ -31,7 +31,7 @@ function LoginRestaurante() {
                 body: JSON.stringify({
                     email: email,
                     senha: senha,
-                    tipo_usuario: 'R', // ✅ Tipo correto
+                    tipo_usuario: 'R',
                 }),
             });
 

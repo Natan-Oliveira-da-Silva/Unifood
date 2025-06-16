@@ -2,7 +2,7 @@ const { db } = require('../database/db.js');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 
-// --- REGISTRAR NOVO USUÁRIO (LÓGICA RESTAURADA) ---
+// --- REGISTRAR NOVO USUÁRIO ---
 exports.registrar = async (req, res) => {
     try {
         const { nome_completo, email, senha, tipo_usuario } = req.body;

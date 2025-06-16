@@ -7,7 +7,6 @@ module.exports = (db) => {
             preco REAL NOT NULL,
             url_imagem TEXT,
             
-            -- ✅ MELHORIA: Usando INTEGER para representar booleano (padrão do SQLite)
             ativo INTEGER DEFAULT 1, 
 
             id_restaurante INTEGER NOT NULL,

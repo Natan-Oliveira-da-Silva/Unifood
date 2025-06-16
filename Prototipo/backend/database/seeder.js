@@ -1,4 +1,3 @@
-// backend/database/seeder.js
 const run = (db, sql, params = []) => {
     return new Promise((resolve, reject) => {
         db.run(sql, params, function (err) {
@@ -21,12 +20,10 @@ async function seed(db) {
     try {
         await run(db, "BEGIN TRANSACTION;");
 
-        // --- Bloco 1: Insere dados primários ---
         console.log("Inserindo grupos...");
         await run(db, "INSERT INTO grupos (id_grupo, nome) VALUES (1, 'Cliente'), (2, 'Restaurante'), (3, 'AdminSistema');");
         
         console.log("Inserindo permissões...");
-        // ✅ Usando sua lista de permissões
         await run(db, "INSERT INTO permissoes (id_permissao, nome) VALUES (1, 'VISUALIZAR_CARDAPIOS'), (2, 'FAZER_PEDIDOS'), (3, 'GERENCIAR_PERFIL_CLIENTE'), (4, 'GERENCIAR_RESTAURANTE'), (5, 'VISUALIZAR_PEDIDOS_RESTAURANTE'), (6, 'ADMINISTRAR_USUARIOS'), (7, 'ADMINISTRAR_RESTAURANTES_TODOS');");
 
         // --- Bloco 2: Insere as associações ---

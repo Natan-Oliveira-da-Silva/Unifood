@@ -40,7 +40,7 @@ exports.criarProduto = async (req, res) => {
     }
 };
 
-// --- LISTAR PRODUTOS DO RESTAURANTE LOGADO ---
+// LISTAR PRODUTOS DO RESTAURANTE
 exports.listarMeusProdutos = async (req, res) => {
     try {
         const idUsuarioLogado = req.usuarioDecodificado.id_usuario;
@@ -60,7 +60,7 @@ exports.listarMeusProdutos = async (req, res) => {
     }
 };
 
-// --- ATUALIZAR UM PRODUTO ---
+// ATUALIZAR UM PRODUTO
 exports.atualizarProduto = async (req, res) => {
     try {
         const { id: idProduto } = req.params;
@@ -120,13 +120,13 @@ exports.atualizarProduto = async (req, res) => {
     }
 };
 
-// ✅ --- APAGAR UM PRODUTO (VERSÃO FINAL E COMPLETA) ---
+//  APAGA UM PRODUTO
 exports.apagarProduto = async (req, res) => {
     try {
         const idUsuarioLogado = req.usuarioDecodificado.id_usuario;
         const { id: idProduto } = req.params;
 
-        // 1. Segurança: Verifica se o produto a ser apagado pertence ao restaurante do usuário logado
+        // 1. Segurança: Verifica se o produto a ser apagado pertence ao restaurante
         const sqlVerifica = `
             SELECT p.id_produto, p.url_imagem
             FROM produtos p
@@ -141,7 +141,7 @@ exports.apagarProduto = async (req, res) => {
             });
         });
 
-        // 2. Apaga o registro do produto do banco de dados
+        // Apaga o registro do produto do banco de dados
         const sqlDelete = "DELETE FROM produtos WHERE id_produto = ?";
         await new Promise((resolve, reject) => {
             db.run(sqlDelete, [idProduto], function(err) {
@@ -150,7 +150,6 @@ exports.apagarProduto = async (req, res) => {
             });
         });
 
-        // 3. Apaga o arquivo de imagem do servidor, se ele existir
         if (produto.url_imagem) {
             const caminhoImagem = path.join(__dirname, '..', produto.url_imagem);
             if (fs.existsSync(caminhoImagem)) {
@@ -160,7 +159,6 @@ exports.apagarProduto = async (req, res) => {
             }
         }
         
-        // 4. Envia a resposta de sucesso
         res.status(200).json({ message: "Produto apagado com sucesso!" });
 
     } catch (error) {
@@ -169,7 +167,6 @@ exports.apagarProduto = async (req, res) => {
     }
 };
 
-// --- ROTA PÚBLICA ---
 exports.listarProdutosDeUmRestaurante = (req, res) => {
     const { id: id_restaurante } = req.params;
     const sql = "SELECT * FROM produtos WHERE id_restaurante = ? AND ativo = 1 ORDER BY nome ASC";
@@ -180,7 +177,6 @@ exports.listarProdutosDeUmRestaurante = (req, res) => {
     });
 };
 
-// --- EXPORTAÇÕES ---
 module.exports = {
     criarProduto: exports.criarProduto,
     listarMeusProdutos: exports.listarMeusProdutos,

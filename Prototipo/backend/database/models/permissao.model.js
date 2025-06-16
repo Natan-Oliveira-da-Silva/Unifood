@@ -13,7 +13,6 @@ module.exports = (db) => {
             console.log("Tabela 'permissoes' verificada/criada com sucesso.");
             
             
-            // Inserir permissoes padrão
             const stmt = db.prepare("INSERT OR IGNORE INTO permissoes (nome, descricao) VALUES (?,?)");
             const permissoesPadrao = [
                 { nome: "VISUALIZAR_CARDAPIOS", descricao: "Permite visualizar cardápios de restaurantes." },

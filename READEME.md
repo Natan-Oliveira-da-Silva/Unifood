@@ -7,8 +7,6 @@ para a realização da A3 de Usabilidade ministrada pelos professores **Lucas (T
 da **Universidade Salvador (UNIFACS)**.  
 O aplicativo foi criado tendo como base as **leis da Usabilidade de Jakob Nielsen**.
 
----
-
 ## 📦 Tecnologias Utilizadas
 
 ### 🔧 Frontend
@@ -84,7 +82,7 @@ O aplicativo foi criado tendo como base as **leis da Usabilidade de Jakob Nielse
 ```bash
 cd backend
 npm install
-cp .env.exemplo .env  # edite se necessário
+cp .env.exemplo .env  
 node server.js
 ```
 

@@ -1,9 +1,9 @@
-// ✅ Adicione estas importações no topo do seu arquivo para lidar com arquivos
 const fs = require('fs');
 const path = require('path');
 const { db } = require('../database/db.js');
 
-// --- LISTAR TODOS OS RESTAURANTES (PÚBLICO) ---
+//  LISTAR TODOS OS RESTAURANTES 
+
 exports.listarRestaurantes = (req, res) => {
     const sql = `
         SELECT r.id_restaurante, r.nome, r.taxa_frete, r.nota_avaliacao, r.url_imagem_logo, c.nome AS nome_cozinha
@@ -20,7 +20,8 @@ exports.listarRestaurantes = (req, res) => {
     });
 };
 
-// --- BUSCAR DADOS DO RESTAURANTE DO USUÁRIO LOGADO ---
+//  BUSCAR DADOS DO RESTAURANTE DO USUÁRIO LOGADO
+
 exports.buscarMeuRestaurante = async (req, res) => {
     const idUsuarioResponsavel = req.usuarioDecodificado.id_usuario;
     const sql = `SELECT * FROM restaurantes WHERE id_usuario_responsavel = ?`;
@@ -41,7 +42,8 @@ exports.buscarMeuRestaurante = async (req, res) => {
     }
 };
 
-// --- CRIAR UM NOVO PERFIL DE RESTAURANTE ---
+//  CRIAR UM NOVO PERFIL DE RESTAURANTE
+
 exports.criarRestaurante = async (req, res) => {
     try {
         const { nome, taxa_frete, id_cozinha, endereco_cep, endereco_logradouro, endereco_numero, endereco_complemento, endereco_bairro, endereco_cidade, endereco_estado, } = req.body;
@@ -64,7 +66,7 @@ exports.criarRestaurante = async (req, res) => {
     } catch (error) { res.status(500).json({ message: "Erro interno inesperado ao criar o restaurante." }); }
 };
 
-// --- BUSCAR UM RESTAURANTE ESPECÍFICO PELO ID (PÚBLICO) ---
+//  BUSCAR UM RESTAURANTE
 exports.buscarRestaurantePorId = async (req, res) => {
     try {
         const idRestaurante = req.params.id;
@@ -81,7 +83,6 @@ exports.buscarRestaurantePorId = async (req, res) => {
 };
 
 
-// ✅ --- ATUALIZAR O PERFIL DO RESTAURANTE LOGADO (VERSÃO COMPLETA E FINAL) ---
 exports.atualizarRestaurante = async (req, res) => {
     try {
         const idUsuarioResponsavel = req.usuarioDecodificado.id_usuario;
@@ -139,7 +140,7 @@ exports.atualizarRestaurante = async (req, res) => {
 };
 
 
-// --- APAGAR O RESTAURANTE DO USUÁRIO LOGADO ---
+//  APAGAR O RESTAURANTE DO USUÁRIO
 exports.apagarMeuRestaurante = async (req, res) => {
     try {
         const idUsuarioResponsavel = req.usuarioDecodificado.id_usuario;
@@ -154,7 +155,6 @@ exports.apagarMeuRestaurante = async (req, res) => {
     }
 };
 
-// --- EXPORTAÇÃO DE TODAS AS FUNÇÕES ---
 module.exports = {
     listarRestaurantes: exports.listarRestaurantes,
     buscarMeuRestaurante: exports.buscarMeuRestaurante,

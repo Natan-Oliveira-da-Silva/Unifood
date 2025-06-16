@@ -1,4 +1,3 @@
-// backend/database/db.js
 const sqlite3 = require('sqlite3').verbose();
 const path = require('path');
 const { seed } = require('./seeder.js');
@@ -37,9 +36,9 @@ const initDb = () => {
         console.log("Estrutura das tabelas verificada/criada.");
 
         db.run("SELECT 1", async () => {
-             console.log("Tabelas prontas. Iniciando seeding de dados...");
+             console.log("Tabelas prontas.");
              await seed(db);
-             console.log("Banco de dados pronto para receber conexões.");
+             
         });
     });
 };

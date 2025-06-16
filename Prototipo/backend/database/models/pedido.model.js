@@ -7,14 +7,11 @@ module.exports = (db) => {
             data_pedido DATETIME DEFAULT (datetime('now','localtime')),
             observacao TEXT,
             
-            -- ✅ COLUNA ADICIONADA PARA O MOTIVO DO CANCELAMENTO
             motivo_cancelamento TEXT,
 
-            -- Colunas de avaliação (se você as tiver)
             nota_avaliacao INTEGER,
             comentario_avaliacao TEXT,
 
-            -- Chaves Estrangeiras
             id_usuario_cliente INTEGER,
             id_restaurante INTEGER,
             id_forma_pagamento INTEGER,

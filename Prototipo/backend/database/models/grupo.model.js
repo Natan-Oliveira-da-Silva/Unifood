@@ -11,7 +11,7 @@ module.exports = (db) => {
         } else {
             console.log("Tabela 'grupos' verificada/criada com sucesso.");
            
-            // Inserir grupos padrão
+            // Inserir grupos
             const stmt = db.prepare("INSERT OR IGNORE INTO grupos (nome) VALUES (?)");
             const gruposPadrao = ["Cliente", "Restaurante", "AdminSistema"];
 

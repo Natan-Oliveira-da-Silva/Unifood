@@ -1,7 +1,5 @@
 const { db } = require('../database/db.js');
 
-// --- FUNÇÕES DO CLIENTE ---
-
 exports.criarPedido = async (req, res) => {
     try {
         const idUsuarioCliente = req.usuarioDecodificado?.id_usuario;
@@ -75,7 +73,6 @@ exports.cancelarPedido = async (req, res) => {
         }
 
         
-
         // Verifica se o pedido pertence ao cliente e está em status cancelável
         const pedido = await new Promise((resolve, reject) => {
             db.get(

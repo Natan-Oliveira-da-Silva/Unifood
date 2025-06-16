@@ -1,6 +1,4 @@
-// backend/database/models/grupo_permissao.model.js
 module.exports = (db) => {
-    // ✅ Nome da tabela ajustado para 'grupo_permissao' (singular)
     const sqlCreateTable = `
         CREATE TABLE IF NOT EXISTS grupo_permissao (
             id_grupo INTEGER NOT NULL,

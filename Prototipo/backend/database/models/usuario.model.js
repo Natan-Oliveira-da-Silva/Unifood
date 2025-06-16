@@ -7,7 +7,6 @@ module.exports = (db) => {
             senha TEXT NOT NULL,
             tipo_usuario CHAR(1) NOT NULL, -- 'C' para Cliente, 'R' para Restaurante
             
-            -- ✅ CAMPOS DE ENDEREÇO ADICIONADOS
             endereco_cep TEXT,
             endereco_logradouro TEXT,
             endereco_numero TEXT,

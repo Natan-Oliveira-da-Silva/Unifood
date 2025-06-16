@@ -5,6 +5,8 @@
   align-items: center;
   background-color: #ffffff;
   font-family: 'Arial', sans-serif;
+  flex-wrap: wrap;
+  padding: 20px;
 }
 
 .formulario {
@@ -14,6 +16,8 @@
   box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
   width: 350px;
   margin-right: 60px;
+  max-width: 100%;
+  box-sizing: border-box;
 }
 
 .formulario h2 {
@@ -63,54 +67,41 @@
   border-top: 1px solid #ddd;
 }
 
-.linkCadastro {
+.linkCadastro,
+.linkRecuperarSenha,
+.linkLoginRestaurante {
   font-size: 14px;
-  text-align: center;
-}
-
-.criar {
-  color: #00d98b;
-  cursor: pointer;
-  font-weight: bold;
-}
-.criar:hover {
-  color: #050a0f; 
-}
-
-.linkRecuperarSenha{
- font-size: 14px;
   text-align: center;
   margin-top: 10px;
 }
 
-
-.recuperarSenha {
-  
-   color: #00d98b;
+.criar,
+.recuperarSenha,
+.linkLoginRestaurante {
+  color: #00d98b;
   cursor: pointer;
   font-weight: bold;
 }
-.recuperarSenha:hover {
-  color: #050a0f; 
-}
-.linkLoginRestaurante{
+
+.linkLoginRestaurante {
   color: #0e00d9;
-   font-size: 14px;
-  text-align: center;
-  
-  font-weight: bold;
   margin-top: 20px;
 }
-.linkLoginRestaurante:hover{
+
+.linkLoginRestaurante:hover,
+.criar:hover,
+.recuperarSenha:hover {
   color: #050a0f;
-  cursor: pointer;
 }
+
 .logoContainer {
- background-color: #fff;
+  background-color: #fff;
   padding: 40px;
   border-radius: 10px;
   box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
   margin-right: 60px;
+  max-width: 100%;
+  box-sizing: border-box;
 }
 
 .logo {
@@ -126,4 +117,30 @@
 .subtitulo {
   font-size: 16px;
   font-weight: 600;
+}
+
+/* Responsividade */
+@media (max-width: 768px) {
+  .container {
+    flex-direction: column;
+    align-items: stretch;
+    height: auto;
+  }
+
+  .formulario,
+  .logoContainer {
+    margin-right: 0;
+    width: 100%;
+    padding: 20px;
+  }
+
+  .logo {
+    width: 80px;
+    margin: 0 auto 20px;
+    display: block;
+  }
+
+  .unifood, .subtitulo {
+    text-align: center;
+  }
 }

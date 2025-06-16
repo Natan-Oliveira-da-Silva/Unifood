@@ -1,11 +1,12 @@
 .container {
   display: flex;
-  height: 101vh;
+  flex-wrap: wrap;
+  height: 100vh;
   justify-content: center;
   align-items: center;
   background-color: #ffffff;
   font-family: 'Arial', sans-serif;
-  
+  padding: 20px;
 }
 
 .formulario {
@@ -14,7 +15,7 @@
   border-radius: 10px;
   box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
   width: 350px;
-  margin-right: 60px;
+  margin: 20px;
 }
 
 .formulario h2 {
@@ -71,14 +72,14 @@
   text-align: center;
 }
 
-.linkLoginRestaurante{
+.linkLoginRestaurante {
   color: #0e00d9;
-   font-size: 14px;
+  font-size: 14px;
   text-align: center;
-   font-weight: bold;
+  font-weight: bold;
   margin-top: 20px;
 }
-.linkLoginRestaurante:hover{
+.linkLoginRestaurante:hover {
   color: black;
   cursor: pointer;
 }
@@ -90,11 +91,12 @@
 }
 
 .logoContainer {
- background-color: #fff;
+  background-color: #fff;
   padding: 40px;
   border-radius: 10px;
   box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
-  margin-right: 60px;
+  margin: 20px;
+  text-align: center;
 }
 
 .logo {
@@ -112,4 +114,29 @@
   font-weight: 600;
 }
 
+/* ✅ Responsividade para telas pequenas */
+@media (max-width: 768px) {
+  .container {
+    flex-direction: column;
+    height: auto;
+    padding: 40px 20px;
+  }
 
+  .formulario, .logoContainer {
+    width: 100%;
+    max-width: 400px;
+    margin: 10px auto;
+  }
+
+  .logo {
+    width: 100px;
+  }
+
+  .unifood {
+    font-size: 22px;
+  }
+
+  .subtitulo {
+    font-size: 14px;
+  }
+}

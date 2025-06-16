@@ -1,12 +1,12 @@
 .container {
   display: flex;
   flex-wrap: wrap;
-  height: 100vh;
   justify-content: center;
   align-items: center;
+  min-height: 100vh;
   background-color: #ffffff;
   font-family: 'Arial', sans-serif;
-  padding: 20px;
+  padding: 2rem;
 }
 
 .formulario {
@@ -15,6 +15,7 @@
   border-radius: 10px;
   box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
   width: 350px;
+  max-width: 100%;
   margin: 20px;
 }
 
@@ -55,6 +56,7 @@
   font-weight: bold;
   cursor: pointer;
   margin-top: 8px;
+  transition: background-color 0.3s ease;
 }
 
 .botao:hover {
@@ -67,18 +69,18 @@
   border-top: 1px solid #ddd;
 }
 
-.linkCadastro {
+.linkCadastro,
+.linkLoginRestaurante {
   font-size: 14px;
   text-align: center;
 }
 
 .linkLoginRestaurante {
   color: #0e00d9;
-  font-size: 14px;
-  text-align: center;
   font-weight: bold;
   margin-top: 20px;
 }
+
 .linkLoginRestaurante:hover {
   color: black;
   cursor: pointer;
@@ -97,6 +99,11 @@
   box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
   margin: 20px;
   text-align: center;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  max-width: 100%;
 }
 
 .logo {
@@ -114,15 +121,15 @@
   font-weight: 600;
 }
 
-/* ✅ Responsividade para telas pequenas */
+/* ✅ Responsivo */
 @media (max-width: 768px) {
   .container {
     flex-direction: column;
-    height: auto;
-    padding: 40px 20px;
+    padding: 20px;
   }
 
-  .formulario, .logoContainer {
+  .formulario,
+  .logoContainer {
     width: 100%;
     max-width: 400px;
     margin: 10px auto;

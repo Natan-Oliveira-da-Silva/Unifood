@@ -8,24 +8,22 @@ export default function CabecalhoRestaurante() {
     const [nome, setNome] = useState("Restaurante");
     const [menuAberto, setMenuAberto] = useState(false);
 
- useEffect(() => {
-    const userDataString = localStorage.getItem('usuario');
-    if (userDataString) {
-        try {
-            const userData = JSON.parse(userDataString);
-
-            const nome =
-                userData?.nome_restaurante ||
-                userData?.restaurante?.nome ||
-                userData?.nome_completo?.split(" ")[0] ||
-                "Restaurante";
-
-            setNome(nome);
-        } catch (e) {
-            console.error("Erro ao carregar nome:", e);
+    useEffect(() => {
+        const userDataString = localStorage.getItem('usuario');
+        if (userDataString) {
+            try {
+                const userData = JSON.parse(userDataString);
+                const nome =
+                    userData?.nome_restaurante ||
+                    userData?.restaurante?.nome ||
+                    userData?.nome_completo?.split(" ")[0] ||
+                    "Restaurante";
+                setNome(nome);
+            } catch (e) {
+                console.error("Erro ao carregar nome:", e);
+            }
         }
-    }
-}, []);
+    }, []);
 
     const handleSair = () => {
         localStorage.removeItem('token');
@@ -55,6 +53,7 @@ export default function CabecalhoRestaurante() {
                 </div>
             </nav>
 
+            {/* Sidebar mobile */}
             <div className={`${styles.sidebar} ${menuAberto ? styles.aberto : ''}`}>
                 <button className={styles.fecharMenu} onClick={() => setMenuAberto(false)}>
                     <FaTimes />

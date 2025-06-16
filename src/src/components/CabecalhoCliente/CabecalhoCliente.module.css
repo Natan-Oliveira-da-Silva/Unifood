@@ -1,3 +1,5 @@
+/* src/components/CabecalhoCliente/CabecalhoCliente.module.css */
+
 .cabecalho {
     background-color: #222;
     color: white;
@@ -11,9 +13,10 @@
     height: 70px;
     max-width: 1400px;
     margin: 0 auto;
+    flex-wrap: wrap;
 }
 
-.nav p { 
+.nav p {
     font-weight: bold;
     font-size: 1.1rem;
 }
@@ -21,7 +24,8 @@
 .linksNavegacao {
     display: flex;
     gap: 1.5rem;
-    margin-left: 2rem; 
+    margin-left: 2rem;
+    flex-wrap: wrap;
 }
 
 .navLink {
@@ -32,8 +36,9 @@
     font-size: 1rem;
     padding: 0.5rem 0;
     transition: color 0.2s ease-in-out;
-    
+    text-decoration: none;
 }
+
 .navLink:hover {
     color: white;
 }
@@ -43,8 +48,8 @@
     display: flex;
     align-items: center;
     gap: 1.5rem;
+    flex-wrap: wrap;
 }
-
 
 .botaoCarrinho {
     position: relative;
@@ -54,30 +59,30 @@
 }
 
 .iconeCarrinho {
-    font-size: 1.5rem; 
+    font-size: 1.5rem;
     color: #ccc;
     transition: color 0.2s ease-in-out;
 }
+
 .botaoCarrinho:hover .iconeCarrinho {
     color: white;
 }
 
 .cartBadge {
-    position: absolute; 
-    top: -8px;      
-    right: -8px;     
-    background-color: #f44336; 
+    position: absolute;
+    top: -8px;
+    right: -8px;
+    background-color: #f44336;
     color: white;
-    border-radius: 50%; 
+    border-radius: 50%;
     padding: 2px 6px;
-    font-size: 0.75rem; 
+    font-size: 0.75rem;
     font-weight: bold;
-    border: 1px solid white; 
+    border: 1px solid white;
 }
 
-
 .botaoSair {
-    background-color: #222; 
+    background-color: #222;
     color: white;
     border: none;
     padding: 0.6rem 1.2rem;
@@ -89,5 +94,100 @@
 
 .botaoSair:hover {
     background-color: #777;
-    
+}
+
+/* Responsividade */
+@media (max-width: 768px) {
+    .nav {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.8rem;
+    }
+
+    .linksNavegacao,
+    .acoesDireita {
+        width: 100%;
+        justify-content: space-between;
+    }
+
+    .botaoSair {
+        padding: 0.5rem 1rem;
+        font-size: 0.95rem;
+    }
+
+    .iconeCarrinho {
+        font-size: 1.3rem;
+    }
+
+    .navLink {
+        font-size: 0.95rem;
+    }
+}
+
+
+.menuButton {
+  background: none;
+  border: none;
+  color: white;
+  font-size: 1.5rem;
+  cursor: pointer;
+  display: none;
+}
+
+/* Exibe o botão hambúrguer apenas em telas pequenas */
+@media (max-width: 768px) {
+  .menuButton {
+    display: block;
+  }
+
+  .linksNavegacao,
+  .acoesDireita {
+    display: none;
+  }
+}
+
+/* Sidebar estilizada */
+.sidebar {
+  position: fixed;
+  top: 0;
+  left: -260px;
+  height: 100%;
+  background-color: #1e1e2f;
+  color: #fff;
+  display: flex;
+  flex-direction: column;
+  padding: 2rem 1.5rem;
+  transition: left 0.3s ease-in-out;
+  z-index: 9999;
+}
+
+.sidebar.aberto {
+  left: 0;
+}
+
+.fecharMenu {
+  align-self: flex-end;
+  font-size: 1.5rem;
+  background: none;
+  border: none;
+  color: #ccc;
+  margin-bottom: 2rem;
+  cursor: pointer;
+}
+
+.sidebarLink {
+  color: #ccc;
+  text-decoration: none;
+  font-size: 1.1rem;
+  margin-bottom: 1.2rem;
+  transition: color 0.2s ease-in-out;
+  border: none;
+  background: none;
+  text-align: left;
+  cursor: pointer;
+  padding: 0;
+}
+
+.sidebarLink:hover {
+  color: #fff;
 }

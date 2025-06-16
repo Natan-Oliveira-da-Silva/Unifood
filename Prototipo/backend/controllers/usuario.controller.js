@@ -65,26 +65,36 @@ exports.login = async (req, res) => {
             return res.status(403).json({ message: `Acesso negado para este tipo de usuário.` });
         }
 
-        let possuiRestaurante = false;
-        if (usuario.tipo_usuario === 'R') {
-            const restaurante = await new Promise((resolve, reject) => {
-                db.get("SELECT id_restaurante FROM restaurantes WHERE id_usuario_responsavel = ?", [usuario.id_usuario], (err, row) => {
-                    if (err) return reject(new Error("Erro ao verificar restaurante do usuário."));
-                    resolve(row);
-                });
-            });
-            possuiRestaurante = !!restaurante;
-        }
-
         const payload = { 
             id_usuario: usuario.id_usuario, 
             email: usuario.email, 
             tipo_usuario: usuario.tipo_usuario 
         };
-        
+
         const token = jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: '8h' });
 
-        const dadosUsuarioParaFrontend = { ...payload, possuiRestaurante };
+        let dadosUsuarioParaFrontend = {
+            id_usuario: usuario.id_usuario,
+            nome_completo: usuario.nome_completo,
+            email: usuario.email,
+            tipo_usuario: usuario.tipo_usuario,
+            possuiRestaurante: false
+        };
+
+        if (usuario.tipo_usuario === 'R') {
+            const restaurante = await new Promise((resolve, reject) => {
+                db.get("SELECT nome AS nome_restaurante, id_restaurante FROM restaurantes WHERE id_usuario_responsavel = ?", [usuario.id_usuario], (err, row) => {
+                    if (err) return reject(new Error("Erro ao buscar dados do restaurante."));
+                    resolve(row);
+                });
+            });
+
+            if (restaurante) {
+                dadosUsuarioParaFrontend.possuiRestaurante = true;
+                dadosUsuarioParaFrontend.nome_restaurante = restaurante.nome_restaurante;
+                dadosUsuarioParaFrontend.id_restaurante = restaurante.id_restaurante;
+            }
+        }
 
         res.status(200).json({ 
             message: "Login bem-sucedido!", 
@@ -97,6 +107,7 @@ exports.login = async (req, res) => {
         res.status(500).json({ message: "Ocorreu um erro interno no servidor." });
     }
 };
+
 
 // --- FUNÇÕES DE PERFIL (JÁ ESTAVAM CORRETAS) ---
 exports.buscarMeuPerfil = async (req, res) => {

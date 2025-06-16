@@ -12,7 +12,7 @@ function LoginRestaurante() {
 
     async function handleLogin(e) {
         e.preventDefault();
-        setErro(''); 
+        setErro('');
 
         if (email === '' || senha === '') {
             setErro("Preencha todos os campos");
@@ -31,53 +31,47 @@ function LoginRestaurante() {
                 body: JSON.stringify({
                     email: email,
                     senha: senha,
-                    // ✅ CORREÇÃO: Enviando o tipo de usuário correto ('R')
-                    tipo_usuario: 'R', 
+                    tipo_usuario: 'R', // ✅ Tipo correto
                 }),
             });
-            console.log("2. Fetch para login realizado. Status da resposta:", response.status);
 
+            console.log("2. Fetch para login realizado. Status:", response.status);
             const data = await response.json();
-            console.log("3. Resposta convertida para JSON:", data);
+            console.log("3. Resposta JSON:", data);
 
             if (!response.ok) {
-                // Se a resposta do backend não for bem-sucedida, lança um erro com a mensagem
-                throw new Error(data.message || `Erro ${response.status}: Não foi possível realizar o login.`);
+                throw new Error(data.message || `Erro ${response.status}`);
             }
 
-            // --- LÓGICA DE SUCESSO CORRIGIDA ---
-            console.log('Login de restaurante realizado com sucesso:', data);
-
-            // ✅ CORREÇÃO 2: Salva o token com a chave correta 'token' para consistência
             localStorage.setItem('token', data.token);
 
             if (data.usuario) {
-                // Opcional: Salvar dados do usuário para fácil acesso
-                localStorage.setItem('usuario', JSON.stringify(data.usuario));
+                // ✅ Salva os campos necessários para o cabeçalho
+                localStorage.setItem('usuario', JSON.stringify({
+                    id_usuario: data.usuario.id_usuario,
+                    nome_completo: data.usuario.nome_completo,
+                    nome_restaurante: data.usuario.nome_restaurante,
+                    id_restaurante: data.usuario.id_restaurante,
+                }));
             }
-            
-            // ✅ CORREÇÃO 3: Lógica de redirecionamento inteligente
+
             if (data.usuario && data.usuario.possuiRestaurante) {
-                // Se JÁ TEM restaurante, vai para o dashboard/início
-                console.log("Redirecionando para /restaurante/inicio");
                 navigate("/restaurante/inicio");
             } else {
-                // Se NÃO TEM restaurante, vai DIRETO para a página de cadastro
-                console.log("Redirecionando para /restaurante/cadastrar-detalhes");
                 navigate("/restaurante/cadastrar-detalhes");
             }
 
         } catch (error) {
-            setLoading(false); // Garante que o loading para em caso de erro
+            setLoading(false);
             console.error("4. Erro capturado:", error);
-            setErro(error.message); // Exibe a mensagem de erro vinda do backend ou do catch
+            setErro(error.message);
         }
-        // Removido o setLoading(false) daqui para o bloco finally
     }
 
     function irParaCadastro() {
         navigate("/restaurante/cadastro");
     }
+
     function irParaLogin() {
         navigate("/cliente/login");
     }

@@ -50,3 +50,9 @@ document.addEventListener('DOMContentLoaded', function() {
     
 });
 
+
+function clicar(){
+    alert("Você está logado com sucesso!");
+        window.location.href = "assets/html/home.html";
+}
+

@@ -88,7 +88,8 @@ cp .env.exemplo .env
 node server.js
 ```
 
-```Via Terminal VsCode
+```
+Via Terminal VsCode:
 
 Criar 1 terminal
 npm install
@@ -107,7 +108,8 @@ npm run dev
 
 Acesse: `http://localhost:5173`
 
-```Via Terminal VsCode
+```
+Via Terminal VsCode:
 
 Criar 1 terminal
 npm install

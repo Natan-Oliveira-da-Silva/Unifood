@@ -84,8 +84,18 @@ O aplicativo foi criado tendo como base as **leis da Usabilidade de Jakob Nielse
 ```bash
 cd backend
 npm install
-cp .env.exemplo .env  # edite se necessário
+cp .env.exemplo .env  
 node server.js
+```
+
+```
+Via Terminal VsCode:
+
+Criar 1 terminal
+npm install
+cd Prototipo/backend
+npm start
+
 ```
 
 ### 🌐 Rodando o frontend
@@ -97,6 +107,15 @@ npm run dev
 ```
 
 Acesse: `http://localhost:5173`
+
+```
+Via Terminal VsCode:
+
+Criar 1 terminal
+npm install
+cd src/src
+npm run dev
+```
 
 ---
 

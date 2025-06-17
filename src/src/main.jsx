@@ -7,7 +7,6 @@ import { CartProvider } from "./context/CartContext.jsx";
 import "./reset.css";
 import "./index.css";
 
-//  Importação das Páginas 
 import TelaInicial from "./pages/TelaInicial/TelaInicial.jsx";
 import LoginCliente from "./pages/Cliente/LoginCliente/LoginCliente.jsx";
 import CadastroCliente from "./pages/Cliente/CadastroCliente/CadastroCliente.jsx";

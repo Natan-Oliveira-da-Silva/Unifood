@@ -1,6 +1,3 @@
-▸ O Enterprise Task permite ver tabelas de tarefas e funcionários com filtros, criar e concluir tarefas e associar tarefas a funcionários.
-▸ O sistema separa as ações permitidas a cada grupo de usuários (funcionários, supervisores e gerentes).
-▸ O front-end do sistema usa HTML, Bootstrap e JavaScript. O back-end é uma API com arquitetura REST feita com NodeJS e Express e integrada a um banco de dados SQLite.
 # 🍔 Unifood — Sistema de Delivery Universitário
 
 Seja Bem-Vindo ao **UNIFOOD**, um MVC de delivery de comida desenvolvido pelos estudantes:  

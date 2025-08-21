@@ -8,6 +8,13 @@ O aplicativo foi criado tendo como base as **leis da Usabilidade de Jakob Nielse
 
 ---
 
+## ▶️ Vídeo do Projeto
+
+Para explicar e demonstrar o funcionamento do Unifood, nosso grupo fez um vídeo. [Assista ao vídeo do projeto](https://www.youtube.com/watch?v=7Xq8sPWmfOQ)
+
+
+---
+
 ## 📦 Tecnologias Utilizadas
 
 ### 🔧 Frontend

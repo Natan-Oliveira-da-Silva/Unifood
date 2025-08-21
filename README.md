@@ -1,7 +1,7 @@
 # 🍔 Unifood — Sistema de Delivery Universitário
 
 Seja Bem-Vindo ao **UNIFOOD**, um MVC de delivery de comida desenvolvido pelos estudantes:  
-**Diogo Souza**, **Nathan Oliveira**, **Elvis Reis**, **Danilo Queiroz**, **Caue Luz**, **Pedro Bispo**, **Gustavo Lima**  
+**Diogo Souza**, **Natan Oliveira**, **Elvis Reis**, **Danilo Queiroz**, **Caue Luz**, **Pedro Bispo**, **Gustavo Lima**  
 para a realização da A3 de Usabilidade ministrada pelos professores **Lucas (Teórica)** e **Thiago (Prática)**  
 da **Universidade Salvador (UNIFACS)**.  
 O aplicativo foi criado tendo como base as **leis da Usabilidade de Jakob Nielsen**.
@@ -135,6 +135,6 @@ npm run dev
 
 ## 🧑‍💻 Desenvolvido por
 
-**Danilo Queiroz**, **Diogo Souza**, **Nathan Oliveira**, **Elvis Reis**,  
+**Danilo Queiroz**, **Diogo Souza**, **Natan Oliveira**, **Elvis Reis**,  
 **Caue Luz**, **Pedro Bispo**, **Gustavo Lima**  
 **UNIFACS - 2025**
